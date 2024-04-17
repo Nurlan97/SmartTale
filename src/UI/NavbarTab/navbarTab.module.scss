@@ -1,0 +1,23 @@
+@mixin navbarGroupHeader {
+  border-radius: 4px;
+  width: 220px;
+  height: 36px;
+  padding-left: 12px;
+  display: flex;
+  align-items: center;
+}
+.navbarGroupHeader {
+  @include navbarGroupHeader;
+}
+.navbarGroupHeaderActive {
+  @include navbarGroupHeader;
+  border-left: 4px solid #fc0;
+  background: #f3f4fd;
+}
+.navbarGroupHeaderText {
+  font-family: 'SF Pro', sans-serif;
+  font-weight: 400;
+  font-size: 16px;
+  color: #000;
+  margin-left: 12px;
+}

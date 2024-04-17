@@ -1,0 +1,102 @@
+.navbar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: 1px 0 4px 0 rgba(0, 0, 0, 0.05);
+  background: #fff;
+}
+.navbarGroup {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.navbarHeader {
+  text-align: left;
+  margin: 32px;
+  font-family: 'SF Pro', sans-serif;
+  font-weight: 400;
+  font-size: 24px;
+  line-height: 92%;
+  text-align: left;
+  color: #000;
+}
+.navbarLogo {
+  background: #fc0;
+  width: 70px;
+  height: 70px;
+  border-radius: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 20px;
+}
+.navbarTitle {
+  font-family: 'SF Pro', sans-serif;
+  font-weight: 400;
+  font-size: 24px;
+  line-height: 92%;
+  color: #000;
+  margin-bottom: 12px;
+}
+.navbarDescription {
+  font-family: 'SF Pro', sans-serif;
+  font-weight: 400;
+  font-size: 14px;
+  color: #000;
+  opacity: 0.6;
+}
+.horizontalLine {
+  border-bottom: 0.5px solid #8e8e93;
+  width: 220px;
+  height: 0px;
+  margin-bottom: 16px;
+}
+
+@mixin linkGroup {
+  // position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  padding-left: 20px;
+  border-left: 1px solid rgba(142, 142, 147, 1);
+  margin: 20px 0;
+  overflow: hidden;
+}
+
+.navbarLinkGroupRolled {
+  @include linkGroup;
+  // background: red;
+  height: 0;
+  transition: height 1s;
+}
+
+.navbarLinkGroupExtended {
+  @include linkGroup;
+  // background: green;
+  transition: height 1s;
+}
+
+.navbarFooter {
+  margin-bottom: 32px;
+  position: absolute;
+  bottom: 0;
+}
+
+.navbarExtit {
+  border-radius: 4px;
+  width: 220px;
+  height: 36px;
+  padding-left: 12px;
+  display: flex;
+  align-items: center;
+}
+
+.navbarExtitText {
+  font-family: 'SF Pro', sans-serif;
+  font-weight: 400;
+  font-size: 16px;
+  color: #000;
+  margin-left: 12px;
+}
