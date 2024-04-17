@@ -1,3 +1,4 @@
+import { observer } from 'mobx-react-lite';
 import { NavLink } from 'react-router-dom';
 
 import navbarStore from '../../store/navbarStore';
@@ -7,7 +8,7 @@ interface INavbarLink {
   title: string;
   to: string;
 }
-const NavbarLink = ({ title, to }: INavbarLink) => {
+const NavbarLink = observer(({ title, to }: INavbarLink) => {
   const activeLink = (active: string, current: string) =>
     active === current ? styles.linkActive : styles.link;
   return (
@@ -19,6 +20,6 @@ const NavbarLink = ({ title, to }: INavbarLink) => {
       {title}
     </NavLink>
   );
-};
+});
 
 export default NavbarLink;

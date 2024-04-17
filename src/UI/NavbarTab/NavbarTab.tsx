@@ -1,3 +1,4 @@
+import { observer } from 'mobx-react-lite';
 import React from 'react';
 
 import navbarStore from '../../store/navbarStore';
@@ -9,7 +10,7 @@ interface INavbarTab {
   slag: 'profile' | 'orders' | 'market';
   currentRef: React.RefObject<HTMLDivElement>;
 }
-const NavbarTab = ({ title, SVG, slag, currentRef }: INavbarTab) => {
+const NavbarTab = observer(({ title, SVG, slag, currentRef }: INavbarTab) => {
   const activeGroup = (active: string, current: string) =>
     active === current ? styles.navbarGroupHeaderActive : styles.navbarGroupHeader;
   const setHeight = (
@@ -40,6 +41,6 @@ const NavbarTab = ({ title, SVG, slag, currentRef }: INavbarTab) => {
       <span className={styles.navbarGroupHeaderText}>{title}</span>
     </button>
   );
-};
+});
 
 export default NavbarTab;
