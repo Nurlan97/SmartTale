@@ -1,0 +1,32 @@
+.wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  padding: 0;
+  gap: 20px;
+}
+
+.oneSymbol {
+  margin: 0;
+  padding: 0;
+  width: 53px;
+  height: 80px;
+  caret-color: transparent;
+  font-family: 'SF Pro', sans-serif;
+  font-weight: 500;
+  font-size: 20px;
+  line-height: 100%;
+  letter-spacing: -0.02em;
+  color: #4f4f4f;
+  text-align: center;
+  border: 1px solid rgba(224, 229, 242, 1);
+  border-radius: 10px;
+}
+.oneSymbol:focus {
+  outline: none;
+}
+.oneSymbol::selection {
+  color: #1233ee;
+ 
+}
