@@ -38,7 +38,7 @@ const Input = ({
       <div
         className={label ? styles.withLabel : styles.withoutLabel}
         style={{
-          borderColor: isError ? 'red' : borderColor,
+          borderColor: isError ? '#FF3B30' : borderColor,
           height: height,
           width: width,
         }}
@@ -46,7 +46,7 @@ const Input = ({
         <label className={styles.label}>
           <div>
             {label}
-            {required && <b style={{ color: 'red' }}>{' *'}</b>}
+            {required && <b style={{ color: '#FF3B30' }}>{' *'}</b>}
           </div>
           <textarea
             value={value}
