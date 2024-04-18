@@ -10,20 +10,7 @@ function App() {
     <div className={styles.App}>
       <div className={styles.auth}>
         <NavBar />
-        <div>
-          Hello world!!!
-          <Input
-            value={state}
-            onChange={(ev) => setState(ev.target.value)}
-            label='test'
-            placeholder='placeholder'
-          ></Input>
-          <Input
-            value={state}
-            onChange={(ev) => setState(ev.target.value)}
-            placeholder='placeholder'
-          ></Input>
-        </div>
+        <div style={{ backgroundColor: 'rgba(248, 249, 250, 1)' }}>Hello world!!!</div>
       </div>
     </div>
   );
