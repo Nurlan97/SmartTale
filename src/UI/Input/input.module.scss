@@ -31,6 +31,13 @@
   color: rgba(142, 142, 147, 1);
   gap: 6px;
 }
+
+.searchWrapper {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  gap: 6px;
+}
 .input {
   width: 100%;
   &:disabled {

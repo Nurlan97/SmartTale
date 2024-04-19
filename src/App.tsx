@@ -2,15 +2,16 @@ import { Route, Routes } from 'react-router-dom';
 
 import styles from './App.module.scss';
 import NavBar from './components/NavBar/NavBar';
+import Equipment from './pages/Equipment/Equipment';
 
 function App() {
   return (
     <div className={styles.App}>
       <NavBar />
-      <div style={{ backgroundColor: 'rgba(248, 249, 250, 1)' }}>
+      <div className={styles.page}>
         <Routes>
           {/* <Route path='' element={<Profile />} /> */}
-          {/* <Route path='' element={<Market />} /> */}
+          <Route path='/equipment' element={<Equipment />} />
         </Routes>
       </div>
     </div>
