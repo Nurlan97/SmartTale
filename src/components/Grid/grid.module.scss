@@ -1,0 +1,19 @@
+@mixin grid-mixin {
+  width: 100%;
+  margin-bottom: 32px;
+  display: grid;
+  gap: 24px;
+}
+
+.gridWrapper2 {
+  @include grid-mixin;
+  grid-template-columns: repeat(2, 1fr);
+}
+.gridWrapper3 {
+  @include grid-mixin;
+  grid-template-columns: repeat(3, 1fr);
+}
+.gridWrapper4 {
+  @include grid-mixin;
+  grid-template-columns: repeat(4, 1fr);
+}

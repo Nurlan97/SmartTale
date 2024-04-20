@@ -1,0 +1,44 @@
+.cardWrapper {
+  border-radius: 20px;
+  width: 269px;
+  height: 393px;
+  background: #fff;
+  overflow: hidden;
+  font-family: 'SF Pro', sans-serif;
+  font-weight: 400;
+  font-size: 16px;
+  color: #000;
+}
+.cardImage {
+  width: 286px;
+  height: 282px;
+}
+
+.price {
+  color: #ff9500;
+}
+
+.authorImage {
+  width: 30px;
+  height: 30px;
+  border-radius: 15px;
+}
+.author {
+  font-size: 12px;
+  line-height: 108%;
+  letter-spacing: -0.03em;
+  text-align: start;
+}
+.authorLabel {
+  font-size: 12px;
+  line-height: 108%;
+  letter-spacing: -0.03em;
+  text-align: start;
+  color: #8e8e93;
+}
+.description {
+  font-size: 14px;
+  line-height: 157%;
+  letter-spacing: -0.03em;
+  color: #8e8e93;
+}

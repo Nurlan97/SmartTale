@@ -24,3 +24,14 @@ export function getCookie(name: string) {
 export function removeCookie(name: string) {
   document.cookie = name + '=; Max-Age=-99999999;';
 }
+
+export function cutText(text: string, limit: number) {
+  text = text.trim();
+  if (text.length <= limit) return text;
+  text = text.slice(0, limit);
+  const lastSpace = text.lastIndexOf(' ');
+  if (lastSpace > 0) {
+    text = text.substring(0, lastSpace);
+  }
+  return text + '...';
+}
