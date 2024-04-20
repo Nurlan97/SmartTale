@@ -5,8 +5,9 @@ import styles from './inputCode.module.scss';
 interface IInputCode {
   setValue: React.Dispatch<React.SetStateAction<string>>; //передаем setState из useState
   isError?: boolean; // для красного border
+  margin?: string;
 }
-const InputCode = ({ setValue, isError = false }: IInputCode) => {
+const InputCode = ({ setValue, isError = false, margin }: IInputCode) => {
   const [symbols, setSymbols] = useState(new Array(4).fill(''));
   setValue(symbols.join(''));
   const refArr = [
@@ -56,7 +57,7 @@ const InputCode = ({ setValue, isError = false }: IInputCode) => {
     if (regex.test(paste)) setSymbols([...paste.slice(0, 4)]);
   };
   return (
-    <div className={styles.wrapper}>
+    <div className={styles.wrapper} style={{ margin: margin }}>
       {symbols.map((symbol, i) => (
         <input
           key={i}

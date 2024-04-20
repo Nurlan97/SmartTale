@@ -8,7 +8,6 @@
   letter-spacing: -0.02em;
   background-color: white;
   color: rgba(79, 79, 79, 1);
-  margin: 8px 16px;
   border: 1px solid rgba(0, 0, 0, 0);
   height: 50px;
   display: flex;
@@ -18,10 +17,12 @@
   @include input;
   height: 65px;
 }
+
 .withoutLabel {
   @include input;
   height: 50px;
 }
+
 .label {
   display: flex;
   flex-direction: column;
@@ -38,8 +39,10 @@
   width: 100%;
   gap: 6px;
 }
+
 .input {
   width: 100%;
+
   &:disabled {
     background-color: white;
     color: black;

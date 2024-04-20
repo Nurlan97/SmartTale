@@ -8,6 +8,7 @@ interface IInput {
   searchHandler?: () => void; //функция поиска
   value: string; // собстенно значение как в простом инпуте
   width?: string; //можно указать производльную ширину, обязательно строкой с единицой измерения
+  margin?: string;
 }
 const SearchInput = ({
   disabled = false,
@@ -17,6 +18,7 @@ const SearchInput = ({
   searchHandler,
   value,
   width,
+  margin = '0',
 }: IInput) => {
   return (
     <div
@@ -25,6 +27,7 @@ const SearchInput = ({
         borderColor: 'rgba(224, 229, 242, 1)',
         height: height,
         width: width,
+        margin: margin,
       }}
     >
       <div className={styles.searchWrapper}>

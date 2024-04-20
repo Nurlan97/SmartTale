@@ -16,6 +16,7 @@ interface IInput {
   required?: boolean; // если true добавляет красную звездочку в label
   value: string; // собстенно значение как в простом инпуте
   width?: string; //можно указать производльную ширину, обязательно строкой с единицой измерения
+  margin?: string;
 }
 const Input = ({
   border = false,
@@ -30,6 +31,7 @@ const Input = ({
   required = false,
   value,
   width,
+  margin = '0',
 }: IInput) => {
   const [hidden, setHidden] = useState(password);
   const borderColor = border ? 'rgba(224, 229, 242, 1)' : '';
@@ -37,7 +39,12 @@ const Input = ({
   return (
     <div
       className={label ? styles.withLabel : styles.withoutLabel}
-      style={{ borderColor: isError ? 'red' : borderColor, height: height, width: width }}
+      style={{
+        borderColor: isError ? 'red' : borderColor,
+        height: height,
+        width: width,
+        margin: margin,
+      }}
     >
       <label className={styles.label} style={disabled ? { pointerEvents: 'none' } : {}}>
         {label && (

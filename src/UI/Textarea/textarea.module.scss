@@ -18,10 +18,12 @@
   @include input;
   height: 65px;
 }
+
 .withoutLabel {
   @include input;
   height: 50px;
 }
+
 .label {
   display: flex;
   flex-direction: column;
