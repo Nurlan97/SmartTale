@@ -12,6 +12,7 @@ interface IInput {
   required?: boolean; // если true добавляет красную звездочку в label
   value: string; // собстенно значение как в простом инпуте
   width?: string; //можно указать производльную ширину, обязательно строкой с единицой измерения
+  margin?: string
 }
 
 const Textarea = ({
@@ -24,6 +25,7 @@ const Textarea = ({
   required = false,
   value,
   width,
+  margin = '0'
 }: IInput) => {
   const borderColor = border ? 'rgba(224, 229, 242, 1)' : '';
   return (
@@ -33,6 +35,7 @@ const Textarea = ({
         borderColor: isError ? '#FF3B30' : borderColor,
         height: height,
         width: width,
+        margin: margin
       }}
     >
       <label className={styles.label}>
