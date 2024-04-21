@@ -1,7 +1,55 @@
+@font-face {
+  font-family: "SF-Pro";
+  font-weight: 300;
+  font-style: normal;
+  src: local("SF-Pro"),
+        local("SFPro"),
+        url("./assets/fonts/SF-Pro.woff") format('woff');
+  font-display: swap;
+}
+@font-face {
+  font-family: "SF-Pro";
+  font-weight: 400;
+  font-style: normal;
+  src: local("SF-Pro"),
+        local("SFPro"),
+        url("./assets/fonts/SF-Pro.woff") format('woff');
+  font-display: swap;
+}
+@font-face {
+  font-family: "SF-Pro";
+  font-weight: 500;
+  font-style: normal;
+  src: local("SF-Pro"),
+        local("SFPro"),
+        url("./assets/fonts/SF-Pro.woff") format('woff');
+  font-display: swap;
+}
+@font-face {
+  font-family: "SF-Pro";
+  font-weight: 600;
+  font-style: normal;
+  src: local("SF-Pro"),
+        local("SFPro"),
+        url("./assets/fonts/SF-Pro.woff") format('woff');
+  font-display: swap;
+}
+@font-face {
+  font-family: "SF-Pro";
+  font-weight: 700;
+  font-style: normal;
+  src: local("SF-Pro"),
+        local("SFPro"),
+        url("./assets/fonts/SF-Pro.woff") format('woff');
+  font-display: swap;
+}
+
+
 * {
   padding: 0px;
   margin: 0px;
   border: none;
+  font-family: "SF-Pro";
 }
 
 *,
