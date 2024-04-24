@@ -4,6 +4,10 @@
   align-items: center;
   box-shadow: 1px 0 4px 0 rgba(0, 0, 0, 0.05);
   background: #fff;
+  position: fixed;
+  width: 252px;
+  height: 100vh;
+  top: 0;
 }
 .navbarGroup {
   display: flex;
@@ -48,14 +52,13 @@
   opacity: 0.6;
 }
 .horizontalLine {
-  border-bottom: 0.5px solid #8e8e93;
+  border-bottom: 1px solid #8e8e93;
   width: 220px;
   height: 0px;
   margin-bottom: 16px;
 }
 
 @mixin linkGroup {
-  // position: relative;
   display: flex;
   flex-direction: column;
   align-items: start;
@@ -67,21 +70,19 @@
 
 .navbarLinkGroupRolled {
   @include linkGroup;
-  // background: red;
   height: 0;
-  transition: height 1s;
+  transition: height 0.5s;
 }
 
 .navbarLinkGroupExtended {
   @include linkGroup;
-  // background: green;
-  transition: height 1s;
+  transition: height 0.5s;
 }
 
 .navbarFooter {
-  margin-bottom: 32px;
   position: absolute;
   bottom: 0;
+  background-color: white;
 }
 
 .navbarExtit {
@@ -91,6 +92,7 @@
   padding-left: 12px;
   display: flex;
   align-items: center;
+  margin-bottom: 32px;
 }
 
 .navbarExtitText {

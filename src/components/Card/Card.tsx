@@ -9,7 +9,7 @@ const Card = ({ id, author, authorImage, description, image, price, title }: ICa
       <img className={styles.cardImage} src={image} alt='' />
       <div className={styles.descriptionWrapper}>
         <div className={styles.headBlock}>
-          <span>{title}</span>
+          <span>{cutText(title, 20)}</span>
           <span className={styles.price}>{`${price} сом`}</span>
         </div>
         <div className={styles.authorBlock}>
@@ -20,7 +20,7 @@ const Card = ({ id, author, authorImage, description, image, price, title }: ICa
           </div>
         </div>
         <div className={styles.description}>{cutText(description, 80)}</div>
-        <Button color='white' type='button'>
+        <Button color='white' type='button' width='100%'>
           Подробнее
         </Button>
       </div>

@@ -16,7 +16,7 @@ class navbarStore {
   activeTab = 'profile';
   activeLink = 'profile';
   tabs: {
-    [key: string]: string;
+    [key: string]: 'extended' | 'rolled up';
   } = {
     profile: 'extended',
     orders: 'extended',

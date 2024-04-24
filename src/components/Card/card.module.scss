@@ -8,16 +8,31 @@
   font-weight: 400;
   font-size: 16px;
   color: #000;
+  // border: 1px solid black;
+  box-shadow: 1px 0px 4px 0px rgba(0, 0, 0, 0.05);
 }
 .cardImage {
-  width: 286px;
-  height: 282px;
+  width: 269px;
+  height: 182px;
+  object-fit: cover;
 }
 
+.descriptionWrapper {
+  padding: 16px;
+}
+.headBlock {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
 .price {
   color: #ff9500;
 }
-
+.authorBlock {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 12px;
+}
 .authorImage {
   width: 30px;
   height: 30px;
@@ -41,4 +56,6 @@
   line-height: 157%;
   letter-spacing: -0.03em;
   color: #8e8e93;
+  text-align: start;
+  height: 64px;
 }

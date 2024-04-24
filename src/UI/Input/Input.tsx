@@ -64,7 +64,7 @@ const Input = ({
         />
       </label>
       {password && (
-        <button onClick={() => setHidden((prev) => !prev)}>
+        <button type='button' onClick={() => setHidden((prev) => !prev)}>
           {hidden ? <EyeClosed /> : <EyeOpened />}
         </button>
       )}

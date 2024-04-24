@@ -1,7 +1,9 @@
 import { observer } from 'mobx-react-lite';
-import React from 'react';
+import React, { useRef } from 'react';
 
+import { ArrowDown, ArrowUp } from '../../assets';
 import navbarStore from '../../store/navbarStore';
+import { setHeight } from '../../utils/navbarHelpers';
 import styles from './navbarTab.module.scss';
 
 interface INavbarTab {
@@ -9,23 +11,13 @@ interface INavbarTab {
   SVG: JSX.Element;
   slag: 'profile' | 'orders' | 'market';
   currentRef: React.RefObject<HTMLDivElement>;
+  collapsed: 'extended' | 'rolled up';
 }
-const NavbarTab = observer(({ title, SVG, slag, currentRef }: INavbarTab) => {
+
+const NavbarTab = observer(({ title, SVG, slag, currentRef, collapsed }: INavbarTab) => {
   const activeGroup = (active: string, current: string) =>
     active === current ? styles.navbarGroupHeaderActive : styles.navbarGroupHeader;
-  const setHeight = (
-    currentRef: React.RefObject<HTMLDivElement> | React.RefObject<HTMLButtonElement>,
-    type: 'extended' | 'rolled up',
-  ) => {
-    if (currentRef.current) {
-      currentRef.current.style.height = `${currentRef.current.scrollHeight}px`;
-      setTimeout(() => {
-        if (currentRef.current)
-          currentRef.current.style.height =
-            type === 'rolled up' ? '0' : `${currentRef.current.scrollHeight}px`;
-      }, 0);
-    }
-  };
+
   return (
     <button
       className={activeGroup(navbarStore.activeTab, slag)}
@@ -39,6 +31,9 @@ const NavbarTab = observer(({ title, SVG, slag, currentRef }: INavbarTab) => {
     >
       {SVG}
       <span className={styles.navbarGroupHeaderText}>{title}</span>
+      <div className={collapsed === 'rolled up' ? styles.arrowReverse : styles.arrow}>
+        <ArrowDown />
+      </div>
     </button>
   );
 });

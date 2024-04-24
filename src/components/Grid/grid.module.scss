@@ -4,7 +4,10 @@
   display: grid;
   gap: 24px;
 }
-
+.gridWrapper1 {
+  @include grid-mixin;
+  grid-template-columns: repeat(1, 1fr);
+}
 .gridWrapper2 {
   @include grid-mixin;
   grid-template-columns: repeat(2, 1fr);
@@ -16,4 +19,12 @@
 .gridWrapper4 {
   @include grid-mixin;
   grid-template-columns: repeat(4, 1fr);
+}
+.gridWrapper5 {
+  @include grid-mixin;
+  grid-template-columns: repeat(5, 1fr);
+}
+.gridWrapper6 {
+  @include grid-mixin;
+  grid-template-columns: repeat(6, 1fr);
 }

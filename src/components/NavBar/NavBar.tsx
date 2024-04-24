@@ -1,5 +1,5 @@
 import { observer } from 'mobx-react-lite';
-import { RefObject, useEffect, useRef } from 'react';
+import { RefObject, useEffect, useLayoutEffect, useRef, useState } from 'react';
 
 import { NavbarExit, NavbarMarket, NavbarOrders, NavbarProfile } from '../../assets';
 import navbarStore from '../../store/navbarStore';
@@ -27,10 +27,23 @@ const NavBar = observer(() => {
       ? styles.navbarLinkGroupExtended
       : styles.navbarLinkGroupRolled;
   };
+  const [windowSize, setWindowSize] = useState({ width: 0 });
+
+  const handleSize = () => {
+    setWindowSize({
+      width: window.innerWidth,
+    });
+  };
+
+  useLayoutEffect(() => {
+    handleSize();
+    window.addEventListener('resize', handleSize);
+    return () => window.removeEventListener('resize', handleSize);
+  }, []);
 
   useEffect(() => {
     collapseCalc(refObj, profileRef, exitRef);
-  }, [{ ...navbarStore.tabs }]);
+  }, [{ ...navbarStore.tabs }, windowSize]);
 
   return (
     <div className={styles.navbar}>
@@ -49,6 +62,7 @@ const NavBar = observer(() => {
           currentRef={profileRef}
           slag='profile'
           title='Личный кабинет'
+          collapsed={navbarStore.tabs.profile}
         />
         <div ref={profileRef} className={extendedLinkGroup(navbarStore.tabs.profile)}>
           <NavbarLink title='Профиль' to='profile' />
@@ -65,6 +79,7 @@ const NavBar = observer(() => {
           currentRef={ordersRef}
           slag='orders'
           title='Заказы'
+          collapsed={navbarStore.tabs.orders}
         />
         <div ref={ordersRef} className={extendedLinkGroup(navbarStore.tabs.orders)}>
           <NavbarLink title='Текущие заказы' to='orders-active' />
@@ -78,6 +93,7 @@ const NavBar = observer(() => {
           currentRef={marketRef}
           slag='market'
           title='Маркетплейс'
+          collapsed={navbarStore.tabs.market}
         />
 
         <div ref={marketRef} className={extendedLinkGroup(navbarStore.tabs.market)}>
