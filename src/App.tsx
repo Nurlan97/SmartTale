@@ -1,26 +1,33 @@
-import { Route, Routes } from 'react-router-dom';
+import { observer } from 'mobx-react-lite';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
 import styles from './App.module.scss';
 import NavBar from './components/NavBar/NavBar';
-import EquipmentPage from './pages/EquipmentPage/EquipmentPage';
+// import EquipmentPage from './pages/EquipmentPage/EquipmentPage';
 // import PlaceOrderPage from './pages/PlaceOrderPage/PlaceOrderPage';
 import ServicesPage from './pages/ServicesPage/ServicesPage';
+import RegistrationPage from './pages/RegistrationPage/RegistrationPage';
+import userStore from './store/userStore';
 
-function App() {
+const App = observer(() => {
   return (
     <div className={styles.App}>
-      <NavBar />
+      {/* <NavBar /> */}
       <div>navbar will be here</div>
-      <div className={styles.page}>
+      {/* <div className={styles.page}> */}
+      {/* <Routes> */}
+      {/* <Route path='' element={<Profile />} />
+          <Route path='/equipment' element={<Equipment />} /> */}
+          {/* <Route path='/services' element={<ServicesPage />} /> */}
+      {/* </Routes> */}
+      {/* </div> */}
+      {!userStore.isAuth && (
         <Routes>
-          {/* <Route path='' element={<Profile />} /> */}
-          <Route path='/equipment' element={<EquipmentPage />} />
-          <Route path='/services' element={<ServicesPage />} />
-          {/* <Route path='/place-order' element={<PlaceOrderPage />} /> */}
+          <Route path='/registration' element={<RegistrationPage />}></Route>
         </Routes>
-      </div>
+      )}
     </div>
   );
-}
+});
 
 export default App;
