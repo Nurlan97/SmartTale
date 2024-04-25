@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import styles from './inputCode.module.scss';
 
@@ -9,7 +9,10 @@ interface IInputCode {
 }
 const InputCode = ({ setValue, isError = false, margin }: IInputCode) => {
   const [symbols, setSymbols] = useState(new Array(4).fill(''));
-  setValue(symbols.join(''));
+  useEffect(() => {
+    setValue(symbols.join(''));
+  }, []);
+
   const refArr = [
     useRef<HTMLInputElement>(null),
     useRef<HTMLInputElement>(null),
@@ -63,7 +66,7 @@ const InputCode = ({ setValue, isError = false, margin }: IInputCode) => {
           key={i}
           className={styles.oneSymbol}
           style={{ borderColor: isError ? '#FF3B30' : '' }}
-          value={symbol}
+          defaultValue={symbol}
           ref={refArr[i]}
           maxLength={1}
           data-index={i}
