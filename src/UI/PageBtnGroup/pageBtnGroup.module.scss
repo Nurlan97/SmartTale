@@ -1,0 +1,59 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&display=swap');
+
+.wrapper {
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+
+.arrow {
+  height: 32px;
+  width: 32px;
+  padding: 6px;
+  border: 1px solid rgba(255, 204, 0, 1);
+  // background-color: rgba(237, 237, 237, 1);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 4px;
+  color: rgba(255, 204, 0, 1);
+}
+.arrow:hover {
+  background-color: rgba(250, 158, 49, 0.3);
+  border: none;
+  transition: background-color 0.3s;
+}
+.page {
+  height: 32px;
+  width: 32px;
+  background-color: #f3f4fd;
+  color: rgba(73, 73, 73, 1);
+  border: none;
+  border-radius: 8px;
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  margin: 0 4px;
+}
+.page:hover {
+  background-color: rgba(250, 158, 49, 0.3);
+  transition: background-color 0.3s;
+}
+.currentPage {
+  height: 32px;
+  width: 32px;
+  background-color: rgba(255, 204, 0, 1);
+  color: rgba(255, 255, 255, 1);
+  border: none;
+  border-radius: 8px;
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  margin: 0 4px;
+  &:disabled {
+    cursor: default;
+  }
+}
