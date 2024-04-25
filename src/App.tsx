@@ -1,32 +1,49 @@
 import { observer } from 'mobx-react-lite';
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { Route, Routes, useLocation } from 'react-router-dom';
 
 import styles from './App.module.scss';
 import NavBar from './components/NavBar/NavBar';
-// import EquipmentPage from './pages/EquipmentPage/EquipmentPage';
-// import PlaceOrderPage from './pages/PlaceOrderPage/PlaceOrderPage';
-import ServicesPage from './pages/ServicesPage/ServicesPage';
+import EquipmentPage from './pages/EquipmentPage/EquipmentPage';
+import PlaceOrderPage from './pages/PlaceOrderPage/PlaceOrderPage';
 import RegistrationPage from './pages/RegistrationPage/RegistrationPage';
-import userStore from './store/userStore';
+import ServicesPage from './pages/ServicesPage/ServicesPage';
+import { userStore } from './store';
 
 const App = observer(() => {
+  const location = useLocation();
+  const [showNavbar, setShowNavbar] = useState(true);
+
+  useEffect(() => {
+    // Список путей, на которых навбар не должен отображаться
+    const noNavbarRoutes = ['/registration', '/autorization'];
+
+    setShowNavbar(!noNavbarRoutes.includes(location.pathname));
+  }, [location]);
   return (
-    <div className={styles.App}>
-      {/* <NavBar /> */}
-      <div>navbar will be here</div>
-      {/* <div className={styles.page}> */}
-      {/* <Routes> */}
-      {/* <Route path='' element={<Profile />} />
-          <Route path='/equipment' element={<Equipment />} /> */}
-          {/* <Route path='/services' element={<ServicesPage />} /> */}
-      {/* </Routes> */}
-      {/* </div> */}
-      {!userStore.isAuth && (
-        <Routes>
-          <Route path='/registration' element={<RegistrationPage />}></Route>
-        </Routes>
+    <>
+      {showNavbar && (
+        <div className={styles.withNavbar}>
+          <NavBar />
+          <div>navbar will be here</div>
+          <div className={styles.page}>
+            <Routes>
+              <Route path='/equipment' element={<EquipmentPage />} />
+              <Route path='/services' element={<ServicesPage />} />
+              <Route path='/place-order' element={<PlaceOrderPage />} />
+            </Routes>
+          </div>
+        </div>
       )}
-    </div>
+      {!userStore.isAuth && (
+        <div className={styles.auth}>
+          <Routes>
+            <Route path='/registration' element={<RegistrationPage />}></Route>
+            {/* <Route path='/autorization' element={<AuthorizationPAge />} /> */}
+          </Routes>
+        </div>
+      )}
+    </>
   );
 });
 

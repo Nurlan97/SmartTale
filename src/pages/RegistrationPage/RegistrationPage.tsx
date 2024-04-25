@@ -2,7 +2,7 @@ import { observer } from 'mobx-react-lite';
 
 import ConfirmationForm from '../../components/ConfirmationForm/ConfirmationForm';
 import RegistrationForm from '../../components/RegistrationForm/RegistrationForm';
-import userStore from '../../store/userStore';
+import { userStore } from '../../store';
 import AuthenticationWrapper from '../../UI/AuthenticationWrapper/AuthenticationWrapper';
 
 const RegistrationPage = observer(() => {
