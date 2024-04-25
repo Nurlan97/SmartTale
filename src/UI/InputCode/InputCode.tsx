@@ -12,7 +12,6 @@ const InputCode = ({ setValue, isError = false, margin }: IInputCode) => {
   useEffect(() => {
     setValue(symbols.join(''));
   }, []);
-
   const refArr = [
     useRef<HTMLInputElement>(null),
     useRef<HTMLInputElement>(null),

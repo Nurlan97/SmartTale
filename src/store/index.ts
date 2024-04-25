@@ -4,6 +4,7 @@ import equipmentStore from './equipmentStore';
 import navbarStore from './navbarStore';
 import PlaceOrderStore from './placeOrderStore';
 import servicesStore from './servicesStore';
+import userStore from './userStore';
 
 const createPlaceOrderStore = (images: string[]) => {
   const placeOrderStoreInstance = new PlaceOrderStore(images);
@@ -19,6 +20,7 @@ injectStores({
   equipmentStore,
   navbarStore,
   servicesStore,
+  userStore,
 });
 
-export { createPlaceOrderStore, equipmentStore, navbarStore, servicesStore };
+export { createPlaceOrderStore, equipmentStore, navbarStore, servicesStore, userStore };

@@ -1,3 +1,4 @@
+import { observer } from 'mobx-react-lite';
 import { useEffect, useState } from 'react';
 import { Route, Routes, useLocation } from 'react-router-dom';
 
@@ -5,9 +6,11 @@ import styles from './App.module.scss';
 import NavBar from './components/NavBar/NavBar';
 import EquipmentPage from './pages/EquipmentPage/EquipmentPage';
 import PlaceOrderPage from './pages/PlaceOrderPage/PlaceOrderPage';
+import RegistrationPage from './pages/RegistrationPage/RegistrationPage';
 import ServicesPage from './pages/ServicesPage/ServicesPage';
+import { userStore } from './store';
 
-function App() {
+const App = observer(() => {
   const location = useLocation();
   const [showNavbar, setShowNavbar] = useState(true);
 
@@ -32,14 +35,16 @@ function App() {
           </div>
         </div>
       )}
-      <div className={styles.auth}>
-        <Routes>
-          {/* <Route path='/registration' element={<RegistrationPage />} /> */}
-          {/* <Route path='/autorization' element={<AuthorizationPAge />} /> */}
-        </Routes>
-      </div>
+      {!userStore.isAuth && (
+        <div className={styles.auth}>
+          <Routes>
+            <Route path='/registration' element={<RegistrationPage />}></Route>
+            {/* <Route path='/autorization' element={<AuthorizationPAge />} /> */}
+          </Routes>
+        </div>
+      )}
     </>
   );
-}
+});
 
 export default App;
