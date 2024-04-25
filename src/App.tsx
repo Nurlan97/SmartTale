@@ -1,21 +1,29 @@
-import { Route, Routes } from 'react-router-dom';
+import { observer } from 'mobx-react-lite';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
 import styles from './App.module.scss';
 import NavBar from './components/NavBar/NavBar';
-import Equipment from './pages/Equipment/Equipment';
+// import Equipment from './pages/Equipment/Equipment';
+import RegistrationPage from './pages/RegistrationPage/RegistrationPage';
+import userStore from './store/userStore';
 
-function App() {
+const App = observer(() => {
   return (
     <div className={styles.App}>
-      <NavBar />
-      <div className={styles.page}>
+      {/* <NavBar /> */}
+      {/* <div className={styles.page}> */}
+      {/* <Routes> */}
+      {/* <Route path='' element={<Profile />} />
+          <Route path='/equipment' element={<Equipment />} /> */}
+      {/* </Routes> */}
+      {/* </div> */}
+      {!userStore.isAuth && (
         <Routes>
-          {/* <Route path='' element={<Profile />} /> */}
-          <Route path='/equipment' element={<Equipment />} />
+          <Route path='/registration' element={<RegistrationPage />}></Route>
         </Routes>
-      </div>
+      )}
     </div>
   );
-}
+});
 
 export default App;

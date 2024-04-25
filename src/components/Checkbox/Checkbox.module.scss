@@ -1,0 +1,26 @@
+.wrapper {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  cursor: pointer;
+
+  p {
+    font-size: 14px;
+    font-weight: 400;
+  }
+}
+
+.unchecked {
+  width: 18px;
+  height: 18px;
+  border: 1px solid rgba(43, 54, 116, 1);
+  border-radius: 2px;
+}
+
+.checked {
+  // width: 23px;
+  // height: 23px;
+  width: 18px;
+  height: 18px;
+  color: rgba(43, 54, 116, 1);
+}
