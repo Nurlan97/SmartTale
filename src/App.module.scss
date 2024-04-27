@@ -1,4 +1,4 @@
-.App {
+.withNavbar {
   text-align: center;
   width: 100vw;
   height: 100vh;
@@ -8,5 +8,9 @@
 .page {
   background-color: rgba(248, 249, 250, 1);
   width: calc(100vw - 252px);
+  height: 100vh;
+}
+.auth {
+  width: 100vw;
   height: 100vh;
 }

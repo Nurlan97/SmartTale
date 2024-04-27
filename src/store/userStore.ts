@@ -1,12 +1,12 @@
 import { makeAutoObservable } from 'mobx';
-import { boolean } from 'yup';
+import { fromPromise } from 'mobx-utils';
+import { useNavigate } from 'react-router-dom';
 
-interface IRegistrationData {
-  firstName: string;
-  lastName: string;
-  middleName: string;
-  email: string;
-}
+import { RegistrationRequest, VerificationRequest } from '../api/data-contracts';
+import { MyApi } from '../api/V1';
+
+const navigate = useNavigate();
+const api = new MyApi(); //создаем экземпляр нашего api
 
 class userStore {
   accessToken = '';
@@ -27,12 +27,31 @@ class userStore {
     this.isRemember = !this.isRemember;
   };
 
-  // fetchRegistration = async (registrationData: IRegistrationData) => {
-  //   try {
-  //     const response = await post('../', registrationData);
-
-  //   } catch (error) {}
-  // };
+  fetchRegistration = async (registrationData: RegistrationRequest) => {
+    //Можно писать стандартно через try/catch
+    try {
+      api.register(registrationData);
+      this.authenticationStage = 2;
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  sendVerificationCode = async (data: VerificationRequest) => {
+    const result = fromPromise(api.verifyEmail(data)); //можно использовать fromPromise из mobx-utils
+    result.case({
+      pending: () => {
+        this.authenticationStage = 3; //включаем лоадер
+      },
+      rejected: (error) => {
+        this.authenticationStage = 2; //если ошибка возврашаем на ввод кода
+        console.log(error);
+      },
+      fulfilled: (value) => {
+        console.log(value);
+        navigate('/equipment'); //если все норм, редиректим напримре на маркетплейс
+      },
+    });
+  };
 }
 
 export default new userStore();

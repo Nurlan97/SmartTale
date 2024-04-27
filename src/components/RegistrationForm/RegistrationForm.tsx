@@ -2,7 +2,7 @@ import { useFormik } from 'formik';
 import { observer } from 'mobx-react-lite';
 import { Link } from 'react-router-dom';
 
-import userStore from '../../store/userStore';
+import { userStore } from '../../store';
 import Button from '../../UI/Button/Button';
 import {
   formData,

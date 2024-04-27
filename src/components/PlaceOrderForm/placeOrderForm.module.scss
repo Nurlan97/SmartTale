@@ -1,0 +1,42 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  width: 100%;
+}
+.helper {
+  font-family: 'SF Pro', sans-serif;
+  font-weight: 400;
+  font-size: 12px;
+  color: #000;
+  opacity: 0.6;
+  text-align: start;
+  margin-top: 6px;
+  margin-left: 20px;
+  margin-bottom: 20px;
+}
+.title {
+  font-family: 'SF Pro', sans-serif;
+  font-weight: 400;
+  font-size: 16px;
+  color: #000;
+  text-align: start;
+  margin-top: 32px;
+  margin-bottom: 20px;
+}
+
+.buttonGroup {
+  display: flex;
+  gap: 8px;
+}
+.horizontalLine {
+  border-bottom: 1px solid #8e8e93;
+  width: 100%;
+  height: 0px;
+  margin: 32px 0;
+}
+.footer {
+  width: 100%;
+  display: flex;
+  justify-content: end;
+}
