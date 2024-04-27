@@ -1,5 +1,5 @@
 import authBackground from './authBackground.png';
-import Bell from './Bell.svg';
+import Bell from './bell.svg';
 import Calendar from './calendar.svg';
 import DeleteImg from './deleteImg.svg';
 import logo from './designLogo.png';
@@ -14,7 +14,7 @@ import NavbarOrders from './navbarOrders.svg';
 import NavbarProfile from './navbarProfile.svg';
 import ArrowRight from './rightArrow.svg';
 import ArrowRightDouble from './rightDoubleArrow.svg';
-import Search from './Search.svg';
+import Search from './search.svg';
 import ArrowUp from './upArrow.svg';
 
 export {
