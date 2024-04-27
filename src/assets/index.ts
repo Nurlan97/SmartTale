@@ -1,21 +1,21 @@
 import authBackground from './authBackground.png';
-import Bell from './Bell.svg?react';
-import Calendar from './calendar.svg?react';
-import DeleteImg from './deleteImg.svg?react';
+import Bell from './Bell.svg';
+import Calendar from './calendar.svg';
+import DeleteImg from './deleteImg.svg';
 import logo from './designLogo.png';
-import ArrowDown from './downArrow.svg?react';
-import EyeClosed from './eyeClosed.svg?react';
-import EyeOpened from './eyeOpened.svg?react';
-import ArrowLeft from './leftArrow.svg?react';
-import ArrowLeftDouble from './leftDoubleArrow.svg?react';
-import NavbarExit from './navbarExit.svg?react';
-import NavbarMarket from './navbarMarket.svg?react';
-import NavbarOrders from './navbarOrders.svg?react';
-import NavbarProfile from './navbarProfile.svg?react';
-import ArrowRight from './rightArrow.svg?react';
-import ArrowRightDouble from './rightDoubleArrow.svg?react';
-import Search from './Search.svg?react';
-import ArrowUp from './upArrow.svg?react';
+import ArrowDown from './downArrow.svg';
+import EyeClosed from './eyeClosed.svg';
+import EyeOpened from './eyeOpened.svg';
+import ArrowLeft from './leftArrow.svg';
+import ArrowLeftDouble from './leftDoubleArrow.svg';
+import NavbarExit from './navbarExit.svg';
+import NavbarMarket from './navbarMarket.svg';
+import NavbarOrders from './navbarOrders.svg';
+import NavbarProfile from './navbarProfile.svg';
+import ArrowRight from './rightArrow.svg';
+import ArrowRightDouble from './rightDoubleArrow.svg';
+import Search from './Search.svg';
+import ArrowUp from './upArrow.svg';
 
 export {
   ArrowDown,

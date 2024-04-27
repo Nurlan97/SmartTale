@@ -21,7 +21,7 @@ class navbarStore {
   } = {
     profile: 'extended',
     orders: 'extended',
-    market: 'rolled up',
+    market: 'extended',
   };
   queue: AllowedStrings[] = ['orders', 'profile'];
   constructor() {
