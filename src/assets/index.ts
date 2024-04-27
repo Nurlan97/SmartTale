@@ -1,8 +1,8 @@
 import authBackground from './authBackground.png';
 import Bell from './Bell.svg?react';
-import logo from './designLogo.png';
 import Calendar from './calendar.svg?react';
 import DeleteImg from './deleteImg.svg?react';
+import logo from './designLogo.png';
 import ArrowDown from './downArrow.svg?react';
 import EyeClosed from './eyeClosed.svg?react';
 import EyeOpened from './eyeOpened.svg?react';
@@ -18,13 +18,13 @@ import Search from './Search.svg?react';
 import ArrowUp from './upArrow.svg?react';
 
 export {
-  authBackground,
   ArrowDown,
   ArrowLeft,
   ArrowLeftDouble,
   ArrowRight,
   ArrowRightDouble,
   ArrowUp,
+  authBackground,
   Bell,
   Calendar,
   DeleteImg,

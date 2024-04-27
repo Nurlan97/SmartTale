@@ -1,4 +1,5 @@
-import { makeAutoObservable, toJS } from 'mobx';
+import { makeAutoObservable } from 'mobx';
+
 const tabsMap = new Map();
 tabsMap.set('profile', 'profile');
 tabsMap.set('my-ads', 'profile');
