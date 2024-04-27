@@ -32,9 +32,8 @@ interface REPLACE {
   filePosiiton: number;
 }
 
-export default class PlaceOrderStore {
+export default class adStore {
   isLoading = false;
-  firstAd = true;
   showForm = true;
   type = 'equipment';
   currentImages: Array<string> = [];

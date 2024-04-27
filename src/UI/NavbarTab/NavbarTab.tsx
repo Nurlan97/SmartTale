@@ -31,7 +31,7 @@ const NavbarTab = observer(({ title, SVG, slag, currentRef, collapsed }: INavbar
     >
       {SVG}
       <span className={styles.navbarGroupHeaderText}>{title}</span>
-      <div className={collapsed === 'rolled up' ? styles.arrowReverse : styles.arrow}>
+      <div className={collapsed === 'rolled up' ? styles.arrow : styles.arrowReverse}>
         <ArrowDown />
       </div>
     </button>

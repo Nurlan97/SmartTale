@@ -1,11 +1,10 @@
 import { makeAutoObservable } from 'mobx';
 import { fromPromise } from 'mobx-utils';
-import { useNavigate } from 'react-router-dom';
+import { NavigateFunction, useNavigate } from 'react-router-dom';
 
 import { RegistrationRequest, VerificationRequest } from '../api/data-contracts';
 import { MyApi } from '../api/V1';
 
-const navigate = useNavigate();
 const api = new MyApi(); //создаем экземпляр нашего api
 
 class userStore {
@@ -18,6 +17,7 @@ class userStore {
   isRemember = false;
   authenticationStage: 1 | 2 | 3 = 1;
   isAuth = false;
+  anyAds = false;
 
   constructor() {
     makeAutoObservable(this);
@@ -36,7 +36,10 @@ class userStore {
       console.log(error);
     }
   };
-  sendVerificationCode = async (data: VerificationRequest) => {
+  sendVerificationCode = async (
+    data: VerificationRequest,
+    navigate: NavigateFunction,
+  ) => {
     const result = fromPromise(api.verifyEmail(data)); //можно использовать fromPromise из mobx-utils
     result.case({
       pending: () => {
