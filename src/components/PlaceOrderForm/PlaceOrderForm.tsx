@@ -16,20 +16,23 @@ import Textarea from '../../UI/Textarea/Textarea';
 import styles from './placeOrderForm.module.scss';
 
 registerLocale('ru', ru);
+type IInitialValues = {
+  title: string;
+  description: string;
+  price: string;
+  phone: string;
+  sizes: string;
+  deadline: Date;
+};
+type Props = {
+  store: typePlaceOrderStore;
+  initialValues: IInitialValues;
+  type: 'new' | 'update';
+};
 
-type Props = { store: typePlaceOrderStore };
-
-const PlaceOrderForm = observer(({ store }: Props) => {
+const PlaceOrderForm = observer(({ store, initialValues, type }: Props) => {
   const formik = useFormik({
-    initialValues: {
-      title: '',
-      description: '',
-      price: '',
-      phone: '',
-      sizes: '',
-      deadline: new Date(),
-    },
-
+    initialValues: initialValues,
     onSubmit: ({ title, description, price, phone, sizes, deadline }) => {
       console.log(title, description, price, phone, sizes, deadline);
       console.log(store.calcActions());
@@ -132,9 +135,20 @@ const PlaceOrderForm = observer(({ store }: Props) => {
       />
       <div className={styles.horizontalLine}></div>
       <div className={styles.footer}>
-        <Button color='blue' type='submit'>
-          Разместить объявление
-        </Button>
+        {type === 'new' ? (
+          <Button color='blue' type='submit'>
+            Разместить объявление
+          </Button>
+        ) : (
+          <>
+            <Button color='red' type='button'>
+              Удалить
+            </Button>{' '}
+            <Button color='blue' type='button'>
+              Скрыть объявление
+            </Button>
+          </>
+        )}
       </div>
     </form>
   );
