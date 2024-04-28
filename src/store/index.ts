@@ -1,8 +1,8 @@
 import { injectStores } from '@mobx-devtools/tools';
 
+import PlaceOrderStore from './adStore';
 import equipmentStore from './equipmentStore';
 import navbarStore from './navbarStore';
-import PlaceOrderStore from './placeOrderStore';
 import servicesStore from './servicesStore';
 import userStore from './userStore';
 

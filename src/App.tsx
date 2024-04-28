@@ -26,7 +26,7 @@ const App = observer(() => {
     <div className={showNavbar ? styles.withNavbar : styles.auth}>
       {showNavbar && <NavBar />}
       {showNavbar && <div>navbar will be here</div>}
-      <div className={showNavbar ? styles.page : styles.auth}>
+      <div className={showNavbar ? styles.page : ''}>
         <Routes>
           <Route path='/equipment' element={<EquipmentPage />} />
           <Route path='/services' element={<ServicesPage />} />

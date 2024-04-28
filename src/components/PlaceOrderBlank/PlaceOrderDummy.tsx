@@ -1,15 +1,16 @@
 import { observer } from 'mobx-react-lite';
 
-import placeOrderStore from '../../store/placeOrderStore';
+import { userStore } from '../../store';
 import Button from '../../UI/Button/Button';
 import styles from './placeOrderDummy.module.scss';
+
 const PlaceOrderDummy = observer(() => {
   return (
     <div className={styles.wrapper}>
       <div className={styles.innerBlock}>
-        <div className={styles.smile}>{placeOrderStore.firstAd ? '🙂' : '😃'}</div>
+        <div className={styles.smile}>{userStore.anyAds ? '🙂' : '😃'}</div>
         <div className={styles.title}>
-          {placeOrderStore.firstAd
+          {userStore.anyAds
             ? 'Хмм...\nУ вас еще нет объявлений'
             : 'У вас есть объявления\nХотите добавить новое?'}
         </div>
@@ -17,7 +18,7 @@ const PlaceOrderDummy = observer(() => {
         <div className={styles.subtitle}>
           {'Давайте создадим объявление\nи разместим на маркетплейсе'}
         </div>
-        {placeOrderStore.firstAd ? (
+        {userStore.anyAds ? (
           <Button color='blue' type='button'>
             Создать
           </Button>
