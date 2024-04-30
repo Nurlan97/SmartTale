@@ -1,6 +1,7 @@
 import { observer } from 'mobx-react-lite';
 
 import { modalStore } from '../../store';
+import { SimpleModals } from '../../store/modalStore';
 import Button from '../../UI/Button/Button';
 import styles from './descriptionModal.module.scss';
 
@@ -84,7 +85,7 @@ const DescriptionModal = observer(() => {
             margin='auto auto 0px 0px'
             handler={() => {
               console.log(modalStore.detailed.id);
-              modalStore.openSimple('');
+              modalStore.openSimple(SimpleModals.successOrder);
             }}
           >
             Принять заказ
