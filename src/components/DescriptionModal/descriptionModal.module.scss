@@ -1,0 +1,159 @@
+.wrapper {
+  width: 800px;
+  display: grid;
+  gap: 32px;
+  grid-template-columns: 1fr 1fr;
+  padding: 24px;
+}
+.images {
+  display: grid;
+  grid-template-columns: repeat(5, 64px);
+  grid-template-rows: 320px 64px;
+  grid-template-areas:
+    'bigImage bigImage bigImage bigImage bigImage'
+    'smallImage1 smallImage2 smallImage3 smallImage4 smallImage5';
+  row-gap: 20px;
+  column-gap: 8px;
+}
+
+.bigImage {
+  grid-area: bigImage;
+  border-radius: 10px;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.smallImage {
+  border-radius: 5px;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.smallImageActive {
+  border: 2px solid #fc0;
+  border-radius: 5px;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  box-sizing: content-box;
+  position: relative;
+  top: -2px;
+  left: -2px;
+}
+.path {
+  font-family: 'SF Pro', sans-serif;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 171%;
+  color: #8e8e93;
+}
+.adTitle {
+  font-family: 'SF Pro', sans-serif;
+  font-weight: 400;
+  font-size: 17px;
+  line-height: 129%;
+  letter-spacing: -0.02em;
+  color: #000;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.orderDeadline {
+  border-radius: 8px;
+  padding: 4px 16px;
+  background: #fc0;
+  font-family: 'SF Pro', sans-serif;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 157%;
+  letter-spacing: -0.03em;
+  color: #000;
+}
+.orderStatus {
+  border-radius: 8px;
+  padding: 4px 16px;
+  background: #e6ffa1;
+}
+.price {
+  font-family: 'SF Pro', sans-serif;
+  font-weight: 400;
+  font-size: 24px;
+  color: #ff9500;
+}
+.horizontalLine {
+  border-bottom: 1px solid #8e8e93;
+  width: 100%;
+  height: 0px;
+  margin-bottom: 16px;
+  margin-top: 32px;
+}
+.authorBlock {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+.authorImg {
+  width: 36px;
+  height: 36px;
+  border-radius: 18px;
+}
+.authorName {
+  font-family: 'SF Pro', sans-serif;
+  font-weight: 400;
+  font-size: 13px;
+  line-height: 100%;
+  letter-spacing: -0.03em;
+  text-align: center;
+  color: #000;
+}
+.authorLabel {
+  font-family: 'SF Pro', sans-serif;
+  font-weight: 400;
+  font-size: 13px;
+  line-height: 100%;
+  letter-spacing: -0.03em;
+  text-align: center;
+  color: #8e8e93;
+}
+.tabsContainer {
+  display: flex;
+  gap: 16px;
+}
+.tabActive {
+  font-family: 'SF Pro', sans-serif;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 200%;
+  text-transform: uppercase;
+  text-decoration: underline;
+  text-decoration-skip-ink: none;
+  color: #000;
+}
+.tab {
+  font-family: 'SF Pro', sans-serif;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 200%;
+  text-transform: uppercase;
+  color: #8e8e93;
+}
+.tabDescription {
+  font-family: 'SF Pro', sans-serif;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 157%;
+  letter-spacing: -0.03em;
+  color: #8e8e93;
+  margin: 16px 0;
+}
+.button {
+  min-width: 50%;
+  align-self: flex-end;
+}
+.descriptionPart {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}

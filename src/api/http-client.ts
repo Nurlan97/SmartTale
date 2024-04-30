@@ -69,7 +69,7 @@ export class HttpClient<SecurityDataType = unknown> {
   }: ApiConfig<SecurityDataType> = {}) {
     this.instance = axios.create({
       ...axiosConfig,
-      baseURL: axiosConfig.baseURL || 'http://smart-tale-production.up.railway.app:443',
+      baseURL: axiosConfig.baseURL || 'https://smart-tale-production.up.railway.app:443',
     });
     this.secure = secure;
     this.format = format;
