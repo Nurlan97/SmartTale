@@ -2,6 +2,7 @@ import { injectStores } from '@mobx-devtools/tools';
 
 import PlaceOrderStore from './adStore';
 import equipmentStore from './equipmentStore';
+import modalStore from './modalStore';
 import navbarStore from './navbarStore';
 import servicesStore from './servicesStore';
 import userStore from './userStore';
@@ -21,6 +22,14 @@ injectStores({
   navbarStore,
   servicesStore,
   userStore,
+  modalStore,
 });
 
-export { createPlaceOrderStore, equipmentStore, navbarStore, servicesStore, userStore };
+export {
+  createPlaceOrderStore,
+  equipmentStore,
+  modalStore,
+  navbarStore,
+  servicesStore,
+  userStore,
+};

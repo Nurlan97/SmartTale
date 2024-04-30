@@ -2,13 +2,18 @@ import { observer } from 'mobx-react-lite';
 import { RefObject, useEffect, useLayoutEffect, useRef, useState } from 'react';
 
 import { NavbarExit, NavbarMarket, NavbarOrders, NavbarProfile } from '../../assets';
+import { modalStore } from '../../store';
+import { ChoiseModals } from '../../store/modalStore';
 import navbarStore from '../../store/navbarStore';
 import NavbarLink from '../../UI/NavbarLink/NavbarLink';
 import NavbarTab from '../../UI/NavbarTab/NavbarTab';
 import { collapseCalc } from '../../utils/navbarHelpers';
 import styles from './navBar.module.scss';
 
-const NavBar = observer(() => {
+interface INavBar {
+  path: string;
+}
+const NavBar = observer(({ path }: INavBar) => {
   const profileRef = useRef<HTMLDivElement>(null);
   const ordersRef = useRef<HTMLDivElement>(null);
   const marketRef = useRef<HTMLDivElement>(null);
@@ -37,6 +42,7 @@ const NavBar = observer(() => {
 
   useLayoutEffect(() => {
     handleSize();
+    navbarStore.setActive(path);
     window.addEventListener('resize', handleSize);
     return () => window.removeEventListener('resize', handleSize);
   }, []);
@@ -104,7 +110,10 @@ const NavBar = observer(() => {
       </div>
 
       <div ref={exitRef} className={styles.navbarFooter}>
-        <button className={styles.navbarExtit}>
+        <button
+          className={styles.navbarExtit}
+          onClick={() => modalStore.openChoise(ChoiseModals.exit)}
+        >
           <NavbarExit />
           <span className={styles.navbarExtitText}>Выйти</span>
         </button>
