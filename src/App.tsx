@@ -10,6 +10,9 @@ import EquipmentPage from './pages/EquipmentPage/EquipmentPage';
 import PlaceOrderPage from './pages/PlaceOrderPage/PlaceOrderPage';
 import RegistrationPage from './pages/RegistrationPage/RegistrationPage';
 import ServicesPage from './pages/ServicesPage/ServicesPage';
+import HistoryPage from './pages/HistoryPage/HistoryPage';
+import CurrentOrdersPage from './pages/CurrentOrdersPage/CurrentOrdersPage';
+
 
 const App = observer(() => {
   const location = useLocation();
@@ -30,6 +33,8 @@ const App = observer(() => {
           <Route path='/equipment' element={<EquipmentPage />} />
           <Route path='/services' element={<ServicesPage />} />
           <Route path='/place-order' element={<PlaceOrderPage />} />
+          <Route path='/history' element={<HistoryPage/>}/>
+          <Route path="orders-active" element={<CurrentOrdersPage/>}/>
           <Route element={<AuthRoute />}>
             {/*Сюда пихаем роуты до авторизации, чтобы страницы с авторизацией не были доступны авторизованному пользователю*/}
             <Route path='/registration' element={<RegistrationPage />}></Route>

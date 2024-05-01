@@ -1,0 +1,41 @@
+.columnWrapper {
+    min-width: 218px;
+    padding: 20px;
+    border-radius: 10px;
+    background-color: #fff;
+  }
+  
+  .dropPlaceholder {
+    height: 35px;
+    background-color: transparent;
+    margin-top: 15px;
+  }
+  
+  .columnHeaderWrapper {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    padding: 8px 10px;
+    border-radius: 10px;
+    border: none;
+  }
+
+  .новые {
+    background:#C3FFFB;
+  }
+  
+  .вработе {
+    background: #C5E6FF;
+  }
+  
+  .проверка {
+    background: #FFFBA1;
+  }
+  
+  .отправка {
+    background: #FFD9A1;
+  }
+  .прибыл {
+    background: #E6FFA1;
+  }
