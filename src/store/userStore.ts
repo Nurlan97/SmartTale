@@ -96,16 +96,14 @@ class userStore {
     }
   };
 
-  // resendVerificationCode = async (data: VerificationRequest, navigate: () => void) => {
-  //   try {
-  //     const result = await api.resend(data);
-  //     runInAction(() => {
-  //       if (result.data.accessToken) {
-
-  //       }
-  //     })
-  //   } catch (error) {}
-  // };
+  resendVerificationCode = async () => {
+    try {
+      const result = await api.resend(JSON.stringify(this.email));
+      console.log(result);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 }
 
 export default new userStore();

@@ -91,11 +91,11 @@ export class MyApi<SecurityDataType = unknown> extends HttpClient<SecurityDataTy
    * @summary Get own profile
    * @request GET:/v1/account/profile
    * @response `200` `Profile` Success
-   * @response `401` `Profile` Unauthorized
-   * @response `404` `Profile` Profile not found
+   * @response `401` `void` Unauthorized
+   * @response `404` `void` Profile not found
    */
   getProfile = (params: RequestParams = {}) =>
-    this.request<Profile, Profile>({
+    this.request<Profile, void>({
       path: `/v1/account/profile`,
       method: 'GET',
       ...params,

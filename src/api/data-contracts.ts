@@ -22,10 +22,10 @@ export interface UpdateProfileRequest {
 }
 
 export interface Profile {
-  firstName?: string;
-  lastName?: string;
-  middleName?: string;
-  email?: string;
+  firstName: string;
+  lastName: string;
+  middleName: string;
+  email: string;
   phoneNumber?: string;
   avatarUrl?: string;
   /** @format date */
@@ -78,14 +78,14 @@ export interface CreateAdRequest {
 
 export interface VerificationRequest {
   email: string;
-  code?: string;
+  code: string;
 }
 
 export interface LoginResponse {
-  accessToken?: string;
-  refreshToken?: string;
+  accessToken: string;
+  refreshToken: string;
   /** @format int64 */
-  userId?: number;
+  userId: number;
 }
 
 export interface RegistrationRequest {
@@ -107,18 +107,18 @@ export interface InviteRequest {
 
 export interface Card {
   /** @format int64 */
-  productId?: number;
+  productId: number;
   /** @format date-time */
-  publishedAt?: string;
-  title?: string;
-  description?: string;
+  publishedAt: string;
+  title: string;
+  description: string;
   price?: number;
   imageUrl?: string;
   /** @format int64 */
-  publishedBy?: number;
+  publishedBy: number;
   publisherAvatarUrl?: string;
   /** @format date-time */
-  date?: string;
+  date: string;
 }
 
 export interface PageCard {
@@ -160,41 +160,41 @@ export interface SortObject {
 
 export interface FullProductCard {
   /** @format int64 */
-  advertisementId?: number;
-  title?: string;
-  description?: string;
-  price?: number;
+  advertisementId: number;
+  title: string;
+  description: string;
+  price: number;
   imageUrls?: string[];
   /** @format date-time */
-  publishedAt?: string;
+  publishedAt: string;
   /** @format date-time */
   purchasedAt?: string;
   /** @format int64 */
-  publishedBy?: number;
-  publisherName?: string;
+  publishedBy: number;
+  publisherName: string;
   publisherAvatarUrl?: string;
   publisherPhoneNumber?: string;
-  publisherEmail?: string;
+  publisherEmail: string;
   /** @format int64 */
-  views?: number;
+  views: number;
 }
 
 export interface Position {
   /** @format int64 */
-  positionId?: number;
-  title?: string;
+  positionId: number;
+  title: string;
 }
 
 export interface CurrentOrder {
   /** @format int64 */
-  orderId?: number;
-  title?: string;
-  description?: string;
+  orderId: number;
+  title: string;
+  description: string;
   price?: number;
   imageUrl?: string;
-  status?: 'NEW' | 'IN_PROGRESS' | 'CHECKING' | 'DISPATCHED' | 'ARRIVED' | 'CANCELED';
+  status: 'NEW' | 'IN_PROGRESS' | 'CHECKING' | 'DISPATCHED' | 'ARRIVED' | 'CANCELED';
   /** @format date */
-  acceptedAt?: string;
+  acceptedAt: string;
   /** @format date */
   deadlineAt?: string;
 }
@@ -220,12 +220,12 @@ export interface PageCurrentOrder {
 
 export interface Employee {
   /** @format int64 */
-  employeeId?: number;
-  name?: string;
-  email?: string;
+  employeeId: number;
+  name: string;
+  email: string;
   orderList?: CurrentOrder[];
-  position?: string;
-  status?: string;
+  position: string;
+  status: string;
 }
 
 export interface PageEmployee {
@@ -268,64 +268,64 @@ export interface PageSmallOrder {
 
 export interface SmallOrder {
   /** @format int64 */
-  orderId?: number;
-  title?: string;
+  orderId: number;
+  title: string;
   price?: number;
   /** @format date */
-  date?: string;
+  date: string;
 }
 
 export interface OrderDto {
   /** @format int64 */
-  orderId?: number;
-  title?: string;
-  description?: string;
+  orderId: number;
+  title: string;
+  description: string;
   price?: number;
   size?: string;
   /** @format date */
   deadlineAt?: string;
   imageUrls?: string[];
   /** @format int64 */
-  publishedBy?: number;
-  publisherAvatarUrl?: string;
-  publisherName?: string;
+  publishedBy: number;
+  publisherAvatarUrl: string;
+  publisherName: string;
   publisherPhoneNumber?: string;
-  publisherEmail?: string;
+  publisherEmail: string;
   /** @format date */
-  date?: string;
+  date: string;
 }
 
 export interface Product {
   /** @format int64 */
-  productId?: number;
-  title?: string;
-  description?: string;
+  productId: number;
+  title: string;
+  description: string;
   price?: number;
   imageUrl?: string;
   /** @format date-time */
-  publishedAt?: string;
+  publishedAt: string;
 }
 
 export interface FullOrder {
   /** @format int64 */
-  orderId?: number;
+  orderId: number;
   /** @format date-time */
-  publishedAt?: string;
+  publishedAt: string;
   /** @format int64 */
-  publishedBy?: number;
+  publishedBy: number;
   /** @format date */
   acceptedAt?: string;
   /** @format int64 */
   acceptedBy?: number;
-  title?: string;
-  description?: string;
+  title: string;
+  description: string;
   price?: number;
   size?: string;
   /** @format date */
   deadlineAt?: string;
   imageUrls?: string[];
   /** @format int64 */
-  views?: number;
-  isDeleted?: boolean;
-  isClosed?: boolean;
+  views: number;
+  isDeleted: boolean;
+  isClosed: boolean;
 }

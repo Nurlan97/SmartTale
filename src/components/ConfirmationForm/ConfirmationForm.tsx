@@ -15,17 +15,18 @@ const ConfirmationForm = observer(() => {
   const navigateHandler = () => {
     navigate('/equipment');
   };
-  // const resendBtnClick = () => {
-  //   userStore.sendVerificationCode(
-  //     { email: userStore.email, code: value },
-  //     navigateHandler,
-  //   );
-  //   console.log('resend');
-  // };
+  const resendBtnClick = (
+    event: React.MouseEvent<HTMLButtonElement> | { key: string },
+  ) => {
+    if ('preventDefault' in event) {
+      event.preventDefault();
+    }
+    userStore.resendVerificationCode();
+  };
 
-  // const handleKeyDown = (event: { key: string }) => {
-  //   if (event.key === 'Enter') resendBtnClick();
-  // };
+  const handleKeyDown = (event: { key: string }) => {
+    if (event.key === 'Enter') resendBtnClick(event);
+  };
   return (
     <div className={styles.wrapper}>
       <form className={styles.form}>
@@ -45,7 +46,7 @@ const ConfirmationForm = observer(() => {
         </Button>
         <button
           className={styles.resendCode}
-          // onClick={resendBtnClick}
+          onClick={resendBtnClick}
           // onKeyUp={handleKeyDown}
         >
           Отправить код повторно
