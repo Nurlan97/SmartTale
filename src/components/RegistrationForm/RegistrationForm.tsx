@@ -15,8 +15,13 @@ import FormInput from '../FormInput/FormInput';
 import styles from './RegistrationForm.module.scss';
 
 const RegistrationForm = observer(() => {
-  const onSubmit = ({ lastName, firstName, middleName, email }: ISubmitTypes) => {
-    console.log(lastName, firstName, middleName, email);
+  const onSubmit = async ({ lastName, firstName, middleName, email }: ISubmitTypes) => {
+    // console.log(lastName, firstName, middleName, email);
+    try {
+      await userStore.fetchRegistration({ lastName, firstName, middleName, email });
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const formik = useFormik({
@@ -46,7 +51,7 @@ const RegistrationForm = observer(() => {
       </form>
       <div className={styles.loginLinkBlock}>
         <p>Уже зарегистрированы?</p>
-        <Link to='#'>Войти</Link>
+        <Link to='/authorization'>Войти</Link>
       </div>
     </div>
   );

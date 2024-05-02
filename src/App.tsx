@@ -34,7 +34,7 @@ const App = observer(() => {
           <Route element={<AuthRoute />}>
             {/*Сюда пихаем роуты до авторизации, чтобы страницы с авторизацией не были доступны авторизованному пользователю*/}
             <Route path='/registration' element={<RegistrationPage />}></Route>
-            <Route path='/login' element={<AuthorizationPage />}></Route>
+            <Route path='/authorization' element={<AuthorizationPage />}></Route>
             {/* <Route path='/autorization' element={<AuthorizationPAge />} /> */}
           </Route>
         </Routes>
