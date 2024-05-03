@@ -4,6 +4,7 @@ import { Route, Routes, useLocation } from 'react-router-dom';
 
 import styles from './App.module.scss';
 import AuthRoute from './components/AuthRoute/AuthRoute';
+import ModalContainer from './components/ModalContainer/ModalContainer';
 import NavBar from './components/NavBar/NavBar';
 import AuthorizationPage from './pages/AuthorizationPage/AuthorizationPage';
 import EquipmentPage from './pages/EquipmentPage/EquipmentPage';
@@ -24,7 +25,7 @@ const App = observer(() => {
 
   return (
     <div className={showNavbar ? styles.withNavbar : styles.auth}>
-      {showNavbar && <NavBar />}
+      {showNavbar && <NavBar path={location.pathname.slice(1)} />}
       {showNavbar && <div>navbar will be here</div>}
       <div className={showNavbar ? styles.page : ''}>
         <Routes>
@@ -39,6 +40,7 @@ const App = observer(() => {
           </Route>
         </Routes>
       </div>
+      <ModalContainer />
     </div>
   );
 });

@@ -1,9 +1,19 @@
+import { useLocation } from 'react-router-dom';
+
+import { modalStore, navbarStore } from '../../store';
 import Button from '../../UI/Button/Button';
 import { cutText } from '../../utils/helpers';
 import { ICard } from '../../utils/types';
 import styles from './card.module.scss';
 
 const Card = ({ id, author, authorImage, description, image, price, title }: ICard) => {
+  const location = useLocation();
+  const buttonHandler = () => {
+    console.log('id', id);
+
+    navbarStore.activeLink;
+    modalStore.openDescription(id, location.pathname);
+  };
   return (
     <div className={styles.cardWrapper}>
       <img className={styles.cardImage} src={image} alt='' />
@@ -20,7 +30,7 @@ const Card = ({ id, author, authorImage, description, image, price, title }: ICa
           </div>
         </div>
         <div className={styles.description}>{cutText(description, 80)}</div>
-        <Button color='white' type='button' width='100%'>
+        <Button color='white' type='button' width='100%' handler={buttonHandler}>
           Подробнее
         </Button>
       </div>

@@ -6,13 +6,20 @@ import { useFormik } from 'formik';
 import { observer } from 'mobx-react-lite';
 import DatePicker, { registerLocale } from 'react-datepicker';
 
-import { typePlaceOrderStore } from '../../store';
+import { modalStore, typePlaceOrderStore } from '../../store';
+import { SimpleModals } from '../../store/modalStore';
 import Button from '../../UI/Button/Button';
 import DateCustomInput from '../../UI/DateCustomInput/DateCustomInput';
 import ImagesInput from '../../UI/ImageInput/ImageInput';
 import Input from '../../UI/Input/Input';
 import PhoneInput from '../../UI/PhoneInput/PhoneInput';
 import Textarea from '../../UI/Textarea/Textarea';
+import {
+  dateSchema,
+  descriptionSchema,
+  sizesSchema,
+  titleSchema,
+} from '../../utils/placeOrderHelpers';
 import styles from './placeOrderForm.module.scss';
 
 registerLocale('ru', ru);
@@ -31,11 +38,24 @@ type Props = {
 };
 
 const PlaceOrderForm = observer(({ store, initialValues, type }: Props) => {
+  const schema = titleSchema.concat(descriptionSchema);
+  if (store.type === 'service') {
+    schema.concat(sizesSchema).concat(dateSchema);
+  }
   const formik = useFormik({
     initialValues: initialValues,
     onSubmit: ({ title, description, price, phone, sizes, deadline }) => {
-      console.log(title, description, price, phone, sizes, deadline);
-      console.log(store.calcActions());
+      schema
+        .validate({ title, description, sizes, deadline }, { abortEarly: false })
+        .then(() => {
+          deadline;
+          console.log(title, description, price, phone, sizes, deadline);
+          console.log(store.calcActions());
+        })
+        .catch((e) => {
+          console.log(e);
+          modalStore.openSimple(SimpleModals.errorValidation);
+        });
     },
   });
 

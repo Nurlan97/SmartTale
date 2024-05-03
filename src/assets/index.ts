@@ -1,6 +1,7 @@
 import authBackground from './authBackground.png';
 import Bell from './bell.svg';
 import Calendar from './calendar.svg';
+import Cross from './cross.svg';
 import DeleteImg from './deleteImg.svg';
 import logo from './designLogo.png';
 import ArrowDown from './downArrow.svg';
@@ -27,6 +28,7 @@ export {
   authBackground,
   Bell,
   Calendar,
+  Cross,
   DeleteImg,
   EyeClosed,
   EyeOpened,
