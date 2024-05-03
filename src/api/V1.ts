@@ -264,7 +264,7 @@ export class MyApi<SecurityDataType = unknown> extends HttpClient<SecurityDataTy
       path: `/v1/auth/resend-verification`,
       method: 'POST',
       body: data,
-      type: ContentType.Json,
+      type: ContentType.Text,
       ...params,
     });
   /**
