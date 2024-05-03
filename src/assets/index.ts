@@ -1,12 +1,14 @@
 import authBackground from './authBackground.png';
 import Bell from './bell.svg';
 import Calendar from './calendar.svg';
+import CheckMark from './check mark.svg';
 import Cross from './cross.svg';
 import DeleteImg from './deleteImg.svg';
 import logo from './designLogo.png';
 import ArrowDown from './downArrow.svg';
 import EyeClosed from './eyeClosed.svg';
 import EyeOpened from './eyeOpened.svg';
+import gift from './gift.png';
 import ArrowLeft from './leftArrow.svg';
 import ArrowLeftDouble from './leftDoubleArrow.svg';
 import NavbarExit from './navbarExit.svg';
@@ -28,10 +30,12 @@ export {
   authBackground,
   Bell,
   Calendar,
+  CheckMark,
   Cross,
   DeleteImg,
   EyeClosed,
   EyeOpened,
+  gift,
   logo,
   NavbarExit,
   NavbarMarket,
