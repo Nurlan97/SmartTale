@@ -79,6 +79,7 @@ class userStore {
     // });
 
     try {
+      this.authenticationStage = 3;
       const result = await api.verifyEmail(data);
       runInAction(() => {
         // if (result.data.accessToken) this.accessToken = result.data.accessToken;
@@ -93,7 +94,9 @@ class userStore {
         }
         console.log(this.isRemember);
       });
-      navigate();
+      setTimeout(() => {
+        navigate();
+      }, 500);
     } catch (error) {
       runInAction(() => {
         console.error(error);
