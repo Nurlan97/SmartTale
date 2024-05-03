@@ -8,6 +8,7 @@ import ModalContainer from './components/ModalContainer/ModalContainer';
 import NavBar from './components/NavBar/NavBar';
 import EquipmentPage from './pages/EquipmentPage/EquipmentPage';
 import PlaceOrderPage from './pages/PlaceOrderPage/PlaceOrderPage';
+import ProfilePage from './pages/ProfilePage/ProfilePage';
 import RegistrationPage from './pages/RegistrationPage/RegistrationPage';
 import ServicesPage from './pages/ServicesPage/ServicesPage';
 
@@ -30,6 +31,7 @@ const App = observer(() => {
           <Route path='/equipment' element={<EquipmentPage />} />
           <Route path='/services' element={<ServicesPage />} />
           <Route path='/place-order' element={<PlaceOrderPage />} />
+          <Route path='/profile' element={<ProfilePage />} />
           <Route element={<AuthRoute />}>
             {/*Сюда пихаем роуты до авторизации, чтобы страницы с авторизацией не были доступны авторизованному пользователю*/}
             <Route path='/registration' element={<RegistrationPage />}></Route>

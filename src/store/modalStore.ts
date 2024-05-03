@@ -117,6 +117,10 @@ class modalStore {
     this.currentSimple = type;
     this.isOpen = true;
   };
+  openChangePhoto = () => {
+    this.currentType = ModalsTypes.changePhotoModal;
+    this.isOpen = true;
+  };
   setImage = (num: number) => () => {
     this.detailed.activeImg = num;
   };
