@@ -1,0 +1,70 @@
+.wrapper {
+  display: flex;
+  align-items: center;
+  padding: 16px;
+  width: 100%;
+  justify-content: space-between;
+  background-color: white;
+  border-radius: 16px;
+  box-shadow: 1px 0 4px 0 rgba(0, 0, 0, 0.05);
+  background: #fff;
+}
+.mainBlock {
+  display: flex;
+  align-items: center;
+  gap: 21px;
+}
+.img {
+  width: 75px;
+  height: 75px;
+  border-radius: 8px;
+}
+.descriptionBlock {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  gap: 3px;
+}
+@mixin type {
+  font-family: 'SF Pro', sans-serif;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 143%;
+  letter-spacing: -0.02em;
+  color: #34c759;
+}
+.equipment {
+  @include type;
+  color: #34c759;
+}
+.service {
+  @include type;
+  color: #0085ff;
+}
+
+.title {
+  font-family: 'SF Pro', sans-serif;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 100%;
+  letter-spacing: -0.02em;
+  color: #2b3674;
+}
+.description {
+  font-family: 'SF Pro', sans-serif;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 100%;
+  letter-spacing: -0.02em;
+  color: #2b3674;
+  opacity: 0.6;
+}
+.detailedBtn {
+  font-family: 'SF Pro', sans-serif;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 143%;
+  letter-spacing: -0.02em;
+  color: #8e8e93;
+  margin: 32px;
+}
