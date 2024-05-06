@@ -1,14 +1,34 @@
-import { AxiosHeaders } from 'axios';
 import { makeAutoObservable, runInAction } from 'mobx';
-import { fromPromise } from 'mobx-utils';
 import { NavigateFunction } from 'react-router-dom';
 
-import { RegistrationRequest, VerificationRequest } from '../api/data-contracts';
+import { adsRowMock } from '../../mockData';
+import {
+  FullOrder,
+  RegistrationRequest,
+  VerificationRequest,
+} from '../api/data-contracts';
 import { MyApi } from '../api/V1';
+import { fullPromise } from '../utils/helpers';
 import { setCookie } from '../utils/helpers';
 import modalStore, { SimpleModals } from './modalStore';
 
 const api = new MyApi(); //создаем экземпляр нашего api
+interface IOneAd {
+  id: number;
+  title: string;
+  type: string;
+  description: string;
+  image: string;
+}
+export interface IType {
+  type: 'equipment' | 'services';
+}
+
+interface IMyAd {
+  group: 'all' | 'service' | 'equipment';
+  data: IOneAd[];
+  detailed: FullOrder & IType;
+}
 
 class userStore {
   accessToken = '';
@@ -26,6 +46,30 @@ class userStore {
   authenticationStage: 1 | 2 | 3 = 1;
   isAuth = false;
   anyAds = false;
+  myAds: IMyAd = {
+    group: 'all',
+    data: adsRowMock,
+    detailed: {
+      type: 'equipment',
+      orderId: 0,
+      description:
+        'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat',
+      imageUrls: [
+        'https://kartinki.pics/pics/uploads/posts/2022-08/thumbs/1661232571_2-kartinkin-net-p-shveinoe-delo-fon-krasivo-2.jpg',
+        'https://kartinki.pics/pics/uploads/posts/2022-08/thumbs/1661232571_2-kartinkin-net-p-shveinoe-delo-fon-krasivo-2.jpg',
+        'https://kartinki.pics/pics/uploads/posts/2022-08/thumbs/1661232571_2-kartinkin-net-p-shveinoe-delo-fon-krasivo-2.jpg',
+      ],
+      deadlineAt: '14 march 2025',
+      price: 1000,
+      title: 'Нитки',
+      isClosed: false,
+      isDeleted: false,
+      publishedAt: '',
+      publishedBy: 0,
+      views: 0,
+      size: '',
+    },
+  };
   invalidCode = false;
 
   constructor() {
@@ -61,57 +105,26 @@ class userStore {
     // navigate: NavigateFunction,
     navigate: () => void,
   ) => {
-    // const result = fromPromise(api.verifyEmail(data)); //можно использовать fromPromise из mobx-utils
-    // result.case({
-    //   pending: () => {
-    //     this.authenticationStage = 3; //включаем лоадер
-    //   },
-    //   rejected: (error) => {
-    //     this.authenticationStage = 2; //если ошибка возврашаем на ввод кода
-    //     console.log(error);
-    //   },
-    //   fulfilled: (value) => {
-    //     console.log(value);
-    //     if (value.data.accessToken) this.accessToken = value.data.accessToken;
-    //     if (value.data.refreshToken) this.refreshToken = value.data.refreshToken;
-    //     navigate(); //если все норм, редиректим напримре на маркетплейс
-    //   },
-    // });
-
-    try {
-      const result = await api.verifyEmail(data);
-      runInAction(() => {
-        // if (result.data.accessToken) this.accessToken = result.data.accessToken;
-        // if (result.data.refreshToken) this.refreshToken = result.data.refreshToken;
-        if (result.data.accessToken) {
-          this.accessToken = result.data.accessToken;
-          this.isRemember && setCookie('accessToken', result.data.accessToken, 30);
-        }
-        if (result.data.refreshToken) {
-          this.refreshToken = result.data.refreshToken;
-          this.isRemember && setCookie('refreshToken', result.data.refreshToken, 30);
-        }
-        console.log(this.isRemember);
-      });
-      navigate();
-    } catch (error) {
-      runInAction(() => {
-        console.error(error);
-        this.authenticationStage = 2;
-        this.invalidCode = true;
-      });
-    }
+    //функция fullPromise принимает 3 аргумента
+    //promise - сам промис
+    //fullfilled - каллбек вызовется если промис зарезолвится
+    //rejected - каллбек вызовется если промис зереджектится
+    this.authenticationStage = 3; //включаем лоадер
+    fullPromise(
+      api.verifyEmail(data),
+      (value) => {
+        console.log(value);
+        navigate(); //если все норм, редиректим напримре на маркетплейс
+      },
+      (error) => {
+        this.authenticationStage = 2; //если ошибка возврашаем на ввод кода
+        console.log(error);
+      },
+    );
   };
-
-  resendVerificationCode = async () => {
-    try {
-      const result = await api.resend(this.email);
-      console.log(result);
-    } catch (error) {
-      console.error(error);
-    }
+  resendVerification = async () => {
+    const response = await api.resend(this.email);
   };
-
   getUser = async () => {
     try {
       // const response = await api.getProfile();
@@ -165,12 +178,30 @@ class userStore {
   };
   subscribe = async () => {
     try {
-      const response = await api.subscribe();
-      console.log(response);
+      // const response = await api.subscribe();
+      // console.log(response);
       modalStore.openSimple(SimpleModals.successSubscribe);
     } catch (error) {
       console.log(error);
     }
+  };
+  myAdsSetGroup = (group: 'all' | 'service' | 'equipment') => {
+    this.myAds.group = group;
+  };
+  getDetailedAd = (id: number) => {
+    this.myAds.detailed.orderId = id;
+    // api.getAd1(id).then((response) => {
+    //   this.myAds.detailed.orderId = response.data.orderId;
+    //   this.myAds.detailed.description = response.data.description;
+    //   this.myAds.detailed.title = response.data.title;
+    //   if (response.data.price) this.myAds.detailed.price = response.data.price;
+    //   if (response.data.imageUrls) {
+    //     this.myAds.detailed.imageUrls = response.data.imageUrls;
+    //   }
+    //   if (response.data.deadlineAt) {
+    //     this.myAds.detailed.deadlineAt = response.data.deadlineAt;
+    //   }
+    // });
   };
 }
 

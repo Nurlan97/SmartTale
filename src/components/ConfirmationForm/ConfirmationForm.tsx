@@ -21,7 +21,7 @@ const ConfirmationForm = observer(() => {
     if ('preventDefault' in event) {
       event.preventDefault();
     }
-    userStore.resendVerificationCode();
+    userStore.resendVerification();
   };
 
   const handleKeyDown = (event: { key: string }) => {

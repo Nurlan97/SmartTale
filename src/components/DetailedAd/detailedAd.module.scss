@@ -1,0 +1,39 @@
+.field {
+  width: 100;
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  background-color: white;
+  border-radius: 10px;
+  padding: 10px 20px;
+  font-family: 'SF Pro', sans-serif;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 150%;
+  color: #000;
+  margin: 20px 0;
+  box-shadow: 1px 0 4px 0 rgba(0, 0, 0, 0.05);
+  background: #fff;
+}
+.label {
+  font-family: 'SF Pro', sans-serif;
+  font-weight: 400;
+  font-size: 14px;
+  color: #8e8e93;
+}
+.imgContainer {
+  display: flex;
+  gap: 8px;
+}
+.img {
+  width: 100px;
+  height: 100px;
+  border-radius: 8px;
+}
+.title {
+  font-family: 'SF Pro', sans-serif;
+  font-weight: 400;
+  font-size: 16px;
+  color: #000;
+  margin: 20px 0;
+}
