@@ -166,10 +166,10 @@ export interface PageCurrentOrder {
   number?: number;
   sort?: SortObject;
   pageable?: PageableObject;
-  first?: boolean;
-  last?: boolean;
   /** @format int32 */
   numberOfElements?: number;
+  first?: boolean;
+  last?: boolean;
   empty?: boolean;
 }
 
@@ -213,10 +213,10 @@ export interface PageEmployee {
   number?: number;
   sort?: SortObject;
   pageable?: PageableObject;
-  first?: boolean;
-  last?: boolean;
   /** @format int32 */
   numberOfElements?: number;
+  first?: boolean;
+  last?: boolean;
   empty?: boolean;
 }
 
@@ -246,10 +246,10 @@ export interface PageCard {
   number?: number;
   sort?: SortObject;
   pageable?: PageableObject;
-  first?: boolean;
-  last?: boolean;
   /** @format int32 */
   numberOfElements?: number;
+  first?: boolean;
+  last?: boolean;
   empty?: boolean;
 }
 
@@ -286,10 +286,10 @@ export interface PageSmallOrder {
   number?: number;
   sort?: SortObject;
   pageable?: PageableObject;
-  first?: boolean;
-  last?: boolean;
   /** @format int32 */
   numberOfElements?: number;
+  first?: boolean;
+  last?: boolean;
   empty?: boolean;
 }
 

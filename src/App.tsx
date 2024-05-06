@@ -6,6 +6,7 @@ import styles from './App.module.scss';
 import AuthRoute from './components/AuthRoute/AuthRoute';
 import ModalContainer from './components/ModalContainer/ModalContainer';
 import NavBar from './components/NavBar/NavBar';
+import AuthorizationPage from './pages/AuthorizationPage/AuthorizationPage';
 import { DetailedPage } from './pages/DetailedPage/DetailedPage';
 import EquipmentPage from './pages/EquipmentPage/EquipmentPage';
 import MyAdsPage from './pages/MyAdsPage/MyAdsPage';
@@ -13,6 +14,7 @@ import PlaceOrderPage from './pages/PlaceOrderPage/PlaceOrderPage';
 import ProfilePage from './pages/ProfilePage/ProfilePage';
 import RegistrationPage from './pages/RegistrationPage/RegistrationPage';
 import ServicesPage from './pages/ServicesPage/ServicesPage';
+import userStore from './store/userStore';
 
 const App = observer(() => {
   const location = useLocation();
@@ -39,6 +41,7 @@ const App = observer(() => {
           <Route element={<AuthRoute />}>
             {/*Сюда пихаем роуты до авторизации, чтобы страницы с авторизацией не были доступны авторизованному пользователю*/}
             <Route path='/registration' element={<RegistrationPage />}></Route>
+            <Route path='/authorization' element={<AuthorizationPage />}></Route>
             {/* <Route path='/autorization' element={<AuthorizationPAge />} /> */}
           </Route>
         </Routes>

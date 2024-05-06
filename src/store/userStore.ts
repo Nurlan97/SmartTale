@@ -9,6 +9,7 @@ import {
 } from '../api/data-contracts';
 import { MyApi } from '../api/V1';
 import { fullPromise } from '../utils/helpers';
+import { setCookie } from '../utils/helpers';
 import modalStore, { SimpleModals } from './modalStore';
 
 const api = new MyApi(); //создаем экземпляр нашего api
@@ -68,7 +69,8 @@ class userStore {
       views: 0,
       size: '',
     },
-  };
+  };  invalidCode = false;
+
   constructor() {
     makeAutoObservable(this);
   }
@@ -78,17 +80,29 @@ class userStore {
   };
 
   fetchRegistration = async (registrationData: RegistrationRequest) => {
-    //Можно писать стандартно через try/catch
+    // const result = fromPromise(api.register(registrationData));
+    // result.then(
+    //   (result) => {
+    //     this.email = result.data;
+    //     this.authenticationStage = 2;
+    //   },
+    //   (rejectReason) =>
+    //     console.error('fetchResult was rejected, reason: ' + rejectReason),
+    // );
     try {
-      api.register(registrationData);
-      this.authenticationStage = 2;
+      const result = await api.register(registrationData);
+      runInAction(() => {
+        this.email = result.data;
+        this.authenticationStage = 2;
+      });
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   };
   sendVerificationCode = async (
     data: VerificationRequest,
-    navigate: NavigateFunction,
+    // navigate: NavigateFunction,
+    navigate: () => void,
   ) => {
     //функция fullPromise принимает 3 аргумента
     //promise - сам промис

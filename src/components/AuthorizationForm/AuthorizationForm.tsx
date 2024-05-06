@@ -2,32 +2,27 @@ import { useFormik } from 'formik';
 import { observer } from 'mobx-react-lite';
 import { Link } from 'react-router-dom';
 
-import { userStore } from '../../store';
+import userStore from '../../store/userStore';
 import Button from '../../UI/Button/Button';
 import {
+  AuthorizationSchema,
   formData,
   initialValues,
   ISubmitTypes,
-  RegistrationSchema,
-} from '../../utils/registrationHelpers';
+} from '../../utils/authorizationHelpers';
 import Checkbox from '../Checkbox/Checkbox';
 import FormInput from '../FormInput/FormInput';
-import styles from './RegistrationForm.module.scss';
+import styles from './AuthorizationForm.module.scss';
 
-const RegistrationForm = observer(() => {
-  const onSubmit = async ({ lastName, firstName, middleName, email }: ISubmitTypes) => {
-    // console.log(lastName, firstName, middleName, email);
-    try {
-      await userStore.fetchRegistration({ lastName, firstName, middleName, email });
-    } catch (error) {
-      console.log(error);
-    }
+const AuthorizationForm = observer(() => {
+  const onSubmit = ({ email }: ISubmitTypes) => {
+    console.log(email);
   };
 
   const formik = useFormik({
     initialValues,
     onSubmit,
-    validationSchema: RegistrationSchema,
+    validationSchema: AuthorizationSchema,
   });
   return (
     <div className={styles.wrapper}>
@@ -46,15 +41,15 @@ const RegistrationForm = observer(() => {
         })}
         <Checkbox checked={userStore.isRemember} onClick={userStore.toggleRemember} />
         <Button color='blue' type='submit' width='100%'>
-          Зарегистрироваться
+          Войти
         </Button>
       </form>
-      <div className={styles.loginLinkBlock}>
-        <p>Уже зарегистрированы?</p>
-        <Link to='/authorization'>Войти</Link>
+      <div className={styles.registrationLinkBlock}>
+        <p>Ещё не зарегистрированы?</p>
+        <Link to='/registration'>Зарегистрироваться</Link>
       </div>
     </div>
   );
 });
 
-export default RegistrationForm;
+export default AuthorizationForm;
