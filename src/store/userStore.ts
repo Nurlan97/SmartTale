@@ -56,6 +56,23 @@ class userStore {
       console.error(error);
     }
   };
+  fetchAvailableEmail = async (emailValue: string) => {
+    // function debounce(cb, delay = 1000) {
+    //   let timeout;
+    //   return (...args) => {
+    //     clearTimeout(timeout);
+    //     timeout = setTimeout(() => {
+    //       cb(...args);
+    //     }, delay);
+    //   };
+    // }
+    try {
+      const result = await api.checkAvailable(emailValue);
+      return result.data;
+    } catch (error) {
+      console.log(error);
+    }
+  };
   sendVerificationCode = async (
     data: VerificationRequest,
     // navigate: NavigateFunction,
@@ -84,15 +101,18 @@ class userStore {
       runInAction(() => {
         // if (result.data.accessToken) this.accessToken = result.data.accessToken;
         // if (result.data.refreshToken) this.refreshToken = result.data.refreshToken;
-        if (result.data.accessToken) {
-          this.accessToken = result.data.accessToken;
-          this.isRemember && setCookie('accessToken', result.data.accessToken, 30);
+        // if (result.data.accessToken) {
+        this.accessToken = result.data.accessToken;
+        // this.isRemember && setCookie('accessToken', result.data.accessToken, 30);
+        // }
+        // if (result.data.refreshToken) {
+        this.refreshToken = result.data.refreshToken;
+        // this.isRemember && setCookie('refreshToken', result.data.refreshToken, 30);
+        if (this.isRemember) {
+          setCookie('accessToken', result.data.accessToken, 30);
+          setCookie('refreshToken', result.data.refreshToken, 30);
         }
-        if (result.data.refreshToken) {
-          this.refreshToken = result.data.refreshToken;
-          this.isRemember && setCookie('refreshToken', result.data.refreshToken, 30);
-        }
-        console.log(this.isRemember);
+        // }
       });
       setTimeout(() => {
         navigate();
@@ -109,7 +129,6 @@ class userStore {
   resendVerificationCode = async () => {
     try {
       const result = await api.resend(this.email);
-      console.log(result);
     } catch (error) {
       console.error(error);
     }

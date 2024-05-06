@@ -96,6 +96,7 @@ export interface RegistrationRequest {
   /** @pattern ^[\p{IsLatin}&&[^\p{IsCyrillic}]]+$|^[\p{IsCyrillic}&&[^\p{IsLatin}]]+$ */
   middleName: string;
   email: string;
+  phoneNumber: number;
   valid?: boolean;
 }
 
