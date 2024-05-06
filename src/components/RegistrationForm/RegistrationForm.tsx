@@ -18,7 +18,13 @@ const RegistrationForm = observer(() => {
   const onSubmit = async ({ lastName, firstName, middleName, email }: ISubmitTypes) => {
     // console.log(lastName, firstName, middleName, email);
     try {
-      await userStore.fetchRegistration({ lastName, firstName, middleName, email });
+      await userStore.fetchRegistration({
+        lastName,
+        firstName,
+        middleName,
+        email,
+        phoneNumber: '',
+      });
     } catch (error) {
       console.log(error);
     }

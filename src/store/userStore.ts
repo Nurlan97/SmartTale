@@ -69,7 +69,8 @@ class userStore {
       views: 0,
       size: '',
     },
-  };  invalidCode = false;
+  };
+  invalidCode = false;
 
   constructor() {
     makeAutoObservable(this);
@@ -113,7 +114,7 @@ class userStore {
       api.verifyEmail(data),
       (value) => {
         console.log(value);
-        navigate('/equipment'); //если все норм, редиректим напримре на маркетплейс
+        navigate(); //если все норм, редиректим напримре на маркетплейс
       },
       (error) => {
         this.authenticationStage = 2; //если ошибка возврашаем на ввод кода
@@ -121,8 +122,8 @@ class userStore {
       },
     );
   };
-  resendVerification = async (data: string) => {
-    const response = await api.resend(data);
+  resendVerification = async () => {
+    const response = await api.resend(this.email);
   };
   getUser = async () => {
     try {
