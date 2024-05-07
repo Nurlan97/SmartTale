@@ -73,7 +73,7 @@ const NavBar = observer(({ path }: INavBar) => {
         <div ref={profileRef} className={extendedLinkGroup(navbarStore.tabs.profile)}>
           <NavbarLink title='Профиль' to='profile' />
           <NavbarLink title='Мои объявления' to='my-ads' />
-          <NavbarLink title='Мои покупки' to='my-buys' />
+          <NavbarLink title='Мои покупки' to='my-purchases' />
           <NavbarLink title='История заказов' to='orders-history' />
           <NavbarLink title='Организация' to='company' />
         </div>

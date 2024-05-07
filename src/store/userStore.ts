@@ -1,7 +1,5 @@
 import { makeAutoObservable, runInAction } from 'mobx';
-import { NavigateFunction } from 'react-router-dom';
 
-import { adsRowMock } from '../../mockData';
 import {
   FullOrder,
   RegistrationRequest,
@@ -14,11 +12,11 @@ import modalStore, { SimpleModals } from './modalStore';
 
 const api = new MyApi(); //создаем экземпляр нашего api
 interface IOneAd {
-  id: number;
+  productId: number;
   title: string;
   type: string;
   description: string;
-  image: string;
+  imageUrl: string;
 }
 export interface IType {
   type: 'equipment' | 'services';
@@ -46,30 +44,7 @@ class userStore {
   authenticationStage: 1 | 2 | 3 = 1;
   isAuth = false;
   anyAds = false;
-  myAds: IMyAd = {
-    group: 'all',
-    data: adsRowMock,
-    detailed: {
-      type: 'equipment',
-      orderId: 0,
-      description:
-        'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat',
-      imageUrls: [
-        'https://kartinki.pics/pics/uploads/posts/2022-08/thumbs/1661232571_2-kartinkin-net-p-shveinoe-delo-fon-krasivo-2.jpg',
-        'https://kartinki.pics/pics/uploads/posts/2022-08/thumbs/1661232571_2-kartinkin-net-p-shveinoe-delo-fon-krasivo-2.jpg',
-        'https://kartinki.pics/pics/uploads/posts/2022-08/thumbs/1661232571_2-kartinkin-net-p-shveinoe-delo-fon-krasivo-2.jpg',
-      ],
-      deadlineAt: '14 march 2025',
-      price: 1000,
-      title: 'Нитки',
-      isClosed: false,
-      isDeleted: false,
-      publishedAt: '',
-      publishedBy: 0,
-      views: 0,
-      size: '',
-    },
-  };
+
   invalidCode = false;
 
   constructor() {
@@ -184,24 +159,6 @@ class userStore {
     } catch (error) {
       console.log(error);
     }
-  };
-  myAdsSetGroup = (group: 'all' | 'service' | 'equipment') => {
-    this.myAds.group = group;
-  };
-  getDetailedAd = (id: number) => {
-    this.myAds.detailed.orderId = id;
-    // api.getAd1(id).then((response) => {
-    //   this.myAds.detailed.orderId = response.data.orderId;
-    //   this.myAds.detailed.description = response.data.description;
-    //   this.myAds.detailed.title = response.data.title;
-    //   if (response.data.price) this.myAds.detailed.price = response.data.price;
-    //   if (response.data.imageUrls) {
-    //     this.myAds.detailed.imageUrls = response.data.imageUrls;
-    //   }
-    //   if (response.data.deadlineAt) {
-    //     this.myAds.detailed.deadlineAt = response.data.deadlineAt;
-    //   }
-    // });
   };
 }
 

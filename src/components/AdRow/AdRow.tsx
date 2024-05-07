@@ -1,10 +1,12 @@
 import { useNavigate } from 'react-router-dom';
 
-import { userStore } from '../../store';
+import { Card } from '../../api/data-contracts';
+import { appStore } from '../../store';
+import { IType } from '../../store/appStore';
 import { cutText } from '../../utils/helpers';
 import styles from './adRow.module.scss';
 interface IAd {
-  item: { id: number; title: string; type: string; description: string; image: string };
+  item: Card;
 }
 
 const AdRow = ({ item }: IAd) => {
@@ -12,13 +14,13 @@ const AdRow = ({ item }: IAd) => {
   return (
     <div className={styles.wrapper}>
       <div className={styles.mainBlock}>
-        <img className={styles.img} src={item.image} alt='' />
+        <img className={styles.img} src={item.imageUrl} alt='' />
         <div className={styles.descriptionBlock}>
-          {item.type === 'equipment' ? (
+          {/* {item.type === 'equipment' ? (
             <div className={styles.equipment}>Оборудование</div>
           ) : (
             <div className={styles.service}>Заказ</div>
-          )}
+          )} */}
           <div className={styles.title}>{item.title}</div>
           <div className={styles.description}>{cutText(item.description, 90)}</div>
         </div>
@@ -27,8 +29,8 @@ const AdRow = ({ item }: IAd) => {
       <button
         className={styles.detailedBtn}
         onClick={() => {
-          userStore.getDetailedAd(item.id);
-          navigate(`/my-ads/${item.id}`);
+          appStore.getDetailedAd(item.productId);
+          navigate(`/my-ads/${item.productId}`);
         }}
       >
         Посмотреть детали
