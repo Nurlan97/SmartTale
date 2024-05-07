@@ -43,7 +43,7 @@ interface IDetailed {
 }
 const api = new MyApi();
 const pathObj = {
-  '/my-buys': 'Личный кабинет/Мои покупки',
+  '/my-purchases': 'Личный кабинет/Мои покупки',
   '/equipment': 'Маркетплейс/Оборудование',
   '/services': 'Маркетплейс/Услуги',
 };
@@ -87,7 +87,7 @@ class modalStore {
   };
   openDescription = (id: number, path: string) => {
     this.currentType = ModalsTypes.descriptionModal;
-    if (path === '/my-buys' || path === '/equipment' || path === '/services') {
+    if (path === '/my-purchases' || path === '/equipment' || path === '/services') {
       this.detailed.path = pathObj[path];
     }
     this.detailed.id = id;

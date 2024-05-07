@@ -3,7 +3,7 @@ import { makeAutoObservable } from 'mobx';
 const tabsMap = new Map();
 tabsMap.set('profile', 'profile');
 tabsMap.set('my-ads', 'profile');
-tabsMap.set('my-buys', 'profile');
+tabsMap.set('my-purchases', 'profile');
 tabsMap.set('orders-history', 'profile');
 tabsMap.set('company', 'profile');
 tabsMap.set('orders-active', 'orders');

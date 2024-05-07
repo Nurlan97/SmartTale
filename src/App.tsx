@@ -10,11 +10,11 @@ import AuthorizationPage from './pages/AuthorizationPage/AuthorizationPage';
 import { DetailedPage } from './pages/DetailedPage/DetailedPage';
 import EquipmentPage from './pages/EquipmentPage/EquipmentPage';
 import MyAdsPage from './pages/MyAdsPage/MyAdsPage';
+import MyPurchases from './pages/MyBuys/MyPurchases';
 import PlaceOrderPage from './pages/PlaceOrderPage/PlaceOrderPage';
 import ProfilePage from './pages/ProfilePage/ProfilePage';
 import RegistrationPage from './pages/RegistrationPage/RegistrationPage';
 import ServicesPage from './pages/ServicesPage/ServicesPage';
-import userStore from './store/userStore';
 
 const App = observer(() => {
   const location = useLocation();
@@ -38,6 +38,7 @@ const App = observer(() => {
           <Route path='/profile' element={<ProfilePage />} />
           <Route path='/my-ads' element={<MyAdsPage />} />
           <Route path='/my-ads/:id' element={<DetailedPage />} />
+          <Route path='/my-purchases' element={<MyPurchases />} />
           <Route element={<AuthRoute />}>
             {/*Сюда пихаем роуты до авторизации, чтобы страницы с авторизацией не были доступны авторизованному пользователю*/}
             <Route path='/registration' element={<RegistrationPage />}></Route>

@@ -230,7 +230,7 @@ export interface Card {
   price?: number;
   imageUrl?: string;
   /** @format int64 */
-  publishedBy: number;
+  publishedBy: string;
   publisherAvatarUrl?: string;
 }
 

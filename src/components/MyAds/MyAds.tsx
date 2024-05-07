@@ -1,6 +1,6 @@
 import { observer } from 'mobx-react-lite';
 
-import { userStore } from '../../store';
+import { appStore } from '../../store';
 import Button from '../../UI/Button/Button';
 import AdRow from '../AdRow/AdRow';
 import styles from './myAds.module.scss';
@@ -13,9 +13,9 @@ const MyAds = observer(() => {
   ];
   const addButton = (btn: { type: 'all' | 'service' | 'equipment'; title: string }) => (
     <Button
-      color={btn.type === userStore.myAds.group ? 'orange' : 'white'}
+      color={btn.type === appStore.myAds.group ? 'orange' : 'white'}
       type={'button'}
-      handler={() => userStore.myAdsSetGroup(btn.type)}
+      handler={() => appStore.myAdsSetGroup(btn.type)}
     >
       {btn.title}
     </Button>
@@ -25,9 +25,10 @@ const MyAds = observer(() => {
       <h3>Тип объявления</h3>
       <div className={styles.btnGroup}>{buttons.map((btn) => addButton(btn))}</div>
       <div className={styles.adsBlock}>
-        {userStore.myAds.data.map((item) => (
-          <AdRow key={item.id} item={item} />
-        ))}
+        {appStore.myAds.data.content &&
+          appStore.myAds.data.content.map((item) => (
+            <AdRow key={item.productId} item={item} />
+          ))}
       </div>
     </div>
   );
