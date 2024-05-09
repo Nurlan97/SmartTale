@@ -2,6 +2,7 @@ import { FormikProps } from 'formik';
 import { observer } from 'mobx-react-lite';
 import { useEffect, useState } from 'react';
 
+import { useDebounce } from '../../hooks/useDebounce';
 import { userStore } from '../../store';
 import Input from '../../UI/Input/Input';
 import styles from './FormInput.module.scss';
@@ -25,7 +26,15 @@ const FormInput = observer(({ htmlFor, label, placeholder, id, formik }: FormTyp
 
   // const debouncedFetchAvailableEmail = debounce(userStore.fetchAvailableEmail, 1000);
   // const fetchAvailableEmail = userStore.fetchAvailableEmail(formik.values[htmlFor]);
-  const [availableEmail, setAvailableEmail] = useState<boolean | undefined>(false);
+  const [availableEmail, setAvailableEmail] = useState<boolean | undefined>(undefined);
+
+  const debounceSearch = useDebounce((search: string) => {
+    if (search === '') return;
+    userStore.fetchAvailableEmail(search).then((data) => {
+      setAvailableEmail(data);
+    });
+  });
+
   return (
     <div>
       <label htmlFor={htmlFor} className={styles.lastName}>
@@ -35,12 +44,13 @@ const FormInput = observer(({ htmlFor, label, placeholder, id, formik }: FormTyp
         placeholder={placeholder}
         value={formik.values[htmlFor]}
         onChange={(e) => {
+          if (htmlFor === 'phoneNumber') {
+            const regex = new RegExp(/^[0-9]*$/);
+            if (!regex.test(e.target.value)) return;
+          }
           formik.setFieldValue(htmlFor, e.target.value);
           if (htmlFor === 'email') {
-            userStore.fetchAvailableEmail(e.target.value).then((data) => {
-              setAvailableEmail(data);
-            });
-
+            debounceSearch(e.target.value);
             // debounce(userStore.fetchAvailableEmail(e.target.value), 1000);
           }
         }}
@@ -48,12 +58,12 @@ const FormInput = observer(({ htmlFor, label, placeholder, id, formik }: FormTyp
         id={id}
         isError={isError}
       />
-      <p className={styles.errors}>{isError ? formik.errors[htmlFor] : ' '}</p>
-      {htmlFor === 'email' && (
-        <p className={styles.errors}>
-          {availableEmail ? 'Данный email занят другим пользователем!' : ''}
-        </p>
-      )}
+      <p className={styles.errors}>
+        {isError ? formik.errors[htmlFor] : ' '}
+        {htmlFor === 'email' &&
+          availableEmail !== undefined &&
+          (availableEmail ? '' : 'Данный email занят другим пользователем!')}
+      </p>
     </div>
   );
 });

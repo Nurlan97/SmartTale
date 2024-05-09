@@ -11,14 +11,20 @@
 
 import {
   CreateAdRequest,
+  DashboardOrder,
   FullOrder,
+  FullOrderCard,
+  FullProduct,
   FullProductCard,
   InviteRequest,
   LoginResponse,
+  MonitoringOrder,
+  Order,
   OrderDto,
+  Organization,
   PageCard,
-  PageCurrentOrder,
   PageEmployee,
+  PageOrderSummary,
   PageSmallOrder,
   Position,
   Product,
@@ -32,17 +38,55 @@ import { ContentType, HttpClient, RequestParams } from './http-client';
 
 export class MyApi<SecurityDataType = unknown> extends HttpClient<SecurityDataType> {
   /**
+   * No description
+   *
+   * @tags get, organization, monitoring, Monitoring, order
+   * @name GetOrder
+   * @summary Get order
+   * @request GET:/v1/monitoring/{orderId}
+   * @response `200` `MonitoringOrder` Success
+   * @response `401` `void` Unauthorized
+   * @response `403` `void` Forbidden (not order of organization)
+   * @response `404` `void` Not found
+   */
+  getOrder = (orderId: number, params: RequestParams = {}) =>
+    this.request<MonitoringOrder, void>({
+      path: `/v1/monitoring/${orderId}`,
+      method: 'GET',
+      ...params,
+    });
+  /**
+   * No description
+   *
+   * @tags organization, monitoring, put, Monitoring, order
+   * @name ChangeStatus
+   * @summary Change status
+   * @request PUT:/v1/monitoring/{orderId}
+   * @response `200` `string` Success
+   * @response `401` `void` Unauthorized
+   * @response `403` `void` Forbidden (not order of organization)
+   * @response `404` `void` Not found
+   */
+  changeStatus = (orderId: number, data: string, params: RequestParams = {}) =>
+    this.request<string, void>({
+      path: `/v1/monitoring/${orderId}`,
+      method: 'PUT',
+      body: data,
+      type: ContentType.Text,
+      ...params,
+    });
+  /**
    * @description Get order or product by id
    *
    * @tags market, product, Marketplace, get, advertisement, order
    * @name GetAd
    * @summary Get one ad
    * @request GET:/v1/market/{advertisementId}
-   * @response `200` `FullProductCard` Success
+   * @response `200` `(FullProductCard | FullOrderCard)` Success
    * @response `404` `void` Ad not found
    */
   getAd = (advertisementId: number, params: RequestParams = {}) =>
-    this.request<FullProductCard, void>({
+    this.request<FullProductCard | FullOrderCard, void>({
       path: `/v1/market/${advertisementId}`,
       method: 'GET',
       ...params,
@@ -55,12 +99,12 @@ export class MyApi<SecurityDataType = unknown> extends HttpClient<SecurityDataTy
    * @summary Accept order
    * @request PUT:/v1/market/{advertisementId}
    * @response `200` `string` Success
-   * @response `401` `string` Unauthorized
-   * @response `404` `string` Not found
-   * @response `410` `string` Already accepted
+   * @response `401` `void` Unauthorized
+   * @response `404` `void` Not found
+   * @response `410` `void` Already accepted
    */
   acceptOrder = (advertisementId: number, params: RequestParams = {}) =>
-    this.request<string, string>({
+    this.request<string, void>({
       path: `/v1/market/${advertisementId}`,
       method: 'PUT',
       ...params,
@@ -128,7 +172,7 @@ export class MyApi<SecurityDataType = unknown> extends HttpClient<SecurityDataTy
    * @name GetAds1
    * @summary Get all ads
    * @request GET:/v1/account/advertisements
-   * @response `200` `Product` Success
+   * @response `200` `(Order | Product)` Success
    * @response `400` `void` Bad request param
    * @response `401` `void` Unauthorized
    * @response `404` `void` User not found
@@ -144,7 +188,7 @@ export class MyApi<SecurityDataType = unknown> extends HttpClient<SecurityDataTy
     },
     params: RequestParams = {},
   ) =>
-    this.request<Product, void>({
+    this.request<Order | Product, void>({
       path: `/v1/account/advertisements`,
       method: 'GET',
       query: query,
@@ -172,6 +216,63 @@ export class MyApi<SecurityDataType = unknown> extends HttpClient<SecurityDataTy
     this.request<string, void>({
       path: `/v1/account/advertisements`,
       method: 'PUT',
+      body: data,
+      type: ContentType.Json,
+      ...params,
+    });
+  /**
+   * @description Get all employees and invitees of organization
+   *
+   * @tags Organization, organization, get, employee, user, account
+   * @name GetEmployees
+   * @summary Get employees
+   * @request GET:/v1/organizations/employees
+   * @response `200` `PageEmployee` Success
+   * @response `400` `void` Bad param request
+   * @response `401` `void` Unauthorized
+   * @response `404` `void` User or organization not found
+   */
+  getEmployees = (
+    query: {
+      /** Page number. Default 0 */
+      page?: any;
+      /** Page size. Default 6 */
+      size?: any;
+      /** Sorts by name. name=asc/desc */
+      name?: any;
+      /** Sorts by active orders number */
+      orders?: any;
+      /** Not a property, needs front implementation */
+      status?: any;
+      /** Sorting property. Equals to object field. Can be multiplesorting properties. Default "name" */
+      '[sort]'?: any;
+      params: Record<string, string>;
+    },
+    params: RequestParams = {},
+  ) =>
+    this.request<PageEmployee, void>({
+      path: `/v1/organizations/employees`,
+      method: 'GET',
+      query: query,
+      ...params,
+    });
+  /**
+   * @description Sends email to invited person's address
+   *
+   * @tags Organization, post, organization, employee, user, account
+   * @name InviteEmployee
+   * @summary Invite employee
+   * @request POST:/v1/organizations/employees
+   * @response `201` `string` Invite successful
+   * @response `400` `string` Bad request. Email is validated
+   * @response `401` `string` Unauthorized
+   * @response `403` `string` Forbidden
+   * @response `404` `string` User, org or position not found
+   */
+  inviteEmployee = (data: InviteRequest, params: RequestParams = {}) =>
+    this.request<string, string>({
+      path: `/v1/organizations/employees`,
+      method: 'POST',
       body: data,
       type: ContentType.Json,
       ...params,
@@ -422,66 +523,191 @@ export class MyApi<SecurityDataType = unknown> extends HttpClient<SecurityDataTy
       ...params,
     });
   /**
-   * @description Get all employees and invitees of organization
+   * @description Retrieve all active or completed orders of author. Sort by fields of object. Default sorting by deadlineAt
    *
-   * @tags Organization, organization, get, employee, user, account
-   * @name GetEmployees
-   * @summary Get employees
-   * @request GET:/v1/account/organization/employees
-   * @response `200` `PageEmployee` Success
-   * @response `400` `void` Bad param request
+   * @tags My Orders, get, account, order
+   * @name GetOrders1
+   * @summary Get orders
+   * @request GET:/v1/account/orders
+   * @response `200` `PageSmallOrder` Success
+   * @response `400` `void` Bad param
    * @response `401` `void` Unauthorized
-   * @response `404` `void` User or organization not found
+   * @response `404` `void` User not found
    */
-  getEmployees = (
+  getOrders1 = (
     query: {
-      /** Page number. Default 0 */
+      /** "active" or any other value for completed */
+      q: any;
+      /** Page number */
       page?: any;
-      /** Page size. Default 6 */
+      /** Page size */
       size?: any;
-      /** Sorts by name. name=asc/desc */
-      name?: any;
-      /** Sorts by active orders number */
-      orders?: any;
-      /** Not a property, needs front implementation */
-      status?: any;
-      /** Sorting property. Equals to object field. Can be multiplesorting properties. Default "name" */
-      '[sort]'?: any;
       params: Record<string, string>;
     },
     params: RequestParams = {},
   ) =>
-    this.request<PageEmployee, void>({
-      path: `/v1/account/organization/employees`,
+    this.request<PageSmallOrder, void>({
+      path: `/v1/account/orders`,
       method: 'GET',
       query: query,
       ...params,
     });
   /**
-   * @description Sends email to invited person's address
+   * @description User confirms accepting Org's request
    *
-   * @tags Organization, post, organization, employee, user, account
-   * @name InviteEmployee
-   * @summary Invite employee
-   * @request POST:/v1/account/organization/employees
-   * @response `201` `string` Invite successful
-   * @response `400` `string` Bad request. Email is validated
-   * @response `401` `string` Unauthorized
-   * @response `403` `string` Forbidden
-   * @response `404` `string` User, org or position not found
+   * @tags post, My Orders, account, order
+   * @name ConfirmOrder
+   * @summary Confirm order
+   * @request POST:/v1/account/orders
+   * @response `200` `string` Order confirmed
+   * @response `401` `void` Unauthorized
+   * @response `403` `void` It's not user's order
+   * @response `404` `void` Order or org not found
+   * @response `410` `void` Link is expired
    */
-  inviteEmployee = (data: InviteRequest, params: RequestParams = {}) =>
-    this.request<string, string>({
-      path: `/v1/account/organization/employees`,
+  confirmOrder = (
+    query: {
+      code: string;
+    },
+    params: RequestParams = {},
+  ) =>
+    this.request<string, void>({
+      path: `/v1/account/orders`,
       method: 'POST',
-      body: data,
-      type: ContentType.Json,
+      query: query,
       ...params,
     });
   /**
-   * @description Returns orders and products which user paid for
+   * No description
    *
-   * @tags product, get, purchase, Purchases, user, account, order
+   * @tags Organization, get, organization
+   * @name GetOrganization
+   * @summary Get own Org
+   * @request GET:/v1/organizations
+   * @response `200` `Organization` Success
+   * @response `401` `Organization` Unauthorized
+   * @response `404` `Organization` Org not found
+   */
+  getOrganization = (params: RequestParams = {}) =>
+    this.request<Organization, Organization>({
+      path: `/v1/organizations`,
+      method: 'GET',
+      ...params,
+    });
+  /**
+   * @description Get all positions of organization. Drop down request
+   *
+   * @tags Organization, organization, get, position, employee, user, account
+   * @name GetPositions
+   * @summary Positions
+   * @request GET:/v1/organizations/positions
+   * @response `200` `(Position)[]` Success
+   * @response `401` `void` Unauthorized
+   * @response `404` `void` User or organization not found
+   */
+  getPositions = (params: RequestParams = {}) =>
+    this.request<Position[], void>({
+      path: `/v1/organizations/positions`,
+      method: 'GET',
+      ...params,
+    });
+  /**
+   * @description Get all orders of organization
+   *
+   * @tags Organization, organization, get, monitoring, order
+   * @name GetOrders
+   * @summary Get order history
+   * @request GET:/v1/organizations/orders
+   * @response `200` `PageOrderSummary` Success
+   * @response `400` `void` Bad param request
+   * @response `401` `void` Unauthorized
+   * @response `404` `void` User or organization not found
+   */
+  getOrders = (
+    query: {
+      /** true, null or false */
+      active?: any;
+      /** accepted, deadline, completed */
+      dateType?: any;
+      startDate?: any;
+      endDate?: any;
+      /** Exact date without date range */
+      date?: any;
+      /** Page number. Default 0 */
+      page?: any;
+      /** Page size. Default 6 */
+      size?: any;
+      /** Sorting property. Equals to object field. Can be multiplesorting properties. Default "acceptedAt" */
+      '[sort]'?: any;
+      params: Record<string, string>;
+    },
+    params: RequestParams = {},
+  ) =>
+    this.request<PageOrderSummary, void>({
+      path: `/v1/organizations/orders`,
+      method: 'GET',
+      query: query,
+      ...params,
+    });
+  /**
+   * No description
+   *
+   * @tags get, organization, monitoring, Monitoring, order
+   * @name GetDashboard
+   * @summary Get dashboard
+   * @request GET:/v1/monitoring
+   * @response `200` `(DashboardOrder)[]` Success
+   * @response `401` `void` Unauthorized
+   * @response `404` `void` Not found
+   */
+  getDashboard = (params: RequestParams = {}) =>
+    this.request<DashboardOrder[], void>({
+      path: `/v1/monitoring`,
+      method: 'GET',
+      ...params,
+    });
+  /**
+   * @description Get all orders of organization
+   *
+   * @tags organization, get, monitoring, Monitoring, order
+   * @name GetOrdersHistory
+   * @summary Get order history
+   * @request GET:/v1/monitoring/orders
+   * @response `200` `PageOrderSummary` Success
+   * @response `400` `void` Bad param request
+   * @response `401` `void` Unauthorized
+   * @response `404` `void` User or organization not found
+   */
+  getOrdersHistory = (
+    query: {
+      /** true, null or false */
+      active?: any;
+      /** accepted, deadline, completed */
+      dateType?: any;
+      startDate?: any;
+      endDate?: any;
+      /** Exact date without date range */
+      date?: any;
+      /** Page number. Default 0 */
+      page?: any;
+      /** Page size. Default 6 */
+      size?: any;
+      /** Sorting property. Equals to object field. Can be multiplesorting properties. Default "acceptedAt" */
+      '[sort]'?: any;
+      params: Record<string, string>;
+    },
+    params: RequestParams = {},
+  ) =>
+    this.request<PageOrderSummary, void>({
+      path: `/v1/monitoring/orders`,
+      method: 'GET',
+      query: query,
+      ...params,
+    });
+  /**
+   * @description Returns products purchased by user, id of product replaced by purchase id
+   *
+   * @tags product, get, purchase, Purchases, user, account
    * @name GetPurchases
    * @summary All purchases
    * @request GET:/v1/account/purchases
@@ -504,13 +730,13 @@ export class MyApi<SecurityDataType = unknown> extends HttpClient<SecurityDataTy
       ...params,
     });
   /**
-   * @description Get one purchase by unique id
+   * @description Get one product ad by unique id of purchase
    *
-   * @tags product, get, purchase, Purchases, user, account, order
+   * @tags product, get, purchase, Purchases, user, account
    * @name GetPurchase
    * @summary One purchase
    * @request GET:/v1/account/purchases/{productId}
-   * @response `200` `FullProductCard` Success Product
+   * @response `200` `FullProductCard` Success
    * @response `401` `void` Unauthorized
    * @response `404` `void` Card not found
    */
@@ -521,95 +747,18 @@ export class MyApi<SecurityDataType = unknown> extends HttpClient<SecurityDataTy
       ...params,
     });
   /**
-   * @description Get all positions of organization. Drop down request
+   * @description Retrieve one order by id
    *
-   * @tags Organization, organization, get, position, employee, user, account
-   * @name GetPositions
-   * @summary Positions
-   * @request GET:/v1/account/organization/positions
-   * @response `200` `(Position)[]` Success
-   * @response `401` `void` Unauthorized
-   * @response `404` `void` User or organization not found
-   */
-  getPositions = (params: RequestParams = {}) =>
-    this.request<Position[], void>({
-      path: `/v1/account/organization/positions`,
-      method: 'GET',
-      ...params,
-    });
-  /**
-   * @description Get all current orders of organization
-   *
-   * @tags Organization, organization, get, account, order
-   * @name GetOrders
-   * @summary Get orders
-   * @request GET:/v1/account/organization/orders
-   * @response `200` `PageCurrentOrder` Success
-   * @response `400` `void` Bad param request
-   * @response `401` `void` Unauthorized
-   * @response `404` `void` User or organization not found
-   */
-  getOrders = (
-    query: {
-      /** Page number. Default 0 */
-      page?: any;
-      /** Page size. Default 6 */
-      size?: any;
-      /** Sorting property. Equals to object field. Can be multiplesorting properties. Default "acceptedAt" */
-      '[sort]'?: any;
-      params: Record<string, string>;
-    },
-    params: RequestParams = {},
-  ) =>
-    this.request<PageCurrentOrder, void>({
-      path: `/v1/account/organization/orders`,
-      method: 'GET',
-      query: query,
-      ...params,
-    });
-  /**
-   * @description Retrieve all active or completed orders
-   *
-   * @tags My Orders, get, account, status
-   * @name GetOrders1
-   * @summary Get orders
-   * @request GET:/v1/account/orders
-   * @response `200` `PageSmallOrder` Success
-   * @response `400` `PageSmallOrder` Bad param
-   * @response `401` `PageSmallOrder` Unauthorized
-   * @response `404` `PageSmallOrder` User not found
-   */
-  getOrders1 = (
-    query: {
-      /** "active" or any other value for completed */
-      q: any;
-      /** Page number */
-      page?: any;
-      /** Page size */
-      size?: any;
-      params: Record<string, string>;
-    },
-    params: RequestParams = {},
-  ) =>
-    this.request<PageSmallOrder, PageSmallOrder>({
-      path: `/v1/account/orders`,
-      method: 'GET',
-      query: query,
-      ...params,
-    });
-  /**
-   * @description Retrieve one status by id
-   *
-   * @tags My Orders, get, account, status
-   * @name GetOrder
-   * @summary Get status
+   * @tags My Orders, get, account, order
+   * @name GetOrder1
+   * @summary Get order
    * @request GET:/v1/account/orders/{orderId}
    * @response `200` `OrderDto` Success
-   * @response `401` `OrderDto` Unauthorized
-   * @response `404` `OrderDto` Order not found
+   * @response `401` `void` Unauthorized
+   * @response `404` `void` Order not found
    */
-  getOrder = (orderId: number, params: RequestParams = {}) =>
-    this.request<OrderDto, OrderDto>({
+  getOrder1 = (orderId: number, params: RequestParams = {}) =>
+    this.request<OrderDto, void>({
       path: `/v1/account/orders/${orderId}`,
       method: 'GET',
       ...params,
@@ -621,12 +770,12 @@ export class MyApi<SecurityDataType = unknown> extends HttpClient<SecurityDataTy
    * @name GetAd1
    * @summary Get one ad
    * @request GET:/v1/account/advertisements/{advertisementId}
-   * @response `200` `FullOrder` Success
+   * @response `200` `(FullOrder | FullProduct)` Success
    * @response `401` `void` Unauthorized
    * @response `404` `void` User or Ad not found
    */
   getAd1 = (advertisementId: number, params: RequestParams = {}) =>
-    this.request<FullOrder, void>({
+    this.request<FullOrder | FullProduct, void>({
       path: `/v1/account/advertisements/${advertisementId}`,
       method: 'GET',
       ...params,
