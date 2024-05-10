@@ -1,5 +1,6 @@
 import { useFormik } from 'formik';
 import { observer } from 'mobx-react-lite';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 
 import { userStore } from '../../store';
@@ -15,25 +16,30 @@ import FormInput from '../FormInput/FormInput';
 import styles from './RegistrationForm.module.scss';
 
 const RegistrationForm = observer(() => {
-  const onSubmit = async ({
+  const [submit, setSubmit] = useState(false);
+  const [isError, setIsError] = useState(false);
+  const onSubmit = ({
     lastName,
     firstName,
     middleName,
     email,
     phoneNumber,
   }: ISubmitTypes) => {
-    // console.log(lastName, firstName, middleName, email);
     try {
-      await userStore.fetchRegistration({
-        lastName,
-        firstName,
-        middleName,
-        email,
-        phoneNumber,
-      });
+      setTimeout(async () => {
+        await userStore.fetchRegistration({
+          lastName,
+          firstName,
+          middleName,
+          email,
+          phoneNumber,
+        });
+      }, 500);
     } catch (error) {
       console.log(error);
     }
+
+    setSubmit(true);
   };
 
   const formik = useFormik({
@@ -53,13 +59,28 @@ const RegistrationForm = observer(() => {
               placeholder={data.placeholder}
               id={data.id}
               formik={formik}
+              setError={setIsError}
             />
           );
         })}
         <Checkbox checked={userStore.isRemember} onClick={userStore.toggleRemember} />
-        <Button color='blue' type='submit' width='100%'>
-          Зарегистрироваться
-        </Button>
+        {!submit &&
+          (isError ? (
+            <Button color='white' type='submit' disabled={true}>
+              Заполните все поля
+            </Button>
+          ) : (
+            <Button color='blue' type='submit' width='100%'>
+              Зарегистрироваться
+            </Button>
+          ))}
+        {submit && (
+          <Button color='blue' type='submit' width='100%' disabled={true}>
+            <div className={styles.loaderWrapper}>
+              <div className={styles.loader}>Ожидаем...</div>
+            </div>
+          </Button>
+        )}
       </form>
       <div className={styles.loginLinkBlock}>
         <p>Уже зарегистрированы?</p>
