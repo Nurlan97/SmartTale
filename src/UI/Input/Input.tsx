@@ -17,6 +17,7 @@ interface IInput {
   value: string; // собстенно значение как в простом инпуте
   width?: string; //можно указать производльную ширину, обязательно строкой с единицой измерения
   margin?: string;
+  onBlur?: (e: React.FocusEvent<any, Element>) => void;
 }
 const Input = ({
   border = false,
@@ -32,6 +33,7 @@ const Input = ({
   value,
   width,
   margin = '0',
+  onBlur,
 }: IInput) => {
   const [hidden, setHidden] = useState(password);
   const borderColor = border ? 'rgba(224, 229, 242, 1)' : '';
@@ -61,6 +63,7 @@ const Input = ({
           placeholder={placeholder}
           className={styles.input}
           type={hidden ? 'password' : 'text'}
+          onBlur={onBlur}
         />
       </label>
       {password && (

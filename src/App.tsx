@@ -22,7 +22,7 @@ const App = observer(() => {
 
   useEffect(() => {
     // Список путей, на которых навбар не должен отображаться, это страницы авторизаций
-    const noNavbarRoutes = ['/registration', '/autorization'];
+    const noNavbarRoutes = ['/registration', '/authorization'];
     setShowNavbar(!noNavbarRoutes.includes(location.pathname));
   }, [location]);
 

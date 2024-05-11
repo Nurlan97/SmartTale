@@ -428,7 +428,7 @@ export class MyApi<SecurityDataType = unknown> extends HttpClient<SecurityDataTy
       path: `/v1/auth/email-available`,
       method: 'POST',
       body: data,
-      type: ContentType.Json,
+      type: ContentType.Text,
       ...params,
     });
   /**
