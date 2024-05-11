@@ -34,7 +34,7 @@ const App = observer(() => {
           <Route path='/services' element={<ServicesPage />} />
           <Route path='/place-order' element={<PlaceOrderPage />} />
           <Route path='/history' element={<HistoryPage/>}/>
-          <Route path="orders-active" element={<CurrentOrdersPage/>}/>
+          <Route path="/orders-active" element={<CurrentOrdersPage/>}/>
           <Route element={<AuthRoute />}>
             {/*Сюда пихаем роуты до авторизации, чтобы страницы с авторизацией не были доступны авторизованному пользователю*/}
             <Route path='/registration' element={<RegistrationPage />}></Route>

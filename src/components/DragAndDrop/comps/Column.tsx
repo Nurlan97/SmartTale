@@ -10,17 +10,19 @@ export interface IElement {
 }
 
 interface IColumn {
-  heading: string;
+  name: string;
   elements: IElement[];
+  style: string; 
 }
 
-export const Column: FC<IColumn> = ({ heading, elements }) => {
-  const columnIdentifier = useMemo(() => heading.toLowerCase().replace(/\s/g, ""), [heading]);
+export const Column: FC<IColumn> = ({ name, style, elements }) => {
+  console.log("Column Props:", { elements });
+  const columnIdentifier = useMemo(() => style.toLowerCase(), [style]);
 
   return (
     <div className={styles.columnWrapper}>
       <div className={`${styles.columnHeaderWrapper} ${styles[columnIdentifier]}`}>
-        <h3 className={styles.heading}>{heading}</h3>
+        <h3 className={styles.heading}>{name}</h3>
       </div>
       <Droppable id={columnIdentifier}>
         {elements.map((elm, elmIndex) => (
