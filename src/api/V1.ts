@@ -530,9 +530,9 @@ export class MyApi<SecurityDataType = unknown> extends HttpClient<SecurityDataTy
    * @summary Get orders
    * @request GET:/v1/account/orders
    * @response `200` `PageSmallOrder` Success
-   * @response `400` `PageSmallOrder` Bad param
-   * @response `401` `PageSmallOrder` Unauthorized
-   * @response `404` `PageSmallOrder` User not found
+   * @response `400` `void` Bad param
+   * @response `401` `void` Unauthorized
+   * @response `404` `void` User not found
    */
   getOrders1 = (
     query: {
@@ -546,7 +546,7 @@ export class MyApi<SecurityDataType = unknown> extends HttpClient<SecurityDataTy
     },
     params: RequestParams = {},
   ) =>
-    this.request<PageSmallOrder, PageSmallOrder>({
+    this.request<PageSmallOrder, void>({
       path: `/v1/account/orders`,
       method: 'GET',
       query: query,
@@ -560,10 +560,10 @@ export class MyApi<SecurityDataType = unknown> extends HttpClient<SecurityDataTy
    * @summary Confirm order
    * @request POST:/v1/account/orders
    * @response `200` `string` Order confirmed
-   * @response `401` `string` Unauthorized
-   * @response `403` `string` It's not user's order
-   * @response `404` `string` Order or org not found
-   * @response `410` `string` Link is expired
+   * @response `401` `void` Unauthorized
+   * @response `403` `void` It's not user's order
+   * @response `404` `void` Order or org not found
+   * @response `410` `void` Link is expired
    */
   confirmOrder = (
     query: {
@@ -571,7 +571,7 @@ export class MyApi<SecurityDataType = unknown> extends HttpClient<SecurityDataTy
     },
     params: RequestParams = {},
   ) =>
-    this.request<string, string>({
+    this.request<string, void>({
       path: `/v1/account/orders`,
       method: 'POST',
       query: query,
@@ -612,13 +612,13 @@ export class MyApi<SecurityDataType = unknown> extends HttpClient<SecurityDataTy
       ...params,
     });
   /**
-   * @description Get all current orders of organization
+   * @description Get all orders of organization
    *
-   * @tags Organization, organization, get, order
+   * @tags Organization, organization, get, monitoring, order
    * @name GetOrders
-   * @summary Get orders
+   * @summary Get order history
    * @request GET:/v1/organizations/orders
-   * @response `200` `PageCurrentOrder` Success
+   * @response `200` `PageOrderSummary` Success
    * @response `400` `void` Bad param request
    * @response `401` `void` Unauthorized
    * @response `404` `void` User or organization not found
@@ -643,7 +643,7 @@ export class MyApi<SecurityDataType = unknown> extends HttpClient<SecurityDataTy
     },
     params: RequestParams = {},
   ) =>
-    this.request<PageCurrentOrder, void>({
+    this.request<PageOrderSummary, void>({
       path: `/v1/organizations/orders`,
       method: 'GET',
       query: query,
@@ -750,7 +750,7 @@ export class MyApi<SecurityDataType = unknown> extends HttpClient<SecurityDataTy
    * @description Retrieve one order by id
    *
    * @tags My Orders, get, account, order
-   * @name GetOrder
+   * @name GetOrder1
    * @summary Get order
    * @request GET:/v1/account/orders/{orderId}
    * @response `200` `OrderDto` Success

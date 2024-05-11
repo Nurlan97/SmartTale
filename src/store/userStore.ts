@@ -41,7 +41,7 @@ class userStore {
     'https://img.freepik.com/free-psd/3d-illustration-of-person-with-sunglasses_23-2149436188.jpg?size=338&ext=jpg&ga=GA1.1.2116175301.1714435200&semt=ais';
   subscribePeriod = '';
   isRemember = false;
-  authenticationStage: 1 | 2 | 3 = 2;
+  authenticationStage: 1 | 2 | 3 = 1;
   isAuth = false;
   anyAds = false;
 
