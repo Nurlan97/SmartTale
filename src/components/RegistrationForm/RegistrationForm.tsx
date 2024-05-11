@@ -1,8 +1,9 @@
 import { useFormik } from 'formik';
 import { observer } from 'mobx-react-lite';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 
+import { useDebounce } from '../../hooks/useDebounce';
 import { userStore } from '../../store';
 import Button from '../../UI/Button/Button';
 import {
@@ -17,7 +18,6 @@ import styles from './RegistrationForm.module.scss';
 
 const RegistrationForm = observer(() => {
   const [submit, setSubmit] = useState(false);
-  const [isError, setIsError] = useState(false);
   const onSubmit = ({
     lastName,
     firstName,
@@ -47,6 +47,17 @@ const RegistrationForm = observer(() => {
     onSubmit,
     validationSchema: RegistrationSchema,
   });
+  const debounceSearch = useDebounce((search: string) => {
+    if (search === '') return;
+    if (!formik.errors.email || formik.errors.email === 'Данный email занят') {
+      userStore.fetchAvailableEmail(search).then((data) => {
+        if (!data) formik.setFieldError('email', 'Данный email занят');
+      });
+    }
+  });
+  useEffect(() => {
+    debounceSearch(formik.values.email);
+  }, [formik.values.email]);
   return (
     <div className={styles.wrapper}>
       <form className={styles.form} onSubmit={formik.handleSubmit}>
@@ -59,13 +70,16 @@ const RegistrationForm = observer(() => {
               placeholder={data.placeholder}
               id={data.id}
               formik={formik}
-              setError={setIsError}
             />
           );
         })}
         <Checkbox checked={userStore.isRemember} onClick={userStore.toggleRemember} />
         {!submit &&
-          (isError ? (
+          (Object.keys(formik.touched).length === 0 ? (
+            <Button color='blue' type='submit' width='100%'>
+              Зарегистрироваться
+            </Button>
+          ) : Object.keys(formik.errors).length !== 0 ? (
             <Button color='white' type='submit' disabled={true}>
               Заполните все поля
             </Button>
