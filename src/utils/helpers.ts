@@ -35,3 +35,17 @@ export function cutText(text: string, limit: number) {
   }
   return text + '...';
 }
+
+export function fullPromise<T>(
+  promise: Promise<T>,
+  fulfilled: (value: T) => void,
+  rejected: (error: T) => void,
+): void {
+  promise
+    .then((value) => {
+      fulfilled(value);
+    })
+    .catch((error) => {
+      rejected(error);
+    });
+}

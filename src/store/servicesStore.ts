@@ -1,11 +1,11 @@
 import { flow, makeAutoObservable, runInAction } from 'mobx';
 
 import { cardsArray } from '../../mockData';
-import { ICard } from '../utils/types';
+import { Card } from '../api/data-contracts';
 
 class servicesStore {
   isLoading = false;
-  #grid: Array<ICard> = [];
+  #grid: Omit<Card, 'publishedAt'>[] = [];
   totalCards = 0;
   page = 1;
   limit = 12;
