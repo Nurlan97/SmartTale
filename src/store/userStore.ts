@@ -126,8 +126,17 @@ class userStore {
       },
     );
   };
-  resendVerification = async () => {
-    const response = await api.resend(this.email);
+
+  resendVerificationCode = async () => {
+    if (this.email !== '') {
+      try {
+        await api.resend(this.email);
+      } catch (error) {
+        console.error(error);
+      }
+    } else {
+      console.error('Email пустой');
+    }
   };
   getUser = async () => {
     try {

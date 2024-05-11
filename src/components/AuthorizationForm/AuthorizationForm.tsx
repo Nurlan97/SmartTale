@@ -1,6 +1,5 @@
 import { useFormik } from 'formik';
 import { observer } from 'mobx-react-lite';
-import { useState } from 'react';
 import { Link } from 'react-router-dom';
 
 import userStore from '../../store/userStore';
@@ -16,8 +15,6 @@ import FormInput from '../FormInput/FormInput';
 import styles from './AuthorizationForm.module.scss';
 
 const AuthorizationForm = observer(() => {
-  const [submit, setSubmit] = useState(false);
-  const [isError, setIsError] = useState(false);
   const onSubmit = ({ email }: ISubmitTypes) => {
     console.log(email);
   };
@@ -39,7 +36,6 @@ const AuthorizationForm = observer(() => {
               placeholder={data.placeholder}
               id={data.id}
               formik={formik}
-              setError={setIsError}
             />
           );
         })}

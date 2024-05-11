@@ -5,7 +5,7 @@ export const initialValues = {
   firstName: '',
   middleName: '',
   email: '',
-  phoneNumber: '', // Не понимаю какой тип дать
+  phoneNumber: '',
 };
 
 export interface ISubmitTypes {
@@ -13,7 +13,7 @@ export interface ISubmitTypes {
   firstName: string;
   middleName: string;
   email: string;
-  phoneNumber: number;
+  phoneNumber: string;
 }
 
 export const RegistrationSchema = Yup.object().shape({
