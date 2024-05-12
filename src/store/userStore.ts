@@ -138,6 +138,18 @@ class userStore {
       console.error('Email пустой');
     }
   };
+
+  fetchAuthorization = async (authorizationData: string) => {
+    try {
+      await api.login(authorizationData);
+      runInAction(() => {
+        this.email = authorizationData;
+        this.authenticationStage = 2;
+      });
+    } catch (error) {
+      console.error(error);
+    }
+  };
   getUser = async () => {
     try {
       // const response = await api.getProfile();
