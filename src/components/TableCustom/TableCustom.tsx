@@ -20,7 +20,7 @@ interface IProps {
   styling?: IStyle;
   transform?: ITransform;
   sorting?: ISorting;
-  setSorting: (column: string) => void;
+  setSorting?: (column: string) => void;
   myRef: React.RefObject<HTMLTableElement>;
 }
 const sortIcons = {
@@ -44,15 +44,18 @@ const TableCustom = observer(
                 return (
                   <th className={styles.header} key={header.name}>
                     <div className={styles.headerDiv}>
-                      {header.title}
-                      {sorting && sorting[header.name] && (
-                        <button
-                          className={styles.sortBtn}
-                          onClick={() => setSorting(header.name)}
-                        >
-                          {sortIcons[sorting[header.name]]}
-                        </button>
-                      )}
+                      <button
+                        className={styles.btn}
+                        onClick={() => {
+                          if (!sorting || !sorting[header.name]) return;
+                          if (setSorting) setSorting(header.name);
+                        }}
+                      >
+                        {header.title}
+                        {sorting &&
+                          sorting[header.name] &&
+                          sortIcons[sorting[header.name]]}
+                      </button>
                     </div>
                   </th>
                 );
@@ -65,7 +68,6 @@ const TableCustom = observer(
                 <tr key={ind} className={styles.row}>
                   {headers.map((header) => {
                     const key = header.name as keyof typeof row;
-
                     return (
                       <td key={header.name} className={styles.cell}>
                         <div

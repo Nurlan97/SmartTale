@@ -53,8 +53,9 @@
   height: 18px;
   width: 18px;
 }
-.sortBtn {
+.btn {
   padding: 6px;
+  display: flex;
 }
 
 ::-webkit-scrollbar {
