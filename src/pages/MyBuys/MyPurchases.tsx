@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 import Grid from '../../components/Grid/Grid';
 import Header from '../../components/Header/Header';
 import useColumnsGrid from '../../hooks/useColumnsGrid';
-import { appStore, equipmentStore } from '../../store';
+import { appStore, equipmentStore, userStore } from '../../store';
 import PageBtnGroup from '../../UI/PageBtnGroup/PageBtnGroup';
 import styles from './myPurchases.module.scss';
 

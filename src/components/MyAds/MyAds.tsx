@@ -26,9 +26,7 @@ const MyAds = observer(() => {
       <div className={styles.btnGroup}>{buttons.map((btn) => addButton(btn))}</div>
       <div className={styles.adsBlock}>
         {appStore.myAds.data.content &&
-          appStore.myAds.data.content.map((item) => (
-            <AdRow key={item.productId} item={item} />
-          ))}
+          appStore.myAds.data.content.map((item, ind) => <AdRow key={ind} item={item} />)}
       </div>
     </div>
   );

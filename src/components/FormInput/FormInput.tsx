@@ -12,7 +12,7 @@ type FormType = {
 };
 
 const FormInput = ({ htmlFor, label, placeholder, id, formik }: FormType) => {
-  const isError = !!formik.errors[htmlFor];
+  const isError = formik.errors[htmlFor] ? formik.errors[htmlFor] : ' ';
   return (
     <div>
       <label htmlFor={htmlFor} className={styles.lastName}>
@@ -24,9 +24,9 @@ const FormInput = ({ htmlFor, label, placeholder, id, formik }: FormType) => {
         onChange={formik.handleChange}
         border={true}
         id={id}
-        isError={isError}
+        isError={!!isError}
       />
-      <p className={styles.errors}>{isError ? formik.errors[htmlFor] : ' '}</p>
+      <p className={styles.errors}>{`${isError}`}</p>
     </div>
   );
 };

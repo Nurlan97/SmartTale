@@ -1,25 +1,35 @@
-import { makeAutoObservable, runInAction } from 'mobx';
+import { makeAutoObservable } from 'mobx';
 
-import { adsRowMock, cardsArray } from '../../mockData';
-import { FullOrder, PageCard } from '../api/data-contracts';
+import { cardsArray } from '../../mockData';
+import { FullOrder, Order, PageCard, Product } from '../api/data-contracts';
 import { MyApi } from '../api/V1';
-import { fullPromise } from '../utils/helpers';
-import { setCookie } from '../utils/helpers';
 
 const api = new MyApi(); //создаем экземпляр нашего api
 
 export interface IType {
   type: 'equipment' | 'services';
 }
-
+interface IAdsResponse {
+  totalPages: number;
+  totalElements: number;
+  size: number;
+  content: Order[] | Product[];
+  number: number;
+  sort: { empty: boolean; sorted: boolean; unsorted: boolean };
+  numberOfElements: number;
+  first: boolean;
+  last: boolean;
+  empty: boolean;
+}
 interface IMyAd {
   group: 'all' | 'service' | 'equipment';
-  data: PageCard;
+  data: IAdsResponse;
   detailed: FullOrder & IType;
 }
 interface IMyBuys {
   data: PageCard;
 }
+
 class appStore {
   myAds: IMyAd = {
     group: 'all',
@@ -30,20 +40,16 @@ class appStore {
       content: [],
       number: 0,
       sort: { empty: false, sorted: false, unsorted: false },
-      pageable: {
-        offset: 0,
-        sort: { empty: false, sorted: false, unsorted: false },
-        pageNumber: 0,
-        pageSize: 0,
-        paged: false,
-        unpaged: false,
-      },
       numberOfElements: 0,
       first: false,
       last: false,
       empty: false,
     },
     detailed: {
+      acceptedBy: 0,
+      acceptedAt: '',
+      organizationLogoUrl: '',
+      organizationName: '',
       type: 'equipment',
       orderId: 0,
       description:
@@ -59,7 +65,7 @@ class appStore {
       isClosed: false,
       isDeleted: false,
       publishedAt: '',
-      publishedBy: 0,
+
       views: 0,
       size: '',
     },
@@ -116,6 +122,7 @@ class appStore {
     // const response = await api.getPurchases();
     this.myBuys.data.content = cardsArray;
   };
+  setSorting = () => {};
 }
 
 export default new appStore();

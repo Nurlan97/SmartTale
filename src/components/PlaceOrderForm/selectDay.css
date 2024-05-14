@@ -6,3 +6,12 @@
   background-color: rgb(255, 204, 0) !important;
   color: black;
 }
+.react-datepicker__day--in-selecting-range {
+  background-color: rgb(255, 228, 120) !important;
+  color: black;
+}
+
+.react-datepicker__day--in-range {
+  background-color: rgb(255, 204, 0) !important;
+  color: black;
+}

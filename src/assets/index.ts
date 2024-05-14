@@ -1,9 +1,11 @@
+import Asc from './ascend.svg';
 import authBackground from './authBackground.png';
 import Bell from './bell.svg';
 import Calendar from './calendar.svg';
 import CheckMark from './check mark.svg';
 import Cross from './cross.svg';
 import DeleteImg from './deleteImg.svg';
+import Desc from './descend.svg';
 import logo from './designLogo.png';
 import ArrowDown from './downArrow.svg';
 import EyeClosed from './eyeClosed.svg';
@@ -15,6 +17,7 @@ import NavbarExit from './navbarExit.svg';
 import NavbarMarket from './navbarMarket.svg';
 import NavbarOrders from './navbarOrders.svg';
 import NavbarProfile from './navbarProfile.svg';
+import NoSort from './noSort.svg';
 import ArrowRight from './rightArrow.svg';
 import ArrowRightDouble from './rightDoubleArrow.svg';
 import Search from './search.svg';
@@ -27,12 +30,14 @@ export {
   ArrowRight,
   ArrowRightDouble,
   ArrowUp,
+  Asc,
   authBackground,
   Bell,
   Calendar,
   CheckMark,
   Cross,
   DeleteImg,
+  Desc,
   EyeClosed,
   EyeOpened,
   gift,
@@ -41,5 +46,6 @@ export {
   NavbarMarket,
   NavbarOrders,
   NavbarProfile,
+  NoSort,
   Search,
 };
