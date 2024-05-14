@@ -798,7 +798,8 @@ export class MyApi<SecurityDataType = unknown> extends HttpClient<SecurityDataTy
    */
   confirmOrder = (
     query: {
-      code: string;
+      /** Code for confirming acceptance request */
+      c: string;
     },
     params: RequestParams = {},
   ) =>

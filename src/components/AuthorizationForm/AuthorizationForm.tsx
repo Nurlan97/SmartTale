@@ -1,5 +1,6 @@
 import { useFormik } from 'formik';
 import { observer } from 'mobx-react-lite';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 
 import userStore from '../../store/userStore';
@@ -15,8 +16,15 @@ import FormInput from '../FormInput/FormInput';
 import styles from './AuthorizationForm.module.scss';
 
 const AuthorizationForm = observer(() => {
-  const onSubmit = ({ email }: ISubmitTypes) => {
-    console.log(email);
+  const [submit, setSubmit] = useState(false);
+  const onSubmit = async ({ email }: ISubmitTypes) => {
+    try {
+      await userStore.fetchAuthorization(email);
+    } catch (error) {
+      console.error(error);
+    }
+
+    setSubmit(true);
   };
 
   const formik = useFormik({
@@ -24,6 +32,7 @@ const AuthorizationForm = observer(() => {
     onSubmit,
     validationSchema: AuthorizationSchema,
   });
+
   return (
     <div className={styles.wrapper}>
       <form className={styles.form} onSubmit={formik.handleSubmit}>
@@ -40,9 +49,30 @@ const AuthorizationForm = observer(() => {
           );
         })}
         <Checkbox checked={userStore.isRemember} onClick={userStore.toggleRemember} />
-        <Button color='blue' type='submit' width='100%'>
+        {/* <Button color='blue' type='submit' width='100%'>
           Войти
-        </Button>
+        </Button> */}
+        {!submit &&
+          (Object.keys(formik.touched).length === 0 ? (
+            <Button color='blue' type='submit' width='100%'>
+              Войти
+            </Button>
+          ) : Object.keys(formik.errors).length !== 0 ? (
+            <Button color='white' type='submit' disabled={true}>
+              Введите свой email
+            </Button>
+          ) : (
+            <Button color='blue' type='submit' width='100%'>
+              Войти
+            </Button>
+          ))}
+        {submit && (
+          <Button color='blue' type='submit' width='100%' disabled={true}>
+            <div className={styles.loaderWrapper}>
+              <div className={styles.loader}>Ожидаем...</div>
+            </div>
+          </Button>
+        )}
       </form>
       <div className={styles.registrationLinkBlock}>
         <p>Ещё не зарегистрированы?</p>

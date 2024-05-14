@@ -5,6 +5,7 @@ export const initialValues = {
   firstName: '',
   middleName: '',
   email: '',
+  phoneNumber: '',
 };
 
 export interface ISubmitTypes {
@@ -12,6 +13,7 @@ export interface ISubmitTypes {
   firstName: string;
   middleName: string;
   email: string;
+  phoneNumber: string;
 }
 
 export const RegistrationSchema = Yup.object().shape({
@@ -21,6 +23,7 @@ export const RegistrationSchema = Yup.object().shape({
   email: Yup.string()
     .required('Обязательное поле для заполнения')
     .email('Неправильный формат email адреса'),
+  phoneNumber: Yup.string().required('Обязательное поле для заполнения'),
 });
 
 export const formData = [
@@ -47,5 +50,11 @@ export const formData = [
     label: 'Отчество*',
     placeholder: 'Введите отчество',
     id: 'middleName',
+  },
+  {
+    htmlFor: 'phoneNumber',
+    label: 'Телефон*',
+    placeholder: 'Введите номер телефона',
+    id: 'phoneNumber',
   },
 ];

@@ -75,6 +75,23 @@ class userStore {
       console.error(error);
     }
   };
+  fetchAvailableEmail = async (emailValue: string) => {
+    // function debounce(cb, delay = 1000) {
+    //   let timeout;
+    //   return (...args) => {
+    //     clearTimeout(timeout);
+    //     timeout = setTimeout(() => {
+    //       cb(...args);
+    //     }, delay);
+    //   };
+    // }
+    try {
+      const result = await api.checkAvailable(emailValue);
+      return result.data;
+    } catch (error) {
+      console.log(error);
+    }
+  };
   sendVerificationCode = async (
     data: VerificationRequest,
     // navigate: NavigateFunction,
@@ -88,17 +105,50 @@ class userStore {
     fullPromise(
       api.verifyEmail(data),
       (value) => {
-        console.log(value);
-        navigate(); //если все норм, редиректим напримре на маркетплейс
+        runInAction(() => {
+          this.accessToken = value.data.accessToken;
+          this.refreshToken = value.data.refreshToken;
+          if (this.isRemember) {
+            setCookie('accessToken', value.data.accessToken, 30);
+            setCookie('refreshToken', value.data.refreshToken, 30);
+          }
+        });
+        setTimeout(() => {
+          navigate();
+        }, 500);
       },
       (error) => {
-        this.authenticationStage = 2; //если ошибка возврашаем на ввод кода
-        console.log(error);
+        runInAction(() => {
+          console.error(error);
+          this.authenticationStage = 2;
+          this.invalidCode = true;
+        });
       },
     );
   };
-  resendVerification = async () => {
-    const response = await api.resend(this.email);
+
+  resendVerificationCode = async () => {
+    if (this.email !== '') {
+      try {
+        await api.resend(this.email);
+      } catch (error) {
+        console.error(error);
+      }
+    } else {
+      console.error('Email пустой');
+    }
+  };
+
+  fetchAuthorization = async (authorizationData: string) => {
+    try {
+      await api.login(authorizationData);
+      runInAction(() => {
+        this.email = authorizationData;
+        this.authenticationStage = 2;
+      });
+    } catch (error) {
+      console.error(error);
+    }
   };
   getUser = async () => {
     try {

@@ -574,10 +574,12 @@ export interface Order {
   orderId: number;
   title: string;
   description: string;
-  price?: number;
+  price: number;
   imageUrl: string;
   /** @format date-time */
   publishedAt: string;
+  /** @format int32 */
+  acceptancesCount: number;
 }
 
 export interface Product {
@@ -591,6 +593,14 @@ export interface Product {
   publishedAt: string;
 }
 
+export interface AcceptanceRequestDto {
+  /** @format int64 */
+  organizationId: number;
+  name: string;
+  logoUrl: string;
+  code: string;
+}
+
 export interface FullOrder {
   /** @format int64 */
   orderId: number;
@@ -600,6 +610,7 @@ export interface FullOrder {
   acceptedAt?: string;
   /** @format int64 */
   acceptedBy: number;
+  acceptanceRequests: AcceptanceRequestDto[];
   organizationName: string;
   organizationLogoUrl: string;
   title: string;
