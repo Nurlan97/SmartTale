@@ -49,3 +49,38 @@ export function fullPromise<T>(
       rejected(error);
     });
 }
+
+export function formatDate(dateString: string | undefined) {
+  if (!dateString) return '';
+  const months = [
+    'января',
+    'февраля',
+    'марта',
+    'апреля',
+    'мая',
+    'июня',
+    'июля',
+    'августа',
+    'сентября',
+    'октября',
+    'ноября',
+    'декабря',
+  ];
+  const dateParts = dateString.split('-');
+  const year = dateParts[0];
+  const monthIndex = parseInt(dateParts[1], 10) - 1;
+  const day = parseInt(dateParts[2], 10);
+
+  return `${day} ${months[monthIndex]} ${year}`;
+}
+export function formatDate2(dateString: string | undefined) {
+  if (!dateString) return '';
+  console.log(dateString);
+  const dateParts = dateString.split('/');
+  // console.log(dateParts);
+  const year = dateParts[2];
+  const month = dateParts[0];
+  const day = dateParts[1];
+
+  return `${day}.${month}.${year}`;
+}

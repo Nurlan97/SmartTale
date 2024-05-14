@@ -8,6 +8,7 @@ interface IButton {
   handler?: () => void;
   disabled?: boolean;
   width?: string;
+  height?: string;
   type: 'button' | 'submit';
   margin?: string;
 }
@@ -18,6 +19,7 @@ const Button = ({
   handler,
   disabled = false,
   width,
+  height,
   type = 'button',
   margin = '0',
 }: IButton) => {
@@ -26,7 +28,7 @@ const Button = ({
       disabled={disabled}
       onClick={handler}
       className={styles[color]}
-      style={{ width: width, margin: margin }}
+      style={{ width: width, margin: margin, height: height }}
       type={type}
     >
       {children}

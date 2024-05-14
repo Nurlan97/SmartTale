@@ -86,7 +86,7 @@ class userStore {
     //   };
     // }
     try {
-      const result = await api.checkAvailable(emailValue);
+      const result = await api.isEmailAvailable(emailValue);
       return result.data;
     } catch (error) {
       console.log(error);

@@ -1,0 +1,51 @@
+.dropdownWrapper {
+  position: absolute;
+  top: 15px;
+  right: 0;
+  background-color: #f9f9f9;
+}
+
+.button {
+  padding: 10px;
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  justify-content: space-between;
+  width: fit-content;
+  cursor: pointer;
+}
+.icon {
+  width: 12px;
+  height: 12px;
+}
+.settings {
+  position: absolute;
+  left: 100%;
+  top: 0;
+  width: 160px;
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  display: flex;
+  flex-direction: column;
+  z-index: 1000;
+}
+
+.filterMenu {
+  color: #000;
+  position: relative;
+  display: flex;
+}
+
+.filterDropdown {
+  position: absolute;
+  left: 100%;
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  padding: 10px;
+  z-index: 1000;
+}
+.option {
+  list-style: none;
+  display: flex;
+  gap: 6px;
+}
