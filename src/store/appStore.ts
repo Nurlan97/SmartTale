@@ -46,6 +46,7 @@ class appStore {
       empty: false,
     },
     detailed: {
+      acceptanceRequests: [],
       acceptedBy: 0,
       acceptedAt: '',
       organizationLogoUrl: '',
