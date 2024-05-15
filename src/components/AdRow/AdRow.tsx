@@ -1,3 +1,4 @@
+import { ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { Card, Order, Product } from '../../api/data-contracts';
@@ -7,10 +8,10 @@ import { cutText } from '../../utils/helpers';
 import styles from './adRow.module.scss';
 interface IAd {
   item: Order | Product;
+  children: ReactNode;
 }
 
-const AdRow = ({ item }: IAd) => {
-  const navigate = useNavigate();
+const AdRow = ({ item, children }: IAd) => {
   return (
     <div className={styles.wrapper}>
       <div className={styles.mainBlock}>
@@ -25,21 +26,7 @@ const AdRow = ({ item }: IAd) => {
           <div className={styles.description}>{cutText(item.description, 90)}</div>
         </div>
       </div>
-
-      <button
-        className={styles.detailedBtn}
-        onClick={() => {
-          if ('productId' in item) {
-            appStore.getDetailedAd(item.productId);
-            navigate(`/my-ads/${item.productId}`);
-          } else {
-            appStore.getDetailedAd(item.orderId);
-            navigate(`/my-ads/${item.orderId}`);
-          }
-        }}
-      >
-        Посмотреть детали
-      </button>
+      {children}
     </div>
   );
 };

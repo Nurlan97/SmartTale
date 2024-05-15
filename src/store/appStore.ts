@@ -1,8 +1,15 @@
 import { makeAutoObservable } from 'mobx';
 
 import { cardsArray } from '../../mockData';
-import { FullOrder, Order, PageCard, Product } from '../api/data-contracts';
+import {
+  FullOrder,
+  Order,
+  PageCard,
+  PageSmallOrder,
+  Product,
+} from '../api/data-contracts';
 import { MyApi } from '../api/V1';
+import userStore from './userStore';
 
 const api = new MyApi(); //создаем экземпляр нашего api
 
@@ -29,8 +36,29 @@ interface IMyAd {
 interface IMyBuys {
   data: PageCard;
 }
+interface IOrders {
+  data: Omit<PageSmallOrder, 'pageable'>;
+}
 
 class appStore {
+  myOrders: IOrders = {
+    data: {
+      totalPages: 0,
+      totalElements: 0,
+      size: 0,
+      content: [],
+      number: 0,
+      sort: {
+        empty: false,
+        sorted: false,
+        unsorted: false,
+      },
+      first: false,
+      last: false,
+      numberOfElements: 0,
+      empty: false,
+    },
+  };
   myAds: IMyAd = {
     group: 'all',
     data: {
@@ -124,6 +152,13 @@ class appStore {
     this.myBuys.data.content = cardsArray;
   };
   setSorting = () => {};
+  getMyOrders = async () => {
+    const response = await api.getOrders1(
+      { q: 'active', params: {} },
+      { headers: { Authorization: `Bearer ${userStore.accessToken}` } },
+    );
+    this.myOrders.data = response.data;
+  };
 }
 
 export default new appStore();
