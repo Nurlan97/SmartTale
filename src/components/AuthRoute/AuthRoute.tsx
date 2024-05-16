@@ -3,7 +3,7 @@ import { Navigate, Outlet } from 'react-router-dom';
 import { userStore } from '../../store';
 
 const AuthRoute = () => {
-  return userStore.isAuth ? <Navigate to='/profile' /> : <Outlet />;
+  return userStore.isAuth ? <Outlet /> : <Navigate to='/authorization' />;
 };
 
 export default AuthRoute;

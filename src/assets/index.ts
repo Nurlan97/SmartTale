@@ -13,6 +13,7 @@ import EyeOpened from './eyeOpened.svg';
 import gift from './gift.png';
 import ArrowLeft from './leftArrow.svg';
 import ArrowLeftDouble from './leftDoubleArrow.svg';
+import Login from './login.svg';
 import NavbarExit from './navbarExit.svg';
 import NavbarMarket from './navbarMarket.svg';
 import NavbarOrders from './navbarOrders.svg';
@@ -41,6 +42,7 @@ export {
   EyeClosed,
   EyeOpened,
   gift,
+  Login,
   logo,
   NavbarExit,
   NavbarMarket,

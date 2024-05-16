@@ -108,6 +108,7 @@ class userStore {
         runInAction(() => {
           this.accessToken = value.data.accessToken;
           this.refreshToken = value.data.refreshToken;
+          this.isAuth = true;
           if (this.isRemember) {
             setCookie('accessToken', value.data.accessToken, 30);
             setCookie('refreshToken', value.data.refreshToken, 30);
