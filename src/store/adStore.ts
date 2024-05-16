@@ -1,6 +1,15 @@
 import { makeAutoObservable } from 'mobx';
 import uniqid from 'uniqid';
 
+import { CreateAdRequest } from '../api/data-contracts';
+import { MyApi } from '../api/V1';
+import userStore from './userStore';
+
+const api = new MyApi();
+interface IPlaceAd {
+  dto: CreateAdRequest;
+  images?: File[];
+}
 interface IImage {
   type: 'currentImages' | 'additionalImages';
   index: number;
@@ -169,5 +178,19 @@ export default class adStore {
       return { ...obj, index: obj.index - 1 };
     });
     this.updateViewed();
+  };
+  placeAd = (dto: CreateAdRequest, images: File[] = []) => {
+    const data: IPlaceAd = {
+      dto: dto,
+      images: images,
+    };
+    try {
+      const response = api.placeAdvertisement(data, {
+        headers: { Authorization: `Bearer ${userStore.accessToken}` },
+      });
+      console.log(response);
+    } catch (error) {
+      console.log(error);
+    }
   };
 }

@@ -5,7 +5,7 @@ import { Route, Routes, useLocation } from 'react-router-dom';
 import styles from './App.module.scss';
 import AuthRoute from './components/AuthRoute/AuthRoute';
 import ModalContainer from './components/ModalContainer/ModalContainer';
-import NoAuthRoute from './components/NAuthRoute/NoAuthRoute';
+import NoAuthRoute from './components/NoAuthRoute/NoAuthRoute';
 import NavBar from './components/NavBar/NavBar';
 import AuthorizationPage from './pages/AuthorizationPage/AuthorizationPage';
 import DetailedPage from './pages/DetailedPage/DetailedPage';

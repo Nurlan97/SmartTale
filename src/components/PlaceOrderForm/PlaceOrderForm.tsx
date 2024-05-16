@@ -2,17 +2,17 @@ import 'react-datepicker/dist/react-datepicker.css';
 import './selectDay.css';
 
 import { ru } from 'date-fns/locale';
-import { useFormik } from 'formik';
+import { FormikConfig, FormikProps, useFormik } from 'formik';
 import { observer } from 'mobx-react-lite';
 import DatePicker, { registerLocale } from 'react-datepicker';
 
-import { modalStore, typePlaceOrderStore } from '../../store';
+import { IInital } from '../../pages/PlaceOrderPage/PlaceOrderPage';
+import { modalStore, typePlaceOrderStore, userStore } from '../../store';
 import { SimpleModals } from '../../store/modalStore';
 import Button from '../../UI/Button/Button';
 import DateCustomInput from '../../UI/DateCustomInput/DateCustomInput';
 import ImagesInput from '../../UI/ImageInput/ImageInput';
 import Input from '../../UI/Input/Input';
-import PhoneInput from '../../UI/PhoneInput/PhoneInput';
 import Textarea from '../../UI/Textarea/Textarea';
 import {
   dateSchema,
@@ -23,17 +23,10 @@ import {
 import styles from './placeOrderForm.module.scss';
 
 registerLocale('ru', ru);
-type IInitialValues = {
-  title: string;
-  description: string;
-  price: string;
-  phone: string;
-  sizes: string;
-  deadline: Date;
-};
+
 type Props = {
   store: typePlaceOrderStore;
-  initialValues: IInitialValues;
+  initialValues: IInital;
   type: 'new' | 'update';
 };
 
@@ -42,14 +35,27 @@ const PlaceOrderForm = observer(({ store, initialValues, type }: Props) => {
   if (store.type === 'service') {
     schema.concat(sizesSchema).concat(dateSchema);
   }
+
   const formik = useFormik({
     initialValues: initialValues,
-    onSubmit: ({ title, description, price, phone, sizes, deadline }) => {
+    onSubmit: ({ title, description, price, contacts, sizes, deadline }) => {
       schema
         .validate({ title, description, sizes, deadline }, { abortEarly: false })
         .then(() => {
           deadline;
-          console.log(title, description, price, phone, sizes, deadline);
+          store.placeAd(
+            {
+              type: store.type,
+              title: title,
+              description: description,
+              price: price ? Number(price) : undefined,
+              size: sizes ? sizes : undefined,
+              deadline: deadline ? deadline.toISOString().slice(0, 10) : undefined,
+              contactInfo: contacts ? contacts : undefined,
+            },
+            store.additionalFiles,
+          );
+
           console.log(store.calcActions());
         })
         .catch((e) => {
@@ -146,17 +152,74 @@ const PlaceOrderForm = observer(({ store, initialValues, type }: Props) => {
       <div className={styles.title}>Галерея фотографий</div>
       <ImagesInput store={store} />
       <div className={styles.title}>Контактная информация</div>
-      <PhoneInput
-        onChange={formik.handleChange}
-        value={formik.values.phone}
-        label='Номер телефона'
-        id='phone'
-        width='100%'
-      />
+      <div className={styles.contactsWrapper}>
+        <div>Выберите какую контактную информацию показывать в объявлении</div>
+        <div>
+          <span
+            className={
+              formik.values.contacts.includes('PHONE')
+                ? styles.contactsItemActive
+                : styles.contactsItem
+            }
+          >
+            {userStore.phone}
+          </span>
+          <span
+            className={
+              formik.values.contacts.includes('EMAIL')
+                ? styles.contactsItemActive
+                : styles.contactsItem
+            }
+          >
+            {userStore.email}
+          </span>
+        </div>
+        <div className={styles.contactsBtnGroup}>
+          <button
+            className={
+              formik.values.contacts === 'PHONE'
+                ? styles.contactsBtnActive
+                : styles.contactsBtn
+            }
+            onClick={() => formik.setFieldValue('contacts', 'PHONE')}
+            type='button'
+          >
+            Телефон
+          </button>
+          <button
+            className={
+              formik.values.contacts === 'EMAIL'
+                ? styles.contactsBtnActive
+                : styles.contactsBtn
+            }
+            onClick={() => formik.setFieldValue('contacts', 'EMAIL')}
+            type='button'
+          >
+            E-mail
+          </button>
+          <button
+            className={
+              formik.values.contacts === 'EMAIL_PHONE'
+                ? styles.contactsBtnActive
+                : styles.contactsBtn
+            }
+            onClick={() => formik.setFieldValue('contacts', 'EMAIL_PHONE')}
+            type='button'
+          >
+            {' '}
+            Оба
+          </button>
+        </div>
+      </div>
+
       <div className={styles.horizontalLine}></div>
       <div className={styles.footer}>
         {type === 'new' ? (
-          <Button color='blue' type='submit'>
+          <Button
+            color='blue'
+            type='submit'
+            disabled={!formik.values.title || !formik.values.description}
+          >
             Разместить объявление
           </Button>
         ) : (

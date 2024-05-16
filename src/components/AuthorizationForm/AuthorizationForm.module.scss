@@ -1,34 +1,43 @@
 .wrapper {
-    margin-top: 56px;
-  }
-  
-  .form {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-  }
-  label {
+  margin-top: 56px;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+label {
+  font-size: 14px;
+  font-weight: 510;
+  display: flex;
+  justify-content: flex-start;
+}
+
+.registrationLinkBlock {
+  margin-top: 20px;
+  display: flex;
+  justify-content: flex-start;
+  gap: 5px;
+
+  p {
     font-size: 14px;
     font-weight: 510;
-    display: flex;
-    justify-content: flex-start;
   }
-  
-  .registrationLinkBlock {
-    margin-top: 20px;
-    display: flex;
-    justify-content: flex-start;
-    gap: 5px;
-  
-    p {
-      font-size: 14px;
-      font-weight: 510;
-    }
-  
-    a {
-      font-size: 14px;
-      font-weight: 510;
-      text-decoration: underline;
-    }
+
+  a {
+    font-size: 14px;
+    font-weight: 510;
+    text-decoration: underline;
   }
-  
+}
+
+.registrationLinkInline {
+  margin-top: 12px;
+  font-size: 14px;
+  font-weight: 500;
+}
+.inlineLink {
+  font-weight: 700;
+  text-decoration: underline;
+}
