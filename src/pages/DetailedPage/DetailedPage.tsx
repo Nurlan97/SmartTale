@@ -5,7 +5,7 @@ import Header from '../../components/Header/Header';
 import { appStore } from '../../store';
 import styles from './detailedPage.module.scss';
 
-export const DetailedPage = () => {
+const DetailedPage = () => {
   const { id } = useParams();
   console.log('id', id);
   return (
@@ -15,3 +15,5 @@ export const DetailedPage = () => {
     </div>
   );
 };
+
+export default DetailedPage;

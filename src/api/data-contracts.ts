@@ -435,21 +435,21 @@ export interface Card {
 
 export interface PageCard {
   /** @format int32 */
-  totalPages?: number;
+  totalPages: number;
   /** @format int64 */
-  totalElements?: number;
+  totalElements: number;
   /** @format int32 */
-  size?: number;
-  content?: Card[];
+  size: number;
+  content: Card[];
   /** @format int32 */
-  number?: number;
-  sort?: SortObject;
-  pageable?: PageableObject;
-  first?: boolean;
-  last?: boolean;
+  number: number;
+  sort: SortObject;
+  pageable: PageableObject;
+  first: boolean;
+  last: boolean;
   /** @format int32 */
-  numberOfElements?: number;
-  empty?: boolean;
+  numberOfElements: number;
+  empty: boolean;
 }
 
 export interface FullProductCard {

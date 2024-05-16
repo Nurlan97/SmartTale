@@ -8,9 +8,9 @@ interface IPagesBtnGroup {
 }
 
 const PageBtnGroup = ({ store }: IPagesBtnGroup) => {
-  const currPage = store.page;
-  const limit = store.limit;
-  const total = store.totalCards;
+  const currPage = store.data.number;
+  const limit = store.data.size;
+  const total = store.data.totalPages;
   const pages = [];
   const setPage = (page: number) => (event: any) => {
     store.setPage(page);

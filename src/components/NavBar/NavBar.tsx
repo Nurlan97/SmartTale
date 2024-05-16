@@ -1,8 +1,15 @@
 import { observer } from 'mobx-react-lite';
 import { RefObject, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-import { NavbarExit, NavbarMarket, NavbarOrders, NavbarProfile } from '../../assets';
-import { modalStore } from '../../store';
+import {
+  Login,
+  NavbarExit,
+  NavbarMarket,
+  NavbarOrders,
+  NavbarProfile,
+} from '../../assets';
+import { modalStore, userStore } from '../../store';
 import { ChoiseModals } from '../../store/modalStore';
 import navbarStore from '../../store/navbarStore';
 import NavbarLink from '../../UI/NavbarLink/NavbarLink';
@@ -14,6 +21,7 @@ interface INavBar {
   path: string;
 }
 const NavBar = observer(({ path }: INavBar) => {
+  const navigate = useNavigate();
   const profileRef = useRef<HTMLDivElement>(null);
   const ordersRef = useRef<HTMLDivElement>(null);
   const marketRef = useRef<HTMLDivElement>(null);
@@ -62,37 +70,42 @@ const NavBar = observer(({ path }: INavBar) => {
       </div>
 
       <div className={styles.horizontalLine}></div>
-      <div className={styles.navbarGroup}>
-        <NavbarTab
-          SVG={<NavbarProfile />}
-          currentRef={profileRef}
-          slag='profile'
-          title='Личный кабинет'
-          collapsed={navbarStore.tabs.profile}
-        />
-        <div ref={profileRef} className={extendedLinkGroup(navbarStore.tabs.profile)}>
-          <NavbarLink title='Профиль' to='profile' />
-          <NavbarLink title='Мои объявления' to='my-ads' />
-          <NavbarLink title='Мои покупки' to='my-purchases' />
-          <NavbarLink title='История заказов' to='orders-history' />
-          <NavbarLink title='Организация' to='company' />
-        </div>
-      </div>
-      <div className={styles.horizontalLine}></div>
-      <div className={styles.navbarGroup}>
-        <NavbarTab
-          SVG={<NavbarOrders />}
-          currentRef={ordersRef}
-          slag='orders'
-          title='Заказы'
-          collapsed={navbarStore.tabs.orders}
-        />
-        <div ref={ordersRef} className={extendedLinkGroup(navbarStore.tabs.orders)}>
-          <NavbarLink title='Текущие заказы' to='orders-active' />
-          <NavbarLink title='История' to='history' />
-        </div>
-      </div>
-      <div className={styles.horizontalLine}></div>
+      {userStore.isAuth && (
+        <>
+          <div className={styles.navbarGroup}>
+            <NavbarTab
+              SVG={<NavbarProfile />}
+              currentRef={profileRef}
+              slag='profile'
+              title='Личный кабинет'
+              collapsed={navbarStore.tabs.profile}
+            />
+            <div ref={profileRef} className={extendedLinkGroup(navbarStore.tabs.profile)}>
+              <NavbarLink title='Профиль' to='profile' />
+              <NavbarLink title='Мои объявления' to='my-ads' />
+              <NavbarLink title='Мои покупки' to='my-purchases' />
+              <NavbarLink title='История заказов' to='orders-history' />
+              <NavbarLink title='Организация' to='company' />
+            </div>
+          </div>
+          <div className={styles.horizontalLine}></div>
+          <div className={styles.navbarGroup}>
+            <NavbarTab
+              SVG={<NavbarOrders />}
+              currentRef={ordersRef}
+              slag='orders'
+              title='Заказы'
+              collapsed={navbarStore.tabs.orders}
+            />
+            <div ref={ordersRef} className={extendedLinkGroup(navbarStore.tabs.orders)}>
+              <NavbarLink title='Текущие заказы' to='orders-active' />
+              <NavbarLink title='История' to='history' />
+            </div>
+          </div>
+          <div className={styles.horizontalLine}></div>
+        </>
+      )}
+
       <div className={styles.navbarGroup}>
         <NavbarTab
           SVG={<NavbarMarket />}
@@ -105,18 +118,28 @@ const NavBar = observer(({ path }: INavBar) => {
         <div ref={marketRef} className={extendedLinkGroup(navbarStore.tabs.market)}>
           <NavbarLink title='Оборудование' to='equipment' />
           <NavbarLink title='Услуги' to='services' />
-          <NavbarLink title='Разместить заказ' to='place-order' />
+          {userStore.isAuth && <NavbarLink title='Разместить заказ' to='place-order' />}
         </div>
       </div>
 
       <div ref={exitRef} className={styles.navbarFooter}>
-        <button
-          className={styles.navbarExtit}
-          onClick={() => modalStore.openChoise(ChoiseModals.exit)}
-        >
-          <NavbarExit />
-          <span className={styles.navbarExtitText}>Выйти</span>
-        </button>
+        {userStore.isAuth ? (
+          <button
+            className={styles.navbarExtit}
+            onClick={() => modalStore.openChoise(ChoiseModals.exit)}
+          >
+            <NavbarExit />
+            <span className={styles.navbarExtitText}>Выйти</span>
+          </button>
+        ) : (
+          <button
+            className={styles.navbarExtit}
+            onClick={() => navigate('/authorization')}
+          >
+            <Login className={styles.loginIcon} />
+            <span className={styles.navbarExtitText}>Войти</span>
+          </button>
+        )}
       </div>
     </div>
   );

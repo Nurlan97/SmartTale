@@ -5,9 +5,10 @@ import { Route, Routes, useLocation } from 'react-router-dom';
 import styles from './App.module.scss';
 import AuthRoute from './components/AuthRoute/AuthRoute';
 import ModalContainer from './components/ModalContainer/ModalContainer';
+import NoAuthRoute from './components/NAuthRoute/NoAuthRoute';
 import NavBar from './components/NavBar/NavBar';
 import AuthorizationPage from './pages/AuthorizationPage/AuthorizationPage';
-import { DetailedPage } from './pages/DetailedPage/DetailedPage';
+import DetailedPage from './pages/DetailedPage/DetailedPage';
 import EquipmentPage from './pages/EquipmentPage/EquipmentPage';
 import MyAdsPage from './pages/MyAdsPage/MyAdsPage';
 import MyPurchases from './pages/MyBuys/MyPurchases';
@@ -22,7 +23,6 @@ const App = observer(() => {
   const [showNavbar, setShowNavbar] = useState(true);
 
   useEffect(() => {
-    // Список путей, на которых навбар не должен отображаться, это страницы авторизаций
     const noNavbarRoutes = ['/registration', '/authorization'];
     setShowNavbar(!noNavbarRoutes.includes(location.pathname));
   }, [location]);
@@ -35,17 +35,18 @@ const App = observer(() => {
         <Routes>
           <Route path='/equipment' element={<EquipmentPage />} />
           <Route path='/services' element={<ServicesPage />} />
-          <Route path='/place-order' element={<PlaceOrderPage />} />
-          <Route path='/profile' element={<ProfilePage />} />
-          <Route path='/my-ads' element={<MyAdsPage />} />
-          <Route path='/my-ads/:id' element={<DetailedPage />} />
-          <Route path='/my-purchases' element={<MyPurchases />} />
-          <Route path='/orders-history' element={<OrderHistoryPage />} />
+
           <Route element={<AuthRoute />}>
-            {/*Сюда пихаем роуты до авторизации, чтобы страницы с авторизацией не были доступны авторизованному пользователю*/}
+            <Route path='/place-order' element={<PlaceOrderPage />} />
+            <Route path='/profile' element={<ProfilePage />} />
+            <Route path='/my-ads' element={<MyAdsPage />} />
+            <Route path='/my-ads/:id' element={<DetailedPage />} />
+            <Route path='/my-purchases' element={<MyPurchases />} />
+            <Route path='/orders-history' element={<OrderHistoryPage />} />
+          </Route>
+          <Route element={<NoAuthRoute />}>
             <Route path='/registration' element={<RegistrationPage />}></Route>
             <Route path='/authorization' element={<AuthorizationPage />}></Route>
-            {/* <Route path='/autorization' element={<AuthorizationPAge />} /> */}
           </Route>
         </Routes>
       </div>
