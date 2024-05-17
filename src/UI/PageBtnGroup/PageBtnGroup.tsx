@@ -15,13 +15,13 @@ const PageBtnGroup = ({ store }: IPagesBtnGroup) => {
   const setPage = (page: number) => (event: any) => {
     store.setPage(page);
   };
-  if (currPage > 2)
+  if (currPage > 1)
     pages.push(
       <button className={styles.arrow} onClick={setPage(1)}>
         <ArrowLeftDouble />
       </button>,
     );
-  if (currPage > 1)
+  if (currPage > 0)
     pages.push(
       <button className={styles.arrow} onClick={setPage(currPage - 1)}>
         <ArrowLeft />
@@ -36,13 +36,13 @@ const PageBtnGroup = ({ store }: IPagesBtnGroup) => {
     </button>,
   );
 
-  if (currPage * limit < total) {
+  if (total !== 0 && currPage + 1 < total) {
     pages.push(
       <button className={styles.page} onClick={setPage(currPage + 1)}>
         {currPage + 1}
       </button>,
     );
-    if ((currPage + 1) * limit < total) {
+    if (currPage + 2 < total) {
       pages.push(
         <button className={styles.page} onClick={setPage(currPage + 2)}>
           {currPage + 2}

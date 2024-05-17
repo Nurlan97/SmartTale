@@ -65,12 +65,20 @@
 
 .contactsItemActive {
   color: #000;
-   margin: auto 12px;
-   text-decoration: underline;
+  margin: auto 12px;
+  // text-decoration: underline;
+  background-color: #ffcc0031;
+  padding: 4px 12px;
+  border-radius: 6px;
 }
 .contactsItem {
   color: #8e8e93;
   margin: auto 12px;
+  padding: 4px 12px;
+}
+.contactsTxt {
+  width: 300px;
+  text-align: start;
 }
 .footer {
   width: 100%;

@@ -21,7 +21,7 @@ const emptyForm: IInital = {
   price: '',
   contacts: 'PHONE',
   sizes: '',
-  deadline: new Date(),
+  deadline: new Date(new Date().getTime() + 1 * 24 * 60 * 60 * 1000),
 };
 const PlaceOrderPage = observer(() => {
   return (

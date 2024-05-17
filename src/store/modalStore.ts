@@ -17,12 +17,13 @@ export enum ChoiseModals {
   exit = 'exit',
 }
 
-enum ModalsTypes {
+export enum ModalsTypes {
   simpleModal = 'simpleModal', //Модалки с одной кнопкой
   choiseModal = 'choiseModal', //Модалки с двумя кнопками
   descriptionModal = 'descriptionModal', //Модалки с описанием объявления или заказа
   changePhotoModal = 'changePhotoModal', //Модалка изменения фото профиля
   inviteEmployer = 'inviteEmployer', //Модалка приглашения сотрудника
+  loader = '',
 }
 interface IDetailed {
   id: number;
@@ -78,7 +79,7 @@ class modalStore {
   };
   currentSimple: SimpleModals = SimpleModals.errorValidation;
   currentChoise: ChoiseModals = ChoiseModals.hideAd;
-  currentType: ModalsTypes | null = ModalsTypes.inviteEmployer;
+  currentType: ModalsTypes | null = ModalsTypes.loader;
   constructor() {
     makeAutoObservable(this);
   }
@@ -119,6 +120,10 @@ class modalStore {
   };
   openChangePhoto = () => {
     this.currentType = ModalsTypes.changePhotoModal;
+    this.isOpen = true;
+  };
+  openLoader = () => {
+    this.currentType = ModalsTypes.loader;
     this.isOpen = true;
   };
   setImage = (num: number) => () => {

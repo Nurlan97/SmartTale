@@ -6,7 +6,7 @@ import {
   VerificationRequest,
 } from '../api/data-contracts';
 import { MyApi } from '../api/V1';
-import { fullPromise } from '../utils/helpers';
+import { fullPromise, removeCookie } from '../utils/helpers';
 import { setCookie } from '../utils/helpers';
 import modalStore, { SimpleModals } from './modalStore';
 
@@ -36,15 +36,13 @@ class userStore {
   firstName = '';
   middleName = '';
   email = '';
-  phone = '+996123456789';
-  profilePhoto =
-    'https://img.freepik.com/free-psd/3d-illustration-of-person-with-sunglasses_23-2149436188.jpg?size=338&ext=jpg&ga=GA1.1.2116175301.1714435200&semt=ais';
+  phone = '';
+  profilePhoto = '';
   subscribePeriod = '';
   isRemember = false;
   authenticationStage: 1 | 2 | 3 = 1;
   isAuth = false;
   anyAds = false;
-
   invalidCode = false;
 
   constructor() {
@@ -56,15 +54,6 @@ class userStore {
   };
 
   fetchRegistration = async (registrationData: RegistrationRequest) => {
-    // const result = fromPromise(api.register(registrationData));
-    // result.then(
-    //   (result) => {
-    //     this.email = result.data;
-    //     this.authenticationStage = 2;
-    //   },
-    //   (rejectReason) =>
-    //     console.error('fetchResult was rejected, reason: ' + rejectReason),
-    // );
     try {
       const result = await api.register(registrationData);
       runInAction(() => {
@@ -76,15 +65,6 @@ class userStore {
     }
   };
   fetchAvailableEmail = async (emailValue: string) => {
-    // function debounce(cb, delay = 1000) {
-    //   let timeout;
-    //   return (...args) => {
-    //     clearTimeout(timeout);
-    //     timeout = setTimeout(() => {
-    //       cb(...args);
-    //     }, delay);
-    //   };
-    // }
     try {
       const result = await api.isEmailAvailable(emailValue);
       return result.data;
@@ -92,16 +72,8 @@ class userStore {
       console.log(error);
     }
   };
-  sendVerificationCode = async (
-    data: VerificationRequest,
-    // navigate: NavigateFunction,
-    navigate: () => void,
-  ) => {
-    //функция fullPromise принимает 3 аргумента
-    //promise - сам промис
-    //fullfilled - каллбек вызовется если промис зарезолвится
-    //rejected - каллбек вызовется если промис зереджектится
-    this.authenticationStage = 3; //включаем лоадер
+  sendVerificationCode = async (data: VerificationRequest, navigate: () => void) => {
+    this.authenticationStage = 3;
     fullPromise(
       api.verifyEmail(data),
       (value) => {
@@ -110,10 +82,11 @@ class userStore {
           this.refreshToken = value.data.refreshToken;
           this.isAuth = true;
           if (this.isRemember) {
-            setCookie('accessToken', value.data.accessToken, 30);
-            setCookie('refreshToken', value.data.refreshToken, 30);
+            setCookie('accessToken', value.data.accessToken, 0.25);
+            setCookie('refreshToken', value.data.refreshToken, 168);
           }
         });
+        this.getUser();
         setTimeout(() => {
           navigate();
         }, 500);
@@ -162,12 +135,8 @@ class userStore {
         this.lastName = response.data.lastName;
         this.middleName = response.data.middleName;
         this.email = response.data.email;
-        if (response.data.avatarUrl) {
-          this.profilePhoto = response.data.avatarUrl;
-        }
-        if (response.data.phoneNumber) {
-          this.phone = response.data.phoneNumber;
-        }
+        this.profilePhoto = response.data.avatarUrl;
+        this.phone = response.data.phoneNumber;
         if (response.data.subscriptionEndDate) {
           this.subscribePeriod = response.data.subscriptionEndDate;
         }
@@ -210,6 +179,44 @@ class userStore {
     } catch (error) {
       console.log(error);
     }
+  };
+  setTokens = (accessToken: string, refreshToken: string) => {
+    runInAction(() => {
+      this.accessToken = accessToken;
+      this.refreshToken = refreshToken;
+      setCookie('accessToken', accessToken, 0.25);
+      setCookie('refreshToken', refreshToken, 168);
+    });
+  };
+  refreshTokens = async (refreshToken: string) => {
+    try {
+      console.log('refresh tokens');
+      const response = await api.refreshToken(`Bearer ${refreshToken}`);
+      runInAction(() => {
+        this.setTokens(response.data.accessToken, response.data.refreshToken);
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  logout = () => {
+    this.isAuth = false;
+    this.accessToken = '';
+    this.refreshToken = '';
+    this.profileEdit = false;
+    this.lastName = '';
+    this.firstName = '';
+    this.middleName = '';
+    this.email = '';
+    this.phone = '';
+    this.profilePhoto = '';
+    this.subscribePeriod = '';
+    this.isRemember = false;
+    this.authenticationStage = 1;
+    this.anyAds = false;
+    this.invalidCode = false;
+    removeCookie('accessToken');
+    removeCookie('refreshToken');
   };
 }
 

@@ -10,9 +10,9 @@ import userStore from './userStore';
 
 const createPlaceOrderStore = (images: string[]) => {
   const placeOrderStoreInstance = new PlaceOrderStore(images);
-  injectStores({
-    placeOrderStoreInstance,
-  });
+  // injectStores({
+  //   placeOrderStoreInstance,
+  // });
   return placeOrderStoreInstance;
 };
 const emptyPlaceOrderStore = new PlaceOrderStore([]);

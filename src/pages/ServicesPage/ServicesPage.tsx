@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { observer } from 'mobx-react-lite';
 
 import Grid from '../../components/Grid/Grid';
 import Header from '../../components/Header/Header';
@@ -7,7 +7,7 @@ import servicesStore from '../../store/servicesStore';
 import PageBtnGroup from '../../UI/PageBtnGroup/PageBtnGroup';
 import styles from './servicesPage.module.scss';
 
-const ServicesPage = () => {
+const ServicesPage = observer(() => {
   const columns = useColumnsGrid(servicesStore.setLimit, 286, 24);
   return (
     <div className={styles.page}>
@@ -16,6 +16,6 @@ const ServicesPage = () => {
       <PageBtnGroup store={servicesStore} />
     </div>
   );
-};
+});
 
 export default ServicesPage;

@@ -1,8 +1,10 @@
+import axios from 'axios';
 import { makeAutoObservable } from 'mobx';
 import uniqid from 'uniqid';
 
 import { CreateAdRequest } from '../api/data-contracts';
 import { MyApi } from '../api/V1';
+import modalStore from './modalStore';
 import userStore from './userStore';
 
 const api = new MyApi();
@@ -44,7 +46,7 @@ interface REPLACE {
 export default class adStore {
   isLoading = false;
   showForm = true;
-  type = 'equipment';
+  type: 'Order' | 'Product' = 'Product';
   currentImages: Array<string> = [];
   #viewedImages: IImage[] = [];
   #oldImages: IImage[] = [];
@@ -62,7 +64,7 @@ export default class adStore {
     this.updateViewed();
     makeAutoObservable(this, {}, { autoBind: true });
   }
-  setType = (type: 'equipment' | 'services') => {
+  setType = (type: 'Product' | 'Order') => {
     this.type = type;
   };
   calcActions = () => {
@@ -84,7 +86,7 @@ export default class adStore {
             filePointer += 1;
             currentView.splice(i, 1, newView[i]);
           } else {
-            console.log('testing', currentView.length, newView.length);
+            // console.log('testing', currentView.length, newView.length);
             action = {
               action: 'ADD',
               targetPosition: i,
@@ -94,7 +96,7 @@ export default class adStore {
           }
           // currentView.push(newView[i]);
         } else {
-          console.log('action remove');
+          // console.log('action remove');
           action = {
             action: 'REMOVE',
             arrayPosition: i,
@@ -179,18 +181,46 @@ export default class adStore {
     });
     this.updateViewed();
   };
-  placeAd = (dto: CreateAdRequest, images: File[] = []) => {
-    const data: IPlaceAd = {
-      dto: dto,
-      images: images,
-    };
+  placeAd = async (dto: CreateAdRequest, images: File[] = []) => {
+    modalStore.openLoader();
+    const obj = { dto: dto, images: images };
+    const formData = new FormData();
+    formData.append('dto', new Blob([JSON.stringify(dto)], { type: 'application/json' }));
+    if (images) {
+      for (const image of images) {
+        formData.append('images', image);
+      }
+    }
     try {
-      const response = api.placeAdvertisement(data, {
+      const response = await api.placeAdvertisement(obj, {
         headers: { Authorization: `Bearer ${userStore.accessToken}` },
       });
-      console.log(response);
+      this.resetForm();
+      // const response2 = await axios.post(
+      //   'https://smart-tale-production.up.railway.app/v1/market',
+      //   formData,
+      //   {
+      //     headers: {
+      //       'Content-Type': 'multipart/form-data',
+      //       Authorization: `Bearer ${userStore.accessToken}`,
+      //     },
+      //   },
+      // );
     } catch (error) {
       console.log(error);
     }
+    modalStore.closeModal();
+  };
+  resetForm = () => {
+    this.isLoading = false;
+    this.showForm = true;
+    this.type = 'Product';
+    this.currentImages = [];
+    this.#viewedImages = [];
+    this.#oldImages = [];
+    this.additionalImages = [];
+    this.additionalFiles = [];
+    this.viewedImages = [];
+    this.imageActions = [];
   };
 }

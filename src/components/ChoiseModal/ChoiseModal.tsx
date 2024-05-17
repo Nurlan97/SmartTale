@@ -1,8 +1,11 @@
-import { modalStore } from '../../store';
+import { useNavigate } from 'react-router-dom';
+
+import { modalStore, userStore } from '../../store';
 import Button from '../../UI/Button/Button';
 import styles from './choiseModal.module.scss';
 
 const ChoiseModal = () => {
+  const navigate = useNavigate();
   const modalObj = {
     deleteAd: {
       emoji: '😔',
@@ -10,6 +13,7 @@ const ChoiseModal = () => {
       description: 'Объявление удалится навсегда!',
       button1: 'Отменить',
       button2: 'Удалить',
+      handler: () => {},
     },
     hideAd: {
       emoji: '🙃',
@@ -17,6 +21,7 @@ const ChoiseModal = () => {
       description: 'Объявление больше не будет доступно для просмотра в маркетплейсе',
       button1: 'Отменить',
       button2: 'Скрыть',
+      handler: () => {},
     },
     exit: {
       emoji: '🤔',
@@ -24,6 +29,11 @@ const ChoiseModal = () => {
       description: 'Все данные будут сохранены!',
       button1: 'Нет',
       button2: 'Да',
+      handler: () => {
+        userStore.logout();
+        modalStore.closeModal();
+        navigate('/authorization');
+      },
     },
   };
 
@@ -39,7 +49,11 @@ const ChoiseModal = () => {
           <Button color='white' type='button' handler={modalStore.closeModal}>
             {modalObj[modalStore.currentChoise].button1}
           </Button>
-          <Button color='blue' type='button' handler={modalStore.closeModal}>
+          <Button
+            color='blue'
+            type='button'
+            handler={modalObj[modalStore.currentChoise].handler}
+          >
             {modalObj[modalStore.currentChoise].button2}
           </Button>
         </div>
