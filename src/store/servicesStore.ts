@@ -26,7 +26,7 @@ class servicesStore {
     makeAutoObservable(this, {}, { autoBind: true });
   }
   setPage = (page: number) => {
-    this.getCardsAction(page);
+    this.getCardsAction(page, this.data.size);
   };
   setDetailedPage = (id: number) => {
     this.detailedPage = id;
@@ -36,7 +36,6 @@ class servicesStore {
   };
   getCardsAction = async (page: number = 0, limit: number = 8) => {
     //  await userStore.checkTokens();
-    console.log('services');
     modalStore.openLoader();
     this.isLoading = true;
     try {
@@ -54,7 +53,9 @@ class servicesStore {
         },
         auth,
       );
-      this.data = response.data;
+      runInAction(() => {
+        this.data = response.data;
+      });
     } catch (error) {
       console.log(error);
     } finally {

@@ -25,7 +25,7 @@ const Card = observer(({ card }: IProps) => {
       />
       <div className={styles.descriptionWrapper}>
         <div className={styles.headBlock}>
-          <span>{cutText(card.title, 20)}</span>
+          <span>{cutText(card.title, 15)}</span>
           <span className={styles.price}>
             {card.price ? `${card.price} сом` : 'Договорная'}
           </span>

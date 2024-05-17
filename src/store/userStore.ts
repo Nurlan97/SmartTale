@@ -3,6 +3,7 @@ import { makeAutoObservable, runInAction } from 'mobx';
 import {
   FullOrder,
   RegistrationRequest,
+  UpdateProfileRequest,
   VerificationRequest,
 } from '../api/data-contracts';
 import { MyApi } from '../api/V1';
@@ -145,36 +146,51 @@ class userStore {
       console.log(error);
     }
   };
-  changeFirstName = (ev: React.ChangeEvent<HTMLInputElement>) => {
-    this.firstName = ev.target.value;
-  };
-  changeLastName = (ev: React.ChangeEvent<HTMLInputElement>) => {
-    this.lastName = ev.target.value;
-  };
-  changeMiddleName = (ev: React.ChangeEvent<HTMLInputElement>) => {
-    this.middleName = ev.target.value;
-  };
-  changeEmail = (ev: React.ChangeEvent<HTMLInputElement>) => {
-    this.email = ev.target.value;
-  };
-  changePhone = (ev: React.ChangeEvent<HTMLInputElement>) => {
-    this.phone = ev.target.value;
-  };
-  changePhoto = (ev: React.ChangeEvent<HTMLInputElement>) => {
-    this.profilePhoto = ev.target.value;
-  };
+
   changeProfileEdit = () => {
     this.profileEdit = !this.profileEdit;
   };
-  updatePhoto = (file: File) => {
-    // const data = new FormData();
-    // data.append('file', file, file.name);
-    api.updateAvatar({ avatar: 'image/' }, { avatar: file });
+  updatePhoto = async (file: File) => {
+    modalStore.openLoader();
+    try {
+      await api.updateAvatar(
+        { avatar: file },
+        { headers: { Authorization: `Bearer ${this.accessToken}` } },
+      );
+      this.profilePhoto = URL.createObjectURL(file);
+    } catch (error) {
+      console.log(error);
+    }
+    modalStore.closeModal();
+  };
+  updateProfile = async (data: UpdateProfileRequest) => {
+    modalStore.openLoader();
+    try {
+      const response = await api.updateProfile(data, {
+        headers: { Authorization: `Bearer ${this.accessToken}` },
+      });
+      runInAction(() => {
+        this.firstName = response.data.firstName;
+        this.lastName = response.data.lastName;
+        this.middleName = response.data.middleName;
+        this.email = response.data.email;
+        this.profilePhoto = response.data.avatarUrl;
+        this.phone = response.data.phoneNumber;
+        if (response.data.subscriptionEndDate) {
+          this.subscribePeriod = response.data.subscriptionEndDate;
+        }
+      });
+    } catch (error) {
+      console.log(error);
+    }
+    modalStore.closeModal();
   };
   subscribe = async () => {
+    modalStore.openLoader();
     try {
-      // const response = await api.subscribe();
-      // console.log(response);
+      const response = await api.subscribe({
+        headers: { Authorization: `Bearer ${this.accessToken}` },
+      });
       modalStore.openSimple(SimpleModals.successSubscribe);
     } catch (error) {
       console.log(error);

@@ -1,7 +1,9 @@
 import { makeAutoObservable } from 'mobx';
 import { fromPromise } from 'mobx-utils';
 
+import { FullOrderCard, FullProductCard } from '../api/data-contracts';
 import { MyApi } from '../api/V1';
+import userStore from './userStore';
 export enum SimpleModals {
   closeOrder = 'closeOrder',
   errorOrder = 'errorOrder',
@@ -52,30 +54,30 @@ class modalStore {
   isOpen = false;
   isLoading = false;
   error = '';
-  detailed: IDetailed = {
-    id: 0,
-    path: 'Маркетплейс/Услуги',
-    title: 'Заказ №5',
-    deadline: 'Срок: до 15 апреля',
-    status: '',
-    price: 1000,
-    authorImg:
-      'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTKQLLq7RG9cNzHqCcnSoUlUIZcBhuI5YoCkfOA7OAdag&s',
-    author: 'Sandy Wilder Cheng',
-    images: [
-      'https://img.freepik.com/free-photo/sewing-items-arranged-neatly_463209-40.jpg',
-      'https://imgs2.tribun.com.ua/images/285/09/19607f50ca0f427e3935613776bed214_28509.jpg',
-      'https://lh4.googleusercontent.com/proxy/uR_4lgcMWQd2ZSZMTYaXB4EEu5rHl-tNkAcKIDZXZr7bt-Fwvdj5YxWm7CnJQmd85bZn2h28LsMeQR-eoFDM2mwIQC3mGDOEQi2egSvkrSfyS7MFGpkQvuaX_A',
-      'https://img.freepik.com/premium-photo/sewing-products-seamstress-tools-scissors-tape-measure-thread-pins_587895-714.jpg',
-      'https://burdastyle.ru/images/cache/2022/4/26/resize_900_900_true_q90_5351761_e1645fc8ab3cde7e9e6b95860.jpeg',
-    ],
-    activeImg: 0,
-    type: 'equipment',
-    activeTab: 'description',
-    description:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat',
-    contacts: '+996 123 456 789',
-    size: 'XXL',
+  detailedExt: {
+    path: string;
+    activeImg: number;
+    activeTab: 'description' | 'size' | 'contacts';
+  } = { activeImg: 0, activeTab: 'description', path: '' };
+  detailed: FullProductCard | FullOrderCard = {
+    acceptedBy: 0,
+    advertisementId: 0,
+    deadlineAt: '',
+    description: '',
+    imageUrls: [],
+    organizationLogoUrl: '',
+    organizationName: '',
+    price: 0,
+    publishedAt: '',
+    publishedBy: 0,
+    publisherAvatarUrl: '',
+    publisherEmail: '',
+    publisherName: '',
+    publisherPhoneNumber: '',
+    purchasedAt: '',
+    size: '',
+    title: '',
+    views: 0,
   };
   currentSimple: SimpleModals = SimpleModals.errorValidation;
   currentChoise: ChoiseModals = ChoiseModals.hideAd;
@@ -86,27 +88,24 @@ class modalStore {
   closeModal = () => {
     this.isOpen = false;
   };
-  openDescription = (id: number, path: string) => {
-    this.currentType = ModalsTypes.descriptionModal;
-    if (path === '/my-purchases' || path === '/equipment' || path === '/services') {
-      this.detailed.path = pathObj[path];
-    }
-    this.detailed.id = id;
+  openDescription = async (id: number, path: string) => {
     this.isOpen = true;
-    // const response = fromPromise(api.getAd(id));
-    // response.case({
-    //   pending: () => {
-    //     this.isLoading = true; //включаем лоадер
-    //   },
-    //   rejected: (error) => {
-    //     this.error = error;
-    //     console.log(error);
-    //   },
-    //   fulfilled: (value) => {
-    //     console.log(value);
-    //     this.isLoading = false;
-    //   },
-    // });
+    this.currentType = ModalsTypes.loader;
+    try {
+      const response = await api.getAd(id, {
+        headers: { Authorization: `Bearer ${userStore.accessToken}` },
+      });
+      this.detailed = response.data;
+      if (path === '/my-purchases' || path === '/equipment' || path === '/services') {
+        this.detailedExt.path = pathObj[path];
+      }
+      this.detailedExt.activeImg = 0;
+      this.detailedExt.activeTab = 'description';
+      this.currentType = ModalsTypes.descriptionModal;
+    } catch (error) {
+      console.log(error);
+      this.isOpen = false;
+    }
   };
   openChoise = (type: ChoiseModals) => {
     this.currentType = ModalsTypes.choiseModal;
@@ -127,10 +126,10 @@ class modalStore {
     this.isOpen = true;
   };
   setImage = (num: number) => () => {
-    this.detailed.activeImg = num;
+    this.detailedExt.activeImg = num;
   };
   setActiveTab = (tab: 'description' | 'contacts' | 'size') => () => {
-    this.detailed.activeTab = tab;
+    this.detailedExt.activeTab = tab;
   };
 }
 

@@ -196,16 +196,6 @@ export default class adStore {
         headers: { Authorization: `Bearer ${userStore.accessToken}` },
       });
       this.resetForm();
-      // const response2 = await axios.post(
-      //   'https://smart-tale-production.up.railway.app/v1/market',
-      //   formData,
-      //   {
-      //     headers: {
-      //       'Content-Type': 'multipart/form-data',
-      //       Authorization: `Bearer ${userStore.accessToken}`,
-      //     },
-      //   },
-      // );
     } catch (error) {
       console.log(error);
     }
