@@ -75,7 +75,7 @@ const ProfilePage = observer(() => {
           <div>
             <p
               className={styles.name}
-            >{`${userStore.middleName} ${userStore.firstName} ${userStore.lastName}`}</p>
+            >{`${userStore.lastName} ${userStore.firstName} ${userStore.middleName}`}</p>
             <p className={styles.changePhoto}>Изменить фото профиля</p>
           </div>
         </div>
@@ -90,18 +90,18 @@ const ProfilePage = observer(() => {
           />
           <Input
             onChange={formik.handleChange}
-            value={formik.values.middleName}
+            value={formik.values.lastName}
             label='Фамилия'
             disabled={!userStore.profileEdit}
-            id='middleName'
+            id='lastName'
           />
           <div className={styles.fullWidthInput}>
             <Input
               onChange={formik.handleChange}
-              value={formik.values.lastName}
+              value={formik.values.middleName}
               label='Отчество'
               disabled={!userStore.profileEdit}
-              id='lastName'
+              id='middleName'
             />
           </div>
         </div>
