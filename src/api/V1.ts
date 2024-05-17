@@ -736,10 +736,6 @@ export class MyApi<SecurityDataType = unknown> extends HttpClient<SecurityDataTy
    * @response `404` `void` User not found
    */
   updateAvatar = (
-    query: {
-      /** content type "image/" */
-      avatar: any;
-    },
     data: {
       /** @format binary */
       avatar: File;
@@ -749,7 +745,6 @@ export class MyApi<SecurityDataType = unknown> extends HttpClient<SecurityDataTy
     this.request<string, void>({
       path: `/v1/account/profile/avatar`,
       method: 'POST',
-      query: query,
       body: data,
       type: ContentType.FormData,
       ...params,

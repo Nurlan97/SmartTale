@@ -36,7 +36,6 @@ class mainStore {
     this.getCardsAction(undefined, limit);
   };
   getCardsAction = async (page: number = 0, limit: number = 8) => {
-    console.log('equipment');
     //  await userStore.checkTokens();
     this.isLoading = true;
     modalStore.openLoader();

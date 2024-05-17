@@ -1,8 +1,10 @@
 import { observer } from 'mobx-react-lite';
 
+import { defaultImage, defaultPhoto } from '../../assets';
 import { modalStore } from '../../store';
 import { SimpleModals } from '../../store/modalStore';
 import Button from '../../UI/Button/Button';
+import { formatDate } from '../../utils/helpers';
 import styles from './descriptionModal.module.scss';
 
 const DescriptionModal = observer(() => {
@@ -12,7 +14,9 @@ const DescriptionModal = observer(() => {
   ) => {
     return (
       <button
-        className={modalStore.detailed.activeTab === tab ? styles.tabActive : styles.tab}
+        className={
+          modalStore.detailedExt.activeTab === tab ? styles.tabActive : styles.tab
+        }
         onClick={modalStore.setActiveTab(tab)}
       >
         {text}
@@ -24,15 +28,19 @@ const DescriptionModal = observer(() => {
       <div className={styles.images}>
         <img
           className={styles.bigImage}
-          src={modalStore.detailed.images[modalStore.detailed.activeImg]}
+          src={
+            modalStore.detailed.imageUrls[modalStore.detailedExt.activeImg]
+              ? modalStore.detailed.imageUrls[modalStore.detailedExt.activeImg]
+              : defaultImage
+          }
           alt=''
         />
-        {modalStore.detailed.images.map((img, ind) => {
+        {modalStore.detailed.imageUrls.map((img, ind) => {
           return (
             <button key={ind} onClick={modalStore.setImage(ind)}>
               <img
                 className={
-                  ind === modalStore.detailed.activeImg
+                  ind === modalStore.detailedExt.activeImg
                     ? styles.smallImageActive
                     : styles.smallImage
                 }
@@ -45,36 +53,54 @@ const DescriptionModal = observer(() => {
       </div>
       <div className={styles.descriptionPart}>
         <div>
-          <div className={styles.path}>{modalStore.detailed.path}</div>
+          <div className={styles.path}>{modalStore.detailedExt.path}</div>
           <div className={styles.adTitle}>
             {modalStore.detailed.title}
-            {modalStore.detailed.status && (
+            {/* {modalStore.detailed.status && (
               <div className={styles.orderStatus}>{modalStore.detailed.status}</div>
-            )}
-            {modalStore.detailed.deadline && (
-              <div className={styles.orderStatus}>{modalStore.detailed.deadline}</div>
+            )} */}
+            {'deadlineAt' in modalStore.detailed && (
+              <div className={styles.orderStatus}>
+                До {formatDate(modalStore.detailed.deadlineAt)}
+              </div>
             )}
           </div>
-          <div className={styles.price}>{modalStore.detailed.price} сом</div>
+          <div className={styles.price}>
+            {modalStore.detailed.price
+              ? `${modalStore.detailed.price} сом`
+              : 'Договорная'}
+          </div>
           <div className={styles.horizontalLine}></div>
           <div className={styles.authorBlock}>
             <img
               className={styles.authorImg}
-              src={modalStore.detailed.authorImg}
+              src={
+                modalStore.detailed.publisherAvatarUrl
+                  ? modalStore.detailed.publisherAvatarUrl
+                  : defaultPhoto
+              }
               alt=''
             />
             <div>
-              <div className={styles.authorName}>{modalStore.detailed.author}</div>
+              <div className={styles.authorName}>{modalStore.detailed.publisherName}</div>
               <div className={styles.authorLabel}>Автор объявления</div>
             </div>
           </div>
           <div className={styles.tabsContainer}>
             {createTab('description', 'Описание')}
             {createTab('contacts', 'Контакты автора')}
-            {modalStore.detailed.type === 'service' && createTab('size', 'Размеры')}
+            {'size' in modalStore.detailed && createTab('size', 'Размеры')}
           </div>
           <div className={styles.tabDescription}>
-            {modalStore.detailed[modalStore.detailed.activeTab]}
+            {modalStore.detailedExt.activeTab !== 'contacts' ? (
+              modalStore.detailedExt.activeTab !== 'size' &&
+              modalStore.detailed[modalStore.detailedExt.activeTab]
+            ) : (
+              <>
+                <p>{modalStore.detailed.publisherPhoneNumber}</p>
+                <p>{modalStore.detailed.publisherEmail}</p>
+              </>
+            )}
           </div>
         </div>
         <div className={styles.button}>
@@ -84,7 +110,7 @@ const DescriptionModal = observer(() => {
             width='100%'
             margin='auto auto 0px 0px'
             handler={() => {
-              console.log(modalStore.detailed.id);
+              console.log(modalStore.detailed.advertisementId);
               modalStore.openSimple(SimpleModals.successOrder);
             }}
           >
