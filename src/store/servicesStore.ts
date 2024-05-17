@@ -3,6 +3,7 @@ import { flow, makeAutoObservable, runInAction } from 'mobx';
 import { cardsArray } from '../../mockData';
 import { PageCard } from '../api/data-contracts';
 import { MyApi } from '../api/V1';
+import modalStore from './modalStore';
 import userStore from './userStore';
 const api = new MyApi();
 class servicesStore {
@@ -31,10 +32,12 @@ class servicesStore {
     this.detailedPage = id;
   };
   setLimit = (limit: number) => {
-    // this.limit = limit;
+    this.getCardsAction(undefined, limit);
   };
   getCardsAction = async (page: number = 0, limit: number = 8) => {
     //  await userStore.checkTokens();
+    console.log('services');
+    modalStore.openLoader();
     this.isLoading = true;
     try {
       const auth = userStore.isAuth
@@ -56,6 +59,7 @@ class servicesStore {
       console.log(error);
     } finally {
       this.isLoading = false;
+      modalStore.closeModal();
     }
   };
 }

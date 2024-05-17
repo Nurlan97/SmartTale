@@ -536,13 +536,14 @@ export class MyApi<SecurityDataType = unknown> extends HttpClient<SecurityDataTy
       dto: CreateAdRequest;
       images?: File[];
     },
+    // data: FormData,
     params: RequestParams = {},
   ) =>
     this.request<string, void>({
       path: `/v1/market`,
       method: 'POST',
       body: data,
-      type: ContentType.Json,
+      type: ContentType.FormData,
       ...params,
     });
   /**

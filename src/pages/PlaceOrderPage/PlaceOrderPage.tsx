@@ -6,18 +6,22 @@ import PlaceOrderForm from '../../components/PlaceOrderForm/PlaceOrderForm';
 import { createPlaceOrderStore } from '../../store';
 import styles from './placeOrderPage.module.scss';
 
-const store = createPlaceOrderStore([
-  'https://kartinki.pics/pics/uploads/posts/2022-08/thumbs/1661232571_2-kartinkin-net-p-shveinoe-delo-fon-krasivo-2.jpg',
-  'https://kartinki.pics/pics/uploads/posts/2022-08/thumbs/1661232571_2-kartinkin-net-p-shveinoe-delo-fon-krasivo-2.jpg',
-  'https://kartinki.pics/pics/uploads/posts/2022-08/thumbs/1661232571_2-kartinkin-net-p-shveinoe-delo-fon-krasivo-2.jpg',
-]);
-const emptyForm = {
+const store = createPlaceOrderStore([]);
+export interface IInital {
+  title: string;
+  description: string;
+  price: string;
+  contacts: 'EMAIL' | 'PHONE' | 'EMAIL_PHONE';
+  sizes: string;
+  deadline: Date;
+}
+const emptyForm: IInital = {
   title: '',
   description: '',
   price: '',
-  phone: '',
+  contacts: 'PHONE',
   sizes: '',
-  deadline: new Date(),
+  deadline: new Date(new Date().getTime() + 1 * 24 * 60 * 60 * 1000),
 };
 const PlaceOrderPage = observer(() => {
   return (

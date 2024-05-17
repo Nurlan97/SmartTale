@@ -72,7 +72,7 @@ export class HttpClient<SecurityDataType = unknown> {
 
     protected stringifyFormItem(formItem: unknown) {
       if (typeof formItem === "object" && formItem !== null) {
-        return JSON.stringify(formItem);
+        return new Blob([JSON.stringify(formItem)], { type: 'application/json' });
       } else {
         return `${formItem}`;
       }

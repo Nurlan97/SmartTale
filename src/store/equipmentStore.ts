@@ -2,6 +2,7 @@ import { flow, makeAutoObservable, runInAction } from 'mobx';
 
 import { PageCard } from '../api/data-contracts';
 import { MyApi } from '../api/V1';
+import modalStore from './modalStore';
 import userStore from './userStore';
 
 const api = new MyApi();
@@ -26,7 +27,7 @@ class mainStore {
   }
   setPage = (page: number) => {
     // this.page = page;
-    this.getCardsAction(page);
+    this.getCardsAction(page, this.data.size);
   };
   setDetailedPage = (id: number) => {
     this.detailedPage = id;
@@ -35,8 +36,10 @@ class mainStore {
     this.getCardsAction(undefined, limit);
   };
   getCardsAction = async (page: number = 0, limit: number = 8) => {
+    console.log('equipment');
     //  await userStore.checkTokens();
     this.isLoading = true;
+    modalStore.openLoader();
     try {
       const auth = userStore.isAuth
         ? {
@@ -52,11 +55,14 @@ class mainStore {
         },
         auth,
       );
-      this.data = response.data;
+      runInAction(() => {
+        this.data = response.data;
+      });
     } catch (error) {
       console.log(error);
     } finally {
       this.isLoading = false;
+      modalStore.closeModal();
     }
   };
 }

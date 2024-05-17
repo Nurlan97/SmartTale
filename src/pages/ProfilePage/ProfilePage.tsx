@@ -14,7 +14,6 @@ import styles from './profilePage.module.scss';
 const ProfilePage = observer(() => {
   useEffect(() => {
     // userStore.getUser();
-    console.log('getUser');
   }, []);
   return (
     <div className={styles.page}>

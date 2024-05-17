@@ -3,10 +3,12 @@ import Modal from 'react-modal';
 
 import { Cross } from '../../assets';
 import { modalStore } from '../../store';
+import { ModalsTypes } from '../../store/modalStore';
 import ChangePhotoModal from '../ChangePhotoModal/ChangePhotoModal';
 import ChoiseModal from '../ChoiseModal/ChoiseModal';
 import DescriptionModal from '../DescriptionModal/DescriptionModal';
 import InviteEmployerModal from '../InviteEmployerModal/InviteEmployerModal';
+import ModalLoader from '../ModalLoader/ModalLoader';
 import SimpleModal from '../SimpleModal/SimpleModal';
 import styles from './modalContainer.module.scss';
 
@@ -17,7 +19,20 @@ const ModalContainer = observer(() => {
     descriptionModal: <DescriptionModal />,
     changePhotoModal: <ChangePhotoModal />,
     inviteEmployer: <InviteEmployerModal />,
+    loaderModal: <ModalLoader />,
   };
+  if (modalStore.currentType === ModalsTypes.loader) {
+    return (
+      <Modal
+        isOpen={modalStore.isOpen}
+        overlayClassName={styles.overlay}
+        className={styles.loader}
+        appElement={document.getElementById('root') as HTMLElement}
+      >
+        <ModalLoader />
+      </Modal>
+    );
+  }
   return (
     <Modal
       isOpen={modalStore.isOpen}

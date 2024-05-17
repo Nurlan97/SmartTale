@@ -1,12 +1,12 @@
 import { observer } from 'mobx-react-lite';
 import { useEffect, useState } from 'react';
-import { Route, Routes, useLocation } from 'react-router-dom';
+import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 
 import styles from './App.module.scss';
 import AuthRoute from './components/AuthRoute/AuthRoute';
 import ModalContainer from './components/ModalContainer/ModalContainer';
-import NoAuthRoute from './components/NAuthRoute/NoAuthRoute';
 import NavBar from './components/NavBar/NavBar';
+import NoAuthRoute from './components/NoAuthRoute/NoAuthRoute';
 import AuthorizationPage from './pages/AuthorizationPage/AuthorizationPage';
 import DetailedPage from './pages/DetailedPage/DetailedPage';
 import EquipmentPage from './pages/EquipmentPage/EquipmentPage';
@@ -17,8 +17,33 @@ import PlaceOrderPage from './pages/PlaceOrderPage/PlaceOrderPage';
 import ProfilePage from './pages/ProfilePage/ProfilePage';
 import RegistrationPage from './pages/RegistrationPage/RegistrationPage';
 import ServicesPage from './pages/ServicesPage/ServicesPage';
+import { userStore } from './store';
+import { getCookie, isTokenExpired, removeCookie } from './utils/helpers';
 
 const App = observer(() => {
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (!userStore.isAuth) {
+      const accessToken = getCookie('accessToken');
+      const refreshToken = getCookie('refreshToken');
+      if (!!accessToken && !!refreshToken && !isTokenExpired(accessToken)) {
+        userStore.setTokens(accessToken, refreshToken);
+        userStore.getUser();
+        userStore.isAuth = true;
+        navigate('/equipment');
+        return;
+      }
+      if (!!refreshToken && !isTokenExpired(refreshToken)) {
+        userStore.refreshTokens(refreshToken);
+        userStore.getUser();
+        userStore.isAuth = true;
+        navigate('/equipment');
+        return;
+      }
+      removeCookie('accessToken');
+      removeCookie('refreshToken');
+    }
+  });
   const location = useLocation();
   const [showNavbar, setShowNavbar] = useState(true);
 
