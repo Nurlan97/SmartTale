@@ -49,7 +49,6 @@ const ChangePhotoModal = () => {
         handler={() => {
           if (photo.file) {
             userStore.updatePhoto(photo.file);
-            modalStore.closeModal();
           }
         }}
       >

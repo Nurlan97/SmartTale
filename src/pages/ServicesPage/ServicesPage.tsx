@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { observer } from 'mobx-react-lite';
 
 import Grid from '../../components/Grid/Grid';
 import Header from '../../components/Header/Header';
@@ -7,18 +7,15 @@ import servicesStore from '../../store/servicesStore';
 import PageBtnGroup from '../../UI/PageBtnGroup/PageBtnGroup';
 import styles from './servicesPage.module.scss';
 
-const ServicesPage = () => {
-  useEffect(() => {
-    servicesStore.getRecipesAction();
-  }, []);
+const ServicesPage = observer(() => {
   const columns = useColumnsGrid(servicesStore.setLimit, 286, 24);
   return (
     <div className={styles.page}>
       <Header path='Маркетплейс/Услуги' title='Услуги' />
-      <Grid array={servicesStore.grid} columns={columns} />
+      <Grid array={servicesStore.data.content} columns={columns} />
       <PageBtnGroup store={servicesStore} />
     </div>
   );
-};
+});
 
 export default ServicesPage;

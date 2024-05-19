@@ -35,6 +35,51 @@
   height: 0px;
   margin: 32px 0;
 }
+
+.contactsWrapper {
+  background-color: white;
+  border-radius: 12px;
+  padding: 12px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.contactsBtnGroup {
+  overflow: hidden;
+  width: 250px;
+  height: 40px;
+  border-radius: 12px;
+  border: 1px solid #8e8e93;
+  background-color: #8e8e93;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 1px;
+}
+.contactsBtn {
+  background-color: white;
+}
+.contactsBtnActive {
+  background-color: #ffcc00;
+}
+
+.contactsItemActive {
+  color: #000;
+  margin: auto 12px;
+  // text-decoration: underline;
+  background-color: #ffcc0031;
+  padding: 4px 12px;
+  border-radius: 6px;
+}
+.contactsItem {
+  color: #8e8e93;
+  margin: auto 12px;
+  padding: 4px 12px;
+}
+.contactsTxt {
+  width: 300px;
+  text-align: start;
+}
 .footer {
   width: 100%;
   display: flex;

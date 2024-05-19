@@ -4,6 +4,8 @@ import Bell from './bell.svg';
 import Calendar from './calendar.svg';
 import CheckMark from './check mark.svg';
 import Cross from './cross.svg';
+import defaultImage from './defaultImage.jpg';
+import defaultPhoto from './defaultPhoto.png';
 import DeleteImg from './deleteImg.svg';
 import Desc from './descend.svg';
 import logo from './designLogo.png';
@@ -13,6 +15,7 @@ import EyeOpened from './eyeOpened.svg';
 import gift from './gift.png';
 import ArrowLeft from './leftArrow.svg';
 import ArrowLeftDouble from './leftDoubleArrow.svg';
+import Login from './login.svg';
 import NavbarExit from './navbarExit.svg';
 import NavbarMarket from './navbarMarket.svg';
 import NavbarOrders from './navbarOrders.svg';
@@ -36,11 +39,14 @@ export {
   Calendar,
   CheckMark,
   Cross,
+  defaultImage,
+  defaultPhoto,
   DeleteImg,
   Desc,
   EyeClosed,
   EyeOpened,
   gift,
+  Login,
   logo,
   NavbarExit,
   NavbarMarket,

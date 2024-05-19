@@ -1,5 +1,7 @@
 import { useEffect, useLayoutEffect, useState } from 'react';
 
+import { useDebounce } from './useDebounce';
+
 // limit: передаем из стора лимит карточек, он его будет менять
 // width: передаем ширину карточек
 // gap: передаем gap в гриде
@@ -9,19 +11,21 @@ const useColumnsGrid = (
   width: number,
   gap: number,
 ) => {
-  const [windowSize, setWindowSize] = useState({ width: 0, height: 0 });
-  const [columns, setColumns] = useState(4);
-  const handleSize = () => {
+  const [windowSize, setWindowSize] = useState({
+    width: window.innerWidth,
+    height: window.innerHeight,
+  });
+  const [columns, setColumns] = useState(6);
+
+  const debounceHandleSize = useDebounce(() => {
     setWindowSize({
       width: window.innerWidth,
       height: window.innerHeight,
     });
-  };
-
+  });
   useLayoutEffect(() => {
-    handleSize();
-    window.addEventListener('resize', handleSize);
-    return () => window.removeEventListener('resize', handleSize);
+    window.addEventListener('resize', debounceHandleSize);
+    return () => window.removeEventListener('resize', debounceHandleSize);
   }, []);
 
   useEffect(() => {

@@ -13,7 +13,7 @@ type FormType = {
 };
 
 const FormInput = observer(({ htmlFor, label, placeholder, id, formik }: FormType) => {
-  const isError = formik.errors[htmlFor] ? formik.errors[htmlFor] : ' ';
+  const isError = formik.errors[htmlFor] ? formik.errors[htmlFor] : '';
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (htmlFor === 'phoneNumber') {
       const regex = new RegExp(/^\+?[0-9]*$/);
@@ -36,7 +36,7 @@ const FormInput = observer(({ htmlFor, label, placeholder, id, formik }: FormTyp
         onBlur={formik.handleBlur}
       />
       <p className={styles.errors}>
-        {`${!!isError && !!formik.touched[htmlFor] ? isError : ' '}`}
+        {`${!!isError && !!formik.touched[htmlFor] ? isError : ''}`}
       </p>
     </div>
   );

@@ -3,10 +3,11 @@ import { makeAutoObservable, runInAction } from 'mobx';
 import {
   FullOrder,
   RegistrationRequest,
+  UpdateProfileRequest,
   VerificationRequest,
 } from '../api/data-contracts';
 import { MyApi } from '../api/V1';
-import { fullPromise } from '../utils/helpers';
+import { fullPromise, removeCookie } from '../utils/helpers';
 import { setCookie } from '../utils/helpers';
 import modalStore, { SimpleModals } from './modalStore';
 
@@ -37,14 +38,12 @@ class userStore {
   middleName = '';
   email = '';
   phone = '';
-  profilePhoto =
-    'https://img.freepik.com/free-psd/3d-illustration-of-person-with-sunglasses_23-2149436188.jpg?size=338&ext=jpg&ga=GA1.1.2116175301.1714435200&semt=ais';
+  profilePhoto = '';
   subscribePeriod = '';
   isRemember = false;
   authenticationStage: 1 | 2 | 3 = 1;
   isAuth = false;
   anyAds = false;
-
   invalidCode = false;
 
   constructor() {
@@ -56,15 +55,6 @@ class userStore {
   };
 
   fetchRegistration = async (registrationData: RegistrationRequest) => {
-    // const result = fromPromise(api.register(registrationData));
-    // result.then(
-    //   (result) => {
-    //     this.email = result.data;
-    //     this.authenticationStage = 2;
-    //   },
-    //   (rejectReason) =>
-    //     console.error('fetchResult was rejected, reason: ' + rejectReason),
-    // );
     try {
       const result = await api.register(registrationData);
       runInAction(() => {
@@ -76,15 +66,6 @@ class userStore {
     }
   };
   fetchAvailableEmail = async (emailValue: string) => {
-    // function debounce(cb, delay = 1000) {
-    //   let timeout;
-    //   return (...args) => {
-    //     clearTimeout(timeout);
-    //     timeout = setTimeout(() => {
-    //       cb(...args);
-    //     }, delay);
-    //   };
-    // }
     try {
       const result = await api.isEmailAvailable(emailValue);
       return result.data;
@@ -92,27 +73,21 @@ class userStore {
       console.log(error);
     }
   };
-  sendVerificationCode = async (
-    data: VerificationRequest,
-    // navigate: NavigateFunction,
-    navigate: () => void,
-  ) => {
-    //функция fullPromise принимает 3 аргумента
-    //promise - сам промис
-    //fullfilled - каллбек вызовется если промис зарезолвится
-    //rejected - каллбек вызовется если промис зереджектится
-    this.authenticationStage = 3; //включаем лоадер
+  sendVerificationCode = async (data: VerificationRequest, navigate: () => void) => {
+    this.authenticationStage = 3;
     fullPromise(
       api.verifyEmail(data),
       (value) => {
         runInAction(() => {
           this.accessToken = value.data.accessToken;
           this.refreshToken = value.data.refreshToken;
+          this.isAuth = true;
           if (this.isRemember) {
-            setCookie('accessToken', value.data.accessToken, 30);
-            setCookie('refreshToken', value.data.refreshToken, 30);
+            setCookie('accessToken', value.data.accessToken, 0.25);
+            setCookie('refreshToken', value.data.refreshToken, 168);
           }
         });
+        this.getUser();
         setTimeout(() => {
           navigate();
         }, 500);
@@ -161,12 +136,8 @@ class userStore {
         this.lastName = response.data.lastName;
         this.middleName = response.data.middleName;
         this.email = response.data.email;
-        if (response.data.avatarUrl) {
-          this.profilePhoto = response.data.avatarUrl;
-        }
-        if (response.data.phoneNumber) {
-          this.phone = response.data.phoneNumber;
-        }
+        this.profilePhoto = response.data.avatarUrl;
+        this.phone = response.data.phoneNumber;
         if (response.data.subscriptionEndDate) {
           this.subscribePeriod = response.data.subscriptionEndDate;
         }
@@ -175,40 +146,93 @@ class userStore {
       console.log(error);
     }
   };
-  changeFirstName = (ev: React.ChangeEvent<HTMLInputElement>) => {
-    this.firstName = ev.target.value;
-  };
-  changeLastName = (ev: React.ChangeEvent<HTMLInputElement>) => {
-    this.lastName = ev.target.value;
-  };
-  changeMiddleName = (ev: React.ChangeEvent<HTMLInputElement>) => {
-    this.middleName = ev.target.value;
-  };
-  changeEmail = (ev: React.ChangeEvent<HTMLInputElement>) => {
-    this.email = ev.target.value;
-  };
-  changePhone = (ev: React.ChangeEvent<HTMLInputElement>) => {
-    this.phone = ev.target.value;
-  };
-  changePhoto = (ev: React.ChangeEvent<HTMLInputElement>) => {
-    this.profilePhoto = ev.target.value;
-  };
+
   changeProfileEdit = () => {
     this.profileEdit = !this.profileEdit;
   };
-  updatePhoto = (file: File) => {
-    // const data = new FormData();
-    // data.append('file', file, file.name);
-    api.updateAvatar({ avatar: 'image/' }, { avatar: file });
+  updatePhoto = async (file: File) => {
+    modalStore.openLoader();
+    try {
+      await api.updateAvatar(
+        { avatar: file },
+        { headers: { Authorization: `Bearer ${this.accessToken}` } },
+      );
+      this.profilePhoto = URL.createObjectURL(file);
+    } catch (error) {
+      console.log(error);
+    }
+    modalStore.closeModal();
+  };
+  updateProfile = async (data: UpdateProfileRequest) => {
+    modalStore.openLoader();
+    try {
+      const response = await api.updateProfile(data, {
+        headers: { Authorization: `Bearer ${this.accessToken}` },
+      });
+      runInAction(() => {
+        this.firstName = response.data.firstName;
+        this.lastName = response.data.lastName;
+        this.middleName = response.data.middleName;
+        this.email = response.data.email;
+        this.profilePhoto = response.data.avatarUrl;
+        this.phone = response.data.phoneNumber;
+        if (response.data.subscriptionEndDate) {
+          this.subscribePeriod = response.data.subscriptionEndDate;
+        }
+      });
+    } catch (error) {
+      console.log(error);
+    }
+    modalStore.closeModal();
   };
   subscribe = async () => {
+    modalStore.openLoader();
     try {
-      // const response = await api.subscribe();
-      // console.log(response);
+      const response = await api.subscribe({
+        headers: { Authorization: `Bearer ${this.accessToken}` },
+      });
       modalStore.openSimple(SimpleModals.successSubscribe);
     } catch (error) {
       console.log(error);
     }
+  };
+  setTokens = (accessToken: string, refreshToken: string) => {
+    runInAction(() => {
+      this.accessToken = accessToken;
+      this.refreshToken = refreshToken;
+      setCookie('accessToken', accessToken, 0.25);
+      setCookie('refreshToken', refreshToken, 168);
+    });
+  };
+  refreshTokens = async (refreshToken: string) => {
+    try {
+      console.log('refresh tokens');
+      const response = await api.refreshToken(`Bearer ${refreshToken}`);
+      runInAction(() => {
+        this.setTokens(response.data.accessToken, response.data.refreshToken);
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  logout = () => {
+    this.isAuth = false;
+    this.accessToken = '';
+    this.refreshToken = '';
+    this.profileEdit = false;
+    this.lastName = '';
+    this.firstName = '';
+    this.middleName = '';
+    this.email = '';
+    this.phone = '';
+    this.profilePhoto = '';
+    this.subscribePeriod = '';
+    this.isRemember = false;
+    this.authenticationStage = 1;
+    this.anyAds = false;
+    this.invalidCode = false;
+    removeCookie('accessToken');
+    removeCookie('refreshToken');
   };
 }
 

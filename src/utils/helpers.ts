@@ -1,8 +1,8 @@
-export function setCookie(name: string, value: string, days: number) {
+export function setCookie(name: string, value: string, hours: number) {
   let expires = '';
-  if (days) {
+  if (hours) {
     const date = new Date();
-    date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
+    date.setTime(date.getTime() + hours * 60 * 60 * 1000);
     expires = '; expires=' + date.toUTCString();
   }
   document.cookie = name + '=' + (value || '') + expires + '; path=/';
@@ -77,10 +77,16 @@ export function formatDate2(dateString: string | undefined) {
   if (!dateString) return '';
   console.log(dateString);
   const dateParts = dateString.split('/');
-  // console.log(dateParts);
   const year = dateParts[2];
   const month = dateParts[0];
   const day = dateParts[1];
 
   return `${day}.${month}.${year}`;
 }
+
+export const isTokenExpired = (token: string) => {
+  if (!token) return true;
+  if (token === 'undefined') return true;
+  const expiry = JSON.parse(atob(token.split('.')[1])).exp;
+  return Math.floor(new Date().getTime() / 1000) >= expiry;
+};
