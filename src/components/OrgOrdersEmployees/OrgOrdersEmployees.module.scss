@@ -1,0 +1,40 @@
+.logoHeader {
+  text-align: left;
+  font-family: 'SF Pro', sans-serif;
+  font-weight: 400;
+  font-size: 24px;
+  line-height: 92%;
+  text-align: left;
+  color: #000;
+}
+.logo {
+  background: #fc0;
+  width: 70px;
+  height: 70px;
+  border-radius: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 20px;
+}
+.title {
+  font-family: 'SF Pro', sans-serif;
+  font-weight: 400;
+  font-size: 24px;
+  line-height: 92%;
+  color: #000;
+  margin-bottom: 12px;
+}
+.description {
+  font-family: 'SF Pro', sans-serif;
+  font-weight: 400;
+  font-size: 14px;
+  color: #000;
+  opacity: 0.6;
+}
+
+.btnGroup {
+    margin-top: 20px;
+    display: flex;
+    gap: 8px;
+  }

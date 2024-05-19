@@ -12,6 +12,7 @@ import EquipmentPage from './pages/EquipmentPage/EquipmentPage';
 import MyAdsPage from './pages/MyAdsPage/MyAdsPage';
 import MyPurchases from './pages/MyBuys/MyPurchases';
 import OrderHistoryPage from './pages/OrderHistoryPage/OrderHistoryPage';
+import OrganizationPage from './pages/OrganizationPage/OrganizationPage';
 import PlaceOrderPage from './pages/PlaceOrderPage/PlaceOrderPage';
 import ProfilePage from './pages/ProfilePage/ProfilePage';
 import RegistrationPage from './pages/RegistrationPage/RegistrationPage';
@@ -41,6 +42,7 @@ const App = observer(() => {
           <Route path='/my-ads/:id' element={<DetailedPage />} />
           <Route path='/my-purchases' element={<MyPurchases />} />
           <Route path='/orders-history' element={<OrderHistoryPage />} />
+          <Route path='/company' element={<OrganizationPage />} />
           <Route element={<AuthRoute />}>
             {/*Сюда пихаем роуты до авторизации, чтобы страницы с авторизацией не были доступны авторизованному пользователю*/}
             <Route path='/registration' element={<RegistrationPage />}></Route>

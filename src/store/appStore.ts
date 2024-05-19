@@ -5,7 +5,7 @@ import {
   FullOrder,
   Order,
   PageCard,
-  PageSmallOrder,
+  PageOrderSummary,
   Product,
 } from '../api/data-contracts';
 import { MyApi } from '../api/V1';
@@ -37,11 +37,13 @@ interface IMyBuys {
   data: PageCard;
 }
 interface IOrders {
-  data: Omit<PageSmallOrder, 'pageable'>;
+  group: 'orders' | 'employees';
+  data: Omit<PageOrderSummary, 'pageable'>;
 }
 
 class appStore {
   myOrders: IOrders = {
+    group: 'orders',
     data: {
       totalPages: 0,
       totalElements: 0,
@@ -129,6 +131,9 @@ class appStore {
   myAdsSetGroup = (group: 'all' | 'service' | 'equipment') => {
     this.myAds.group = group;
   };
+  myOrdersSetGroup = (group: 'orders' | 'employees') => {
+    this.myOrders.group = group;
+  };
   getMyAds = () => {
     this.myAds.data.content = cardsArray;
   };
@@ -153,11 +158,16 @@ class appStore {
   };
   setSorting = () => {};
   getMyOrders = async () => {
-    const response = await api.getOrders1(
-      { q: 'active', params: {} },
-      { headers: { Authorization: `Bearer ${userStore.accessToken}` } },
-    );
-    this.myOrders.data = response.data;
+    try {
+      const response = await api.getOrders(
+        { active: true, params: {} },
+        { headers: { Authorization: `Bearer ${userStore.accessToken}` } },
+      );
+      console.log('Response', response.data);
+      this.myOrders.data = response.data;
+    } catch (error) {
+      console.error('Failed to fetch orders', error);
+    }
   };
 }
 

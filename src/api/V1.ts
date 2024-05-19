@@ -685,7 +685,7 @@ export class MyApi<SecurityDataType = unknown> extends HttpClient<SecurityDataTy
       method: 'POST',
       query: query,
       body: data,
-      type: ContentType.Json,
+      type: ContentType.Text,
       ...params,
     });
   /**

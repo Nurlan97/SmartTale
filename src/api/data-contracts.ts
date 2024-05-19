@@ -538,6 +538,7 @@ export interface SmallOrder {
     | 'ARRIVED'
     | 'COMPLETED'
     | 'CANCELED';
+  
 }
 
 export interface OrderDto {
