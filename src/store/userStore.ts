@@ -9,7 +9,7 @@ import {
 import { MyApi } from '../api/V1';
 import { fullPromise, removeCookie } from '../utils/helpers';
 import { setCookie } from '../utils/helpers';
-import modalStore, { SimpleModals } from './modalStore';
+import modalStore, { Modals } from './modalStore';
 
 const api = new MyApi(); //создаем экземпляр нашего api
 interface IOneAd {
@@ -83,7 +83,7 @@ class userStore {
           this.refreshToken = value.data.refreshToken;
           this.isAuth = true;
           if (this.isRemember) {
-            setCookie('accessToken', value.data.accessToken, 0.25);
+            setCookie('accessToken', value.data.accessToken, 1);
             setCookie('refreshToken', value.data.refreshToken, 168);
           }
         });
@@ -151,7 +151,7 @@ class userStore {
     this.profileEdit = !this.profileEdit;
   };
   updatePhoto = async (file: File) => {
-    modalStore.openLoader();
+    modalStore.openModal(Modals.loader);
     try {
       await api.updateAvatar(
         { avatar: file },
@@ -164,7 +164,7 @@ class userStore {
     modalStore.closeModal();
   };
   updateProfile = async (data: UpdateProfileRequest) => {
-    modalStore.openLoader();
+    modalStore.openModal(Modals.loader);
     try {
       const response = await api.updateProfile(data, {
         headers: { Authorization: `Bearer ${this.accessToken}` },
@@ -186,12 +186,12 @@ class userStore {
     modalStore.closeModal();
   };
   subscribe = async () => {
-    modalStore.openLoader();
+    modalStore.openModal(Modals.loader);
     try {
       const response = await api.subscribe({
         headers: { Authorization: `Bearer ${this.accessToken}` },
       });
-      modalStore.openSimple(SimpleModals.successSubscribe);
+      modalStore.openModal(Modals.successSubscribe);
     } catch (error) {
       console.log(error);
     }
@@ -200,14 +200,14 @@ class userStore {
     runInAction(() => {
       this.accessToken = accessToken;
       this.refreshToken = refreshToken;
-      setCookie('accessToken', accessToken, 0.25);
+      setCookie('accessToken', accessToken, 1);
       setCookie('refreshToken', refreshToken, 168);
     });
   };
-  refreshTokens = async (refreshToken: string) => {
+  refreshTokens = async () => {
     try {
       console.log('refresh tokens');
-      const response = await api.refreshToken(`Bearer ${refreshToken}`);
+      const response = await api.refreshToken(`Bearer ${this.refreshToken}`);
       runInAction(() => {
         this.setTokens(response.data.accessToken, response.data.refreshToken);
       });

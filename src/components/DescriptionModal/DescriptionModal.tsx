@@ -2,7 +2,7 @@ import { observer } from 'mobx-react-lite';
 
 import { defaultImage, defaultPhoto } from '../../assets';
 import { modalStore } from '../../store';
-import { SimpleModals } from '../../store/modalStore';
+import { Modals } from '../../store/modalStore';
 import Button from '../../UI/Button/Button';
 import { formatDate } from '../../utils/helpers';
 import styles from './descriptionModal.module.scss';
@@ -111,7 +111,7 @@ const DescriptionModal = observer(() => {
             margin='auto auto 0px 0px'
             handler={() => {
               console.log(modalStore.detailed.advertisementId);
-              modalStore.openSimple(SimpleModals.successOrder);
+              modalStore.openModal(Modals.successOrder);
             }}
           >
             Принять заказ

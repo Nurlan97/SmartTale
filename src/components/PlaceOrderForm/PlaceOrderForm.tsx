@@ -8,7 +8,7 @@ import DatePicker, { registerLocale } from 'react-datepicker';
 
 import { IInital } from '../../pages/PlaceOrderPage/PlaceOrderPage';
 import { modalStore, typePlaceOrderStore, userStore } from '../../store';
-import { SimpleModals } from '../../store/modalStore';
+import { Modals } from '../../store/modalStore';
 import Button from '../../UI/Button/Button';
 import DateCustomInput from '../../UI/DateCustomInput/DateCustomInput';
 import ImagesInput from '../../UI/ImageInput/ImageInput';
@@ -59,7 +59,7 @@ const PlaceOrderForm = observer(({ store, initialValues, type }: Props) => {
         })
         .catch((e) => {
           console.log(e);
-          modalStore.openSimple(SimpleModals.errorValidation);
+          modalStore.openModal(Modals.errorValidation);
         });
     },
   });

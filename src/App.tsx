@@ -11,7 +11,7 @@ import AuthorizationPage from './pages/AuthorizationPage/AuthorizationPage';
 import DetailedPage from './pages/DetailedPage/DetailedPage';
 import EquipmentPage from './pages/EquipmentPage/EquipmentPage';
 import MyAdsPage from './pages/MyAdsPage/MyAdsPage';
-import MyPurchases from './pages/MyBuys/MyPurchases';
+import MyPurchases from './pages/MyPurchases/MyPurchases';
 import OrderHistoryPage from './pages/OrderHistoryPage/OrderHistoryPage';
 import PlaceOrderPage from './pages/PlaceOrderPage/PlaceOrderPage';
 import ProfilePage from './pages/ProfilePage/ProfilePage';
@@ -34,7 +34,7 @@ const App = observer(() => {
         return;
       }
       if (!!refreshToken && !isTokenExpired(refreshToken)) {
-        userStore.refreshTokens(refreshToken);
+        userStore.refreshTokens();
         userStore.getUser();
         userStore.isAuth = true;
         navigate('/equipment');

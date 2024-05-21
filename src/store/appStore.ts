@@ -3,20 +3,19 @@ import { makeAutoObservable } from 'mobx';
 import { cardsArray } from '../../mockData';
 import {
   FullOrder,
+  FullProduct,
   Order,
   PageCard,
   PageSmallOrder,
   Product,
 } from '../api/data-contracts';
 import { MyApi } from '../api/V1';
+import modalStore from './modalStore';
 import userStore from './userStore';
 
 const api = new MyApi(); //создаем экземпляр нашего api
 
-export interface IType {
-  type: 'equipment' | 'services';
-}
-interface IAdsResponse {
+export interface IAdsResponse {
   totalPages: number;
   totalElements: number;
   size: number;
@@ -29,9 +28,9 @@ interface IAdsResponse {
   empty: boolean;
 }
 interface IMyAd {
-  group: 'all' | 'service' | 'equipment';
+  group: 'all' | 'orders' | 'products';
   data: IAdsResponse;
-  detailed: FullOrder & IType;
+  detailed: Array<FullOrder | FullProduct>;
 }
 interface IMyBuys {
   data: PageCard;
@@ -64,7 +63,7 @@ class appStore {
     data: {
       totalPages: 0,
       totalElements: 0,
-      size: 0,
+      size: 10,
       content: [],
       number: 0,
       sort: { empty: false, sorted: false, unsorted: false },
@@ -73,31 +72,7 @@ class appStore {
       last: false,
       empty: false,
     },
-    detailed: {
-      acceptanceRequests: [],
-      acceptedBy: 0,
-      acceptedAt: '',
-      organizationLogoUrl: '',
-      organizationName: '',
-      type: 'equipment',
-      orderId: 0,
-      description:
-        'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat',
-      imageUrls: [
-        'https://kartinki.pics/pics/uploads/posts/2022-08/thumbs/1661232571_2-kartinkin-net-p-shveinoe-delo-fon-krasivo-2.jpg',
-        'https://kartinki.pics/pics/uploads/posts/2022-08/thumbs/1661232571_2-kartinkin-net-p-shveinoe-delo-fon-krasivo-2.jpg',
-        'https://kartinki.pics/pics/uploads/posts/2022-08/thumbs/1661232571_2-kartinkin-net-p-shveinoe-delo-fon-krasivo-2.jpg',
-      ],
-      deadlineAt: '14 march 2025',
-      price: 1000,
-      title: 'Нитки',
-      isClosed: false,
-      isDeleted: false,
-      publishedAt: '',
-
-      views: 0,
-      size: '',
-    },
+    detailed: [],
   };
   myBuys: IMyBuys = {
     data: {
@@ -126,28 +101,40 @@ class appStore {
     makeAutoObservable(this);
   }
 
-  myAdsSetGroup = (group: 'all' | 'service' | 'equipment') => {
+  myAdsSetGroup = (group: 'all' | 'orders' | 'products') => {
     this.myAds.group = group;
+    this.getMyAds();
   };
-  getMyAds = () => {
-    this.myAds.data.content = cardsArray;
+  getMyAds = async () => {
+    // this.myAds.data.content = cardsArray;
+
+    try {
+      const response = await api.getAds1(
+        {
+          q: this.myAds.group !== 'all' ? this.myAds.group : undefined,
+          page: this.myAds.data.number,
+          size: this.myAds.data.size,
+        },
+        { headers: { Authorization: `Bearer ${userStore.accessToken}` } },
+      );
+      this.myAds.data = response.data;
+    } catch (error) {
+      console.log(error);
+    }
   };
-  getDetailedAd = (id: number) => {
-    this.myAds.detailed.orderId = id;
-    // api.getAd1(id).then((response) => {
-    //   this.myAds.detailed.orderId = response.data.orderId;
-    //   this.myAds.detailed.description = response.data.description;
-    //   this.myAds.detailed.title = response.data.title;
-    //   if (response.data.price) this.myAds.detailed.price = response.data.price;
-    //   if (response.data.imageUrls) {
-    //     this.myAds.detailed.imageUrls = response.data.imageUrls;
-    //   }
-    //   if (response.data.deadlineAt) {
-    //     this.myAds.detailed.deadlineAt = response.data.deadlineAt;
-    //   }
-    // });
+  getDetailedAd = async (id: number) => {
+    this.myAds.detailed = [];
+    try {
+      const response = await api.getAd1(id, {
+        headers: { Authorization: `Bearer ${userStore.accessToken}` },
+      });
+
+      this.myAds.detailed.push(response.data);
+    } catch (error) {
+      console.log(error);
+    }
   };
-  getMyBuys = async () => {
+  getMyBuys = async (page: number = 0, limit: number = 8) => {
     // const response = await api.getPurchases();
     this.myBuys.data.content = cardsArray;
   };
@@ -158,6 +145,18 @@ class appStore {
       { headers: { Authorization: `Bearer ${userStore.accessToken}` } },
     );
     this.myOrders.data = response.data;
+  };
+  deleteAd = async (id: number) => {
+    await api.interactWithAd(id, '3', {
+      headers: { Authorization: `Bearer ${userStore.accessToken}` },
+    });
+    modalStore.closeModal();
+  };
+  closeAd = async (id: number) => {
+    await api.interactWithAd(id, '1', {
+      headers: { Authorization: `Bearer ${userStore.accessToken}` },
+    });
+    modalStore.closeModal();
   };
 }
 

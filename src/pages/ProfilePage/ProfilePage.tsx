@@ -5,6 +5,7 @@ import { useEffect } from 'react';
 import { NavbarProfile } from '../../assets';
 import Header from '../../components/Header/Header';
 import { modalStore, userStore } from '../../store';
+import { Modals } from '../../store/modalStore';
 import Button from '../../UI/Button/Button';
 import Input from '../../UI/Input/Input';
 import PhoneInput from '../../UI/PhoneInput/PhoneInput';
@@ -55,7 +56,7 @@ const ProfilePage = observer(() => {
                 id='photo'
                 className={styles.hiddenInput}
                 type='button'
-                onClick={modalStore.openChangePhoto}
+                onClick={() => modalStore.openModal(Modals.changePhotoModal)}
               ></button>
             </>
           ) : (
@@ -67,7 +68,7 @@ const ProfilePage = observer(() => {
                 id='emptyPhoto'
                 className={styles.hiddenInput}
                 type='button'
-                onClick={modalStore.openChangePhoto}
+                onClick={() => modalStore.openModal(Modals.changePhotoModal)}
               ></button>
             </>
           )}

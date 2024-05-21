@@ -3,7 +3,7 @@ import { flow, makeAutoObservable, runInAction } from 'mobx';
 import { cardsArray } from '../../mockData';
 import { PageCard } from '../api/data-contracts';
 import { MyApi } from '../api/V1';
-import modalStore from './modalStore';
+import modalStore, { Modals } from './modalStore';
 import userStore from './userStore';
 const api = new MyApi();
 class servicesStore {
@@ -36,7 +36,7 @@ class servicesStore {
   };
   getCardsAction = async (page: number = 0, limit: number = 8) => {
     //  await userStore.checkTokens();
-    modalStore.openLoader();
+    modalStore.openModal(Modals.loader);
     this.isLoading = true;
     try {
       const auth = userStore.isAuth

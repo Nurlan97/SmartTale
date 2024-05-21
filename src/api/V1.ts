@@ -9,6 +9,7 @@
  * ---------------------------------------------------------------
  */
 
+import { IAdsResponse } from '../store/appStore';
 import {
   CreateAdRequest,
   CreateOrgRequest,
@@ -42,6 +43,7 @@ import {
   VerificationRequest,
 } from './data-contracts';
 import { ContentType, HttpClient, RequestParams } from './http-client';
+
 
 export class MyApi<SecurityDataType = unknown> extends HttpClient<SecurityDataType> {
   /**
@@ -459,7 +461,7 @@ export class MyApi<SecurityDataType = unknown> extends HttpClient<SecurityDataTy
     },
     params: RequestParams = {},
   ) =>
-    this.request<Order | Product, void>({
+    this.request<IAdsResponse, void>({
       path: `/v1/account/advertisements`,
       method: 'GET',
       query: query,
