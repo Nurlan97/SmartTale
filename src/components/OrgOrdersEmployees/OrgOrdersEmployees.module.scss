@@ -34,7 +34,46 @@
 }
 
 .btnGroup {
-    margin-top: 20px;
-    display: flex;
-    gap: 8px;
-  }
+  height: 56px;
+  margin-top: 32px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.btnList {
+  display: flex;
+  gap: 8px;
+}
+
+.list {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.table {
+  margin-top: 20px;
+  padding: 20px;
+  border-radius: 16px;
+  background: #fff;
+}
+.tableHeaderContainer {
+  // background: #000;
+  border-bottom: 1px solid rgb(233, 237, 247);
+}
+.tableHeader {
+  text-align: start;
+  padding-bottom: 20px;
+  color: #8e8e93;
+}
+
+.tableRow{
+  padding: 20px;
+}
+
+.fullName, .order {
+  text-decoration: underline;
+  font-size: 14px;
+  font-weight: 400; 
+}

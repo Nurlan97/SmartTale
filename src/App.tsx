@@ -69,6 +69,7 @@ const App = observer(() => {
             <Route path='/my-ads/:id' element={<DetailedPage />} />
             <Route path='/my-purchases' element={<MyPurchases />} />
             <Route path='/orders-history' element={<OrderHistoryPage />} />
+            <Route path='/company' element={<OrganizationPage />} />
           </Route>
           <Route element={<NoAuthRoute />}>
             <Route path='/registration' element={<RegistrationPage />}></Route>

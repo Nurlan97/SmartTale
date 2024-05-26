@@ -1,10 +1,13 @@
 import { makeAutoObservable } from 'mobx';
 
+import { MOCK_DATA } from '../../MOCK_DATA';
+import { MOCK_DATA_EMPLOYEES } from '../../MOCK_DATA_EMPLOYEES';
 import { cardsArray } from '../../mockData';
 import {
   FullOrder,
   Order,
   PageCard,
+  PageEmployee,
   PageOrderSummary,
   Product,
 } from '../api/data-contracts';
@@ -37,13 +40,18 @@ interface IMyBuys {
   data: PageCard;
 }
 interface IOrders {
-  group: 'orders' | 'employees';
   data: Omit<PageOrderSummary, 'pageable'>;
+}
+
+interface IMyOrganization {
+  group: 'orders' | 'employees';
+  orders: Omit<PageOrderSummary, 'pageable'>;
+  employees: Omit<PageEmployee, 'pageable'>;
 }
 
 class appStore {
   myOrders: IOrders = {
-    group: 'orders',
+    // group: 'orders',
     data: {
       totalPages: 0,
       totalElements: 0,
@@ -123,6 +131,41 @@ class appStore {
       empty: false,
     },
   };
+  myOrganization: IMyOrganization = {
+    group: 'orders',
+    orders: {
+      totalPages: 0,
+      totalElements: 0,
+      size: 0,
+      content: [],
+      number: 0,
+      sort: {
+        empty: false,
+        sorted: false,
+        unsorted: false,
+      },
+      first: false,
+      last: false,
+      numberOfElements: 0,
+      empty: false,
+    },
+    employees: {
+      totalPages: 0,
+      totalElements: 0,
+      size: 0,
+      content: [],
+      number: 0,
+      sort: {
+        empty: false,
+        sorted: false,
+        unsorted: false,
+      },
+      first: false,
+      last: false,
+      numberOfElements: 0,
+      empty: false,
+    },
+  };
 
   constructor() {
     makeAutoObservable(this);
@@ -131,8 +174,13 @@ class appStore {
   myAdsSetGroup = (group: 'all' | 'service' | 'equipment') => {
     this.myAds.group = group;
   };
-  myOrdersSetGroup = (group: 'orders' | 'employees') => {
-    this.myOrders.group = group;
+  myOrganizationSetGroup = (group: 'orders' | 'employees') => {
+    this.myOrganization.group = group;
+    if (group === 'orders') {
+      this.getMyOrganizationOrders();
+    } else {
+      this.getMyOrganizationEmployees();
+    }
   };
   getMyAds = () => {
     this.myAds.data.content = cardsArray;
@@ -158,17 +206,36 @@ class appStore {
   };
   setSorting = () => {};
   getMyOrders = async () => {
-    try {
-      const response = await api.getOrders(
-        { active: true, params: {} },
-        { headers: { Authorization: `Bearer ${userStore.accessToken}` } },
-      );
-      console.log('Response', response.data);
-      this.myOrders.data = response.data;
-    } catch (error) {
-      console.error('Failed to fetch orders', error);
-    }
+    // try {
+    //   const response = await api.getOrders(
+    //     { active: true, params: {} },
+    //     { headers: { Authorization: `Bearer ${userStore.accessToken}` } },
+    //   );
+    //   console.log('Response', response.data);
+    //   this.myOrders.data = response.data;
+    // } catch (error) {
+    //   console.error('Failed to fetch orders', error);
+    // }
   };
+  getMyOrganizationOrders = async () => {
+    // try {
+    //   const response = await api.getOrders(
+    //     { active: true, params: {} },
+    //     { headers: { Authorization: `Bearer ${userStore.accessToken}` } },
+    //   );
+    //   console.log('Response', response.data);
+    //   this.myOrganization.orders = response.data;
+    // } catch (error) {
+    //   console.error('Failed to fetch orders', error);
+    // }
+    this.myOrganization.orders.content = MOCK_DATA;
+  };
+  getMyOrganizationEmployees = async () => {
+    this.myOrganization.employees.content = MOCK_DATA_EMPLOYEES;
+  };
+  get isActiveOrders() {
+    return this.myOrganization.group === 'orders';
+  }
 }
 
 export default new appStore();

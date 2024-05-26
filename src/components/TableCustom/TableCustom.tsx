@@ -1,7 +1,7 @@
 import { observer } from 'mobx-react-lite';
-import { CSSProperties, useRef, useState } from 'react';
+import { CSSProperties, JSXElementConstructor, useRef, useState } from 'react';
 
-import { SmallOrder } from '../../api/data-contracts';
+import { Employee, OrderSummary, SmallOrder } from '../../api/data-contracts';
 import { Asc, Desc, NoSort } from '../../assets';
 import styles from './tableCustom.module.scss';
 interface IHeader {
@@ -12,16 +12,16 @@ interface IStyle {
   [key: string]: (prop: any) => CSSProperties;
 }
 interface ITransform {
-  [key: string]: (prop: string | number | undefined) => string;
+  [key: string]: (prop: string | number | OrderSummary[]) => string | JSX.Element[];
 }
 interface IProps {
   headers: IHeader[];
-  rows: SmallOrder[] | undefined;
+  rows: SmallOrder[] | Employee[];
   styling?: IStyle;
   transform?: ITransform;
   sorting?: ISorting;
   setSorting?: (column: string) => void;
-  myRef: React.RefObject<HTMLTableElement>;
+  myRef?: React.RefObject<HTMLTableElement>;
 }
 const sortIcons = {
   asc: <Asc className={styles.sortIcon} />,

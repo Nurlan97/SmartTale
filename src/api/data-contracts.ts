@@ -9,6 +9,8 @@
  * ---------------------------------------------------------------
  */
 
+import { ReactNode } from "react";
+
 export interface CreateOrgRequest {
   name: string;
   description?: string;
