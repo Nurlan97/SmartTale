@@ -13,8 +13,8 @@ interface IProps {
 const Card = observer(({ card }: IProps) => {
   const location = useLocation();
   const buttonHandler = () => {
-    console.log('id', card.productId);
-    modalStore.openDescription(card.productId, location.pathname);
+    console.log('id', card);
+    modalStore.openDescription(card.advertisementId, location.pathname);
   };
   return (
     <div className={styles.cardWrapper}>

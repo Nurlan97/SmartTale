@@ -1,11 +1,9 @@
-import axios from 'axios';
 import { makeAutoObservable } from 'mobx';
 import uniqid from 'uniqid';
 
 import { CreateAdRequest } from '../api/data-contracts';
 import { MyApi } from '../api/V1';
-import modalStore from './modalStore';
-import userStore from './userStore';
+import modalStore, { Modals } from './modalStore';
 
 const api = new MyApi();
 interface IPlaceAd {
@@ -182,7 +180,7 @@ export default class adStore {
     this.updateViewed();
   };
   placeAd = async (dto: CreateAdRequest, images: File[] = []) => {
-    modalStore.openLoader();
+    modalStore.openModal(Modals.loader);
     const obj = { dto: dto, images: images };
     const formData = new FormData();
     formData.append('dto', new Blob([JSON.stringify(dto)], { type: 'application/json' }));
@@ -192,9 +190,7 @@ export default class adStore {
       }
     }
     try {
-      const response = await api.placeAdvertisement(obj, {
-        headers: { Authorization: `Bearer ${userStore.accessToken}` },
-      });
+      const response = await api.placeAdvertisement(obj);
       this.resetForm();
     } catch (error) {
       console.log(error);

@@ -2,8 +2,7 @@ import { flow, makeAutoObservable, runInAction } from 'mobx';
 
 import { PageCard } from '../api/data-contracts';
 import { MyApi } from '../api/V1';
-import modalStore from './modalStore';
-import userStore from './userStore';
+import modalStore, { Modals } from './modalStore';
 
 const api = new MyApi();
 class mainStore {
@@ -36,24 +35,14 @@ class mainStore {
     this.getCardsAction(undefined, limit);
   };
   getCardsAction = async (page: number = 0, limit: number = 8) => {
-    //  await userStore.checkTokens();
     this.isLoading = true;
-    modalStore.openLoader();
+    modalStore.openModal(Modals.loader);
     try {
-      const auth = userStore.isAuth
-        ? {
-            headers: { Authorization: `Bearer ${userStore.accessToken}` },
-          }
-        : {};
-      const response = await api.getAds(
-        {
-          type: 'products',
-          page: page,
-          size: limit,
-          params: {},
-        },
-        auth,
-      );
+      const response = await api.getAds({
+        type: 'products',
+        page: page,
+        size: limit,
+      });
       runInAction(() => {
         this.data = response.data;
       });

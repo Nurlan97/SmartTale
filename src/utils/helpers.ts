@@ -75,7 +75,6 @@ export function formatDate(dateString: string | undefined) {
 }
 export function formatDate2(dateString: string | undefined) {
   if (!dateString) return '';
-  console.log(dateString);
   const dateParts = dateString.split('/');
   const year = dateParts[2];
   const month = dateParts[0];
