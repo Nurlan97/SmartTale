@@ -1,11 +1,15 @@
 import { makeAutoObservable, runInAction } from 'mobx';
 
+import { MOCK_DATA } from '../../MOCK_DATA';
+import { MOCK_DATA_EMPLOYEES } from '../../MOCK_DATA_EMPLOYEES';
 import { cardsArray } from '../../mockData';
 import {
   FullOrder,
   FullProduct,
   Order,
   PageCard,
+  PageEmployee,
+  PageOrderSummary,
   PageSmallOrder,
   Product,
 } from '../api/data-contracts';
@@ -38,8 +42,18 @@ interface IOrders {
   data: Omit<PageSmallOrder, 'pageable'>;
 }
 
+interface IMyOrganization {
+  group: 'orders' | 'employees';
+  orders: Omit<PageOrderSummary, 'pageable'>;
+  employees: Omit<PageEmployee, 'pageable'>;
+  description: string;
+  name: string;
+  logoUrl: string;
+}
+
 class appStore {
   myOrders: IOrders = {
+    // group: 'orders',
     data: {
       totalPages: 0,
       totalElements: 0,
@@ -95,6 +109,44 @@ class appStore {
       empty: false,
     },
   };
+  myOrganization: IMyOrganization = {
+    group: 'orders',
+    description: '',
+    name: '',
+    logoUrl: '',
+    orders: {
+      totalPages: 0,
+      totalElements: 0,
+      size: 0,
+      content: [],
+      number: 0,
+      sort: {
+        empty: false,
+        sorted: false,
+        unsorted: false,
+      },
+      first: false,
+      last: false,
+      numberOfElements: 0,
+      empty: false,
+    },
+    employees: {
+      totalPages: 0,
+      totalElements: 0,
+      size: 0,
+      content: [],
+      number: 0,
+      sort: {
+        empty: false,
+        sorted: false,
+        unsorted: false,
+      },
+      first: false,
+      last: false,
+      numberOfElements: 0,
+      empty: false,
+    },
+  };
 
   constructor() {
     makeAutoObservable(this);
@@ -116,6 +168,14 @@ class appStore {
       this.myAds.data = response.data;
     } catch (error) {
       console.log(error);
+    }
+  };
+  myOrganizationSetGroup = (group: 'orders' | 'employees') => {
+    this.myOrganization.group = group;
+    if (group === 'orders') {
+      this.getMyOrganizationOrders();
+    } else {
+      this.getMyOrganizationEmployees();
     }
   };
   getDetailedAd = async (id: number) => {
@@ -142,6 +202,28 @@ class appStore {
     const response = await api.getOrders1({ q: status });
     this.myOrders.data = response.data;
   };
+  getMyOrganizationOrders = async () => {
+    try {
+      const response = await api.getOrders({ active: true });
+      console.log('Response', response.data);
+      this.myOrganization.orders = response.data;
+    } catch (error) {
+      console.error('Failed to fetch orders', error);
+    }
+    // this.myOrganization.orders.content = MOCK_DATA;
+  };
+  getMyOrganizationEmployees = async () => {
+    try {
+      const response = await api.getEmployees();
+      this.myOrganization.employees = response.data;
+    } catch (error) {
+      console.log(error);
+    }
+    // this.myOrganization.employees.content = MOCK_DATA_EMPLOYEES;
+  };
+  get isActiveOrders() {
+    return this.myOrganization.group === 'orders';
+  }
   deleteAd = async (id: number) => {
     await api.interactWithAd(id, '3');
     modalStore.closeModal();
@@ -152,6 +234,18 @@ class appStore {
   };
   setMyPurchasesePage = (page: number) => {
     this.getMyBuys(page);
+  };
+  getMyOrganization = async () => {
+    try {
+      const response = await api.getOrganization();
+      runInAction(() => {
+        this.myOrganization.description = response.data.description;
+        this.myOrganization.logoUrl = response.data.logoUrl;
+        this.myOrganization.name = response.data.name;
+      });
+    } catch (error) {
+      console.log(error);
+    }
   };
 }
 
