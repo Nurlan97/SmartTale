@@ -10,6 +10,7 @@ import {
   PageCard,
   PageEmployee,
   PageOrderSummary,
+  PageSmallOrder,
   Product,
 } from '../api/data-contracts';
 import { MyApi } from '../api/V1';
@@ -38,13 +39,16 @@ interface IMyBuys {
   data: PageCard;
 }
 interface IOrders {
-  data: Omit<PageOrderSummary, 'pageable'>;
+  data: Omit<PageSmallOrder, 'pageable'>;
 }
 
 interface IMyOrganization {
   group: 'orders' | 'employees';
   orders: Omit<PageOrderSummary, 'pageable'>;
   employees: Omit<PageEmployee, 'pageable'>;
+  description: string;
+  name: string;
+  logoUrl: string;
 }
 
 class appStore {
@@ -107,6 +111,9 @@ class appStore {
   };
   myOrganization: IMyOrganization = {
     group: 'orders',
+    description: '',
+    name: '',
+    logoUrl: '',
     orders: {
       totalPages: 0,
       totalElements: 0,
@@ -196,24 +203,50 @@ class appStore {
     this.myOrders.data = response.data;
   };
   getMyOrganizationOrders = async () => {
-    // try {
-    //   const response = await api.getOrders(
-    //     { active: true, params: {} },
-    //     { headers: { Authorization: `Bearer ${userStore.accessToken}` } },
-    //   );
-    //   console.log('Response', response.data);
-    //   this.myOrganization.orders = response.data;
-    // } catch (error) {
-    //   console.error('Failed to fetch orders', error);
-    // }
-    this.myOrganization.orders.content = MOCK_DATA;
+    try {
+      const response = await api.getOrders({ active: true });
+      console.log('Response', response.data);
+      this.myOrganization.orders = response.data;
+    } catch (error) {
+      console.error('Failed to fetch orders', error);
+    }
+    // this.myOrganization.orders.content = MOCK_DATA;
   };
   getMyOrganizationEmployees = async () => {
-    this.myOrganization.employees.content = MOCK_DATA_EMPLOYEES;
+    try {
+      const response = await api.getEmployees();
+      this.myOrganization.employees = response.data;
+    } catch (error) {
+      console.log(error);
+    }
+    // this.myOrganization.employees.content = MOCK_DATA_EMPLOYEES;
   };
   get isActiveOrders() {
     return this.myOrganization.group === 'orders';
   }
+  deleteAd = async (id: number) => {
+    await api.interactWithAd(id, '3');
+    modalStore.closeModal();
+  };
+  closeAd = async (id: number) => {
+    await api.interactWithAd(id, '1');
+    modalStore.closeModal();
+  };
+  setMyPurchasesePage = (page: number) => {
+    this.getMyBuys(page);
+  };
+  getMyOrganization = async () => {
+    try {
+      const response = await api.getOrganization();
+      runInAction(() => {
+        this.myOrganization.description = response.data.description;
+        this.myOrganization.logoUrl = response.data.logoUrl;
+        this.myOrganization.name = response.data.name;
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
 }
 
 export default new appStore();

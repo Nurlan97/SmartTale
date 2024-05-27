@@ -12,7 +12,7 @@ interface IStyle {
   [key: string]: (prop: any) => CSSProperties;
 }
 interface ITransform {
-  [key: string]: (prop: string | number | OrderSummary[]) => string | JSX.Element[];
+  [key: string]: (prop: any) => any;
 }
 interface IProps {
   headers: IHeader[];
@@ -70,14 +70,8 @@ const TableCustom = observer(
                     const key = header.name as keyof typeof row;
                     return (
                       <td key={header.name} className={styles.cell}>
-                        <div
-                          style={
-                            styling &&
-                            styling[header.name] &&
-                            styling[header.name](row[key])
-                          }
-                        >
-                          {transform && transform[header.name]
+                        <div style={styling && styling[key] && styling[key](row[key])}>
+                          {transform && transform[key] && row[key]
                             ? transform[key](row[key])
                             : row[key]}
                         </div>

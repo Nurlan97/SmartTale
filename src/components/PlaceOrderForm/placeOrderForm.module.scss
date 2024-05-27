@@ -80,6 +80,12 @@
   width: 300px;
   text-align: start;
 }
+.contactsGrp{
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+}
 .footer {
   width: 100%;
   display: flex;

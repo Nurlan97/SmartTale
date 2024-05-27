@@ -156,7 +156,7 @@ const PlaceOrderForm = observer(({ store, initialValues, type }: Props) => {
           <div className={styles.contactsTxt}>
             Выберите какую контактную информацию показывать в объявлении
           </div>
-          <div>
+          <div className={styles.contactsGrp}>
             <span
               className={
                 formik.values.contacts.includes('PHONE')

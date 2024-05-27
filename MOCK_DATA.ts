@@ -1,4 +1,4 @@
-import { OrderSummary } from "./src/api/data-contracts";
+import { OrderSummary } from './src/api/data-contracts';
 
 export const MOCK_DATA: OrderSummary[] = [
   {
@@ -620,7 +620,7 @@ export const MOCK_DATA: OrderSummary[] = [
     price: 243493,
     imageUrl: 'http://dummyimage.com/100x100.png/5fa2dd/ffffff',
     status: 'CANCELED',
-    '  acceptedAt': '2023-06-06',
+    acceptedAt: '2023-06-06',
     deadlineAt: '2024-03-09',
     completedAt: '2024-02-27',
   },

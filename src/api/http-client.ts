@@ -59,9 +59,8 @@ export enum ContentType {
 const redirectToAuth = (config: InternalAxiosRequestConfig<any>) => {
   const abortCtrl = new AbortController();
   abortCtrl.abort();
-  config.signal = abortCtrl.signal;
-  removeCookie('accessToken');
-  removeCookie('refreshToken');
+  // config.signal = abortCtrl.signal;
+  userStore.logout();
   window.location.assign(`${window.location.origin}/#/authorization`);
 };
 export class HttpClient<SecurityDataType = unknown> {

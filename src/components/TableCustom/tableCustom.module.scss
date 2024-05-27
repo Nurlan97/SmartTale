@@ -2,7 +2,7 @@
   overflow-y: auto;
   text-align: center;
   width: fit-content;
-  border-radius: 30px;
+  border-radius: 15px;
 }
 
 .tableWrapper * {
@@ -48,14 +48,17 @@
 }
 .cell {
   padding: 0 12px;
+  text-align: start;
 }
 .sortIcon {
   height: 18px;
   width: 18px;
 }
 .btn {
-  padding: 6px;
+  padding: 12px;
   display: flex;
+  text-align: start;
+  width: 100%;
 }
 
 ::-webkit-scrollbar {
