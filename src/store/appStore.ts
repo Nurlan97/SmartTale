@@ -1,4 +1,4 @@
-import { makeAutoObservable } from 'mobx';
+import { makeAutoObservable, runInAction } from 'mobx';
 
 import { cardsArray } from '../../mockData';
 import {
@@ -11,7 +11,6 @@ import {
 } from '../api/data-contracts';
 import { MyApi } from '../api/V1';
 import modalStore from './modalStore';
-import userStore from './userStore';
 
 const api = new MyApi(); //создаем экземпляр нашего api
 
@@ -109,14 +108,11 @@ class appStore {
     // this.myAds.data.content = cardsArray;
 
     try {
-      const response = await api.getAds1(
-        {
-          q: this.myAds.group !== 'all' ? this.myAds.group : undefined,
-          page: this.myAds.data.number,
-          size: this.myAds.data.size,
-        },
-        { headers: { Authorization: `Bearer ${userStore.accessToken}` } },
-      );
+      const response = await api.getAds1({
+        q: this.myAds.group !== 'all' ? this.myAds.group : undefined,
+        page: this.myAds.data.number,
+        size: this.myAds.data.size,
+      });
       this.myAds.data = response.data;
     } catch (error) {
       console.log(error);
@@ -125,9 +121,7 @@ class appStore {
   getDetailedAd = async (id: number) => {
     this.myAds.detailed = [];
     try {
-      const response = await api.getAd1(id, {
-        headers: { Authorization: `Bearer ${userStore.accessToken}` },
-      });
+      const response = await api.getAd1(id);
 
       this.myAds.detailed.push(response.data);
     } catch (error) {
@@ -135,28 +129,29 @@ class appStore {
     }
   };
   getMyBuys = async (page: number = 0, limit: number = 8) => {
-    // const response = await api.getPurchases();
-    this.myBuys.data.content = cardsArray;
+    const response = await api.getPurchases({ page: page, size: limit });
+    runInAction(() => {
+      // this.myBuys.data.content = cardsArray;
+      this.myBuys.data = response.data;
+    });
   };
-  setSorting = () => {};
-  getMyOrders = async () => {
-    const response = await api.getOrders1(
-      { q: 'active', params: {} },
-      { headers: { Authorization: `Bearer ${userStore.accessToken}` } },
-    );
+  setLimitMyBuys = (limit: number) => {
+    this.getMyBuys(undefined, limit);
+  };
+  getMyOrders = async (status: 'active' | 'completed') => {
+    const response = await api.getOrders1({ q: status });
     this.myOrders.data = response.data;
   };
   deleteAd = async (id: number) => {
-    await api.interactWithAd(id, '3', {
-      headers: { Authorization: `Bearer ${userStore.accessToken}` },
-    });
+    await api.interactWithAd(id, '3');
     modalStore.closeModal();
   };
   closeAd = async (id: number) => {
-    await api.interactWithAd(id, '1', {
-      headers: { Authorization: `Bearer ${userStore.accessToken}` },
-    });
+    await api.interactWithAd(id, '1');
     modalStore.closeModal();
+  };
+  setMyPurchasesePage = (page: number) => {
+    this.getMyBuys(page);
   };
 }
 

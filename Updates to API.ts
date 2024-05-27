@@ -30,7 +30,7 @@
 //    return config;
 //  });
 
-// in Va.ts file
+// in V1.ts file
 // getAds1 = (
 //   query?: {
 //     /** Page number, default 0 */

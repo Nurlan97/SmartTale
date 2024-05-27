@@ -12,7 +12,6 @@ type CustomInputProps = {
 const DateCustomInput = (props: CustomInputProps, ref: LegacyRef<HTMLButtonElement>) => {
   const { value, onClick } = props;
   const newDates = value?.split(' - ');
-  console.log(newDates);
   return (
     <div className={styles.wrapper}>
       <button

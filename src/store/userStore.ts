@@ -128,9 +128,7 @@ class userStore {
   getUser = async () => {
     try {
       // const response = await api.getProfile();
-      const response = await api.getProfile({
-        headers: { Authorization: `Bearer ${this.accessToken}` },
-      });
+      const response = await api.getProfile();
       runInAction(() => {
         this.firstName = response.data.firstName;
         this.lastName = response.data.lastName;
@@ -153,10 +151,7 @@ class userStore {
   updatePhoto = async (file: File) => {
     modalStore.openModal(Modals.loader);
     try {
-      await api.updateAvatar(
-        { avatar: file },
-        { headers: { Authorization: `Bearer ${this.accessToken}` } },
-      );
+      await api.updateAvatar({ avatar: 'any' }, { avatar: file });
       this.profilePhoto = URL.createObjectURL(file);
     } catch (error) {
       console.log(error);
@@ -166,9 +161,7 @@ class userStore {
   updateProfile = async (data: UpdateProfileRequest) => {
     modalStore.openModal(Modals.loader);
     try {
-      const response = await api.updateProfile(data, {
-        headers: { Authorization: `Bearer ${this.accessToken}` },
-      });
+      const response = await api.updateProfile(data);
       runInAction(() => {
         this.firstName = response.data.firstName;
         this.lastName = response.data.lastName;
@@ -188,9 +181,7 @@ class userStore {
   subscribe = async () => {
     modalStore.openModal(Modals.loader);
     try {
-      const response = await api.subscribe({
-        headers: { Authorization: `Bearer ${this.accessToken}` },
-      });
+      const response = await api.subscribe();
       modalStore.openModal(Modals.successSubscribe);
     } catch (error) {
       console.log(error);

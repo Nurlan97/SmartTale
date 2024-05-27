@@ -1,23 +1,18 @@
 import React, { useEffect, useRef, useState } from 'react';
 
+import { dateFilters, TDate } from '../../store/orderHistoryStore';
 import styles from './dropDownFilterDate.module.scss';
-type TDate = [Date | null, Date | null];
-export enum dateFilters {
-  accept = 'дате принятия',
-  deadline = 'дедлайну',
-  completed = 'дате завершения',
-  empty = '. . .',
-}
-export enum dateRanges {
+
+enum dateRanges {
   week,
   month,
   year,
 }
 interface IProps {
   tableRef: React.RefObject<HTMLTableElement>;
-  setDate: React.Dispatch<React.SetStateAction<TDate>>;
+  setDate: (range: TDate) => void;
   filter: dateFilters;
-  setFilter: React.Dispatch<React.SetStateAction<dateFilters>>;
+  setFilter: (type: dateFilters) => void;
 }
 const DropDownFilterDate = ({ tableRef, setDate, filter, setFilter }: IProps) => {
   const [isMainHovering, setIsMainHovering] = useState(false);

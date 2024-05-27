@@ -1,9 +1,7 @@
 import { makeAutoObservable } from 'mobx';
-import { fromPromise } from 'mobx-utils';
 
 import { FullOrderCard, FullProductCard } from '../api/data-contracts';
 import { MyApi } from '../api/V1';
-import userStore from './userStore';
 
 export enum Modals {
   closeOrder = 'closeOrder',
@@ -85,9 +83,7 @@ class modalStore {
     this.isOpen = true;
     this.currentModal = Modals.loader;
     try {
-      const response = await api.getAd(id, {
-        headers: { Authorization: `Bearer ${userStore.accessToken}` },
-      });
+      const response = await api.getAd(id);
       this.detailed = response.data;
       if (path === '/my-purchases' || path === '/equipment' || path === '/services') {
         this.detailedExt.path = pathObj[path];

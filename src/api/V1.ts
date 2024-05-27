@@ -44,7 +44,6 @@ import {
 } from './data-contracts';
 import { ContentType, HttpClient, RequestParams } from './http-client';
 
-
 export class MyApi<SecurityDataType = unknown> extends HttpClient<SecurityDataType> {
   /**
    * No description
@@ -190,7 +189,7 @@ export class MyApi<SecurityDataType = unknown> extends HttpClient<SecurityDataTy
    * @response `404` `void` User or organization not found
    */
   getEmployees = (
-    query: {
+    query?: {
       /** Page number. Default 0 */
       page?: any;
       /** Page size. Default 10 */
@@ -203,7 +202,6 @@ export class MyApi<SecurityDataType = unknown> extends HttpClient<SecurityDataTy
       status?: any;
       /** Sorting property. Equals to object field. Can be multiplesorting properties. Default "name" */
       '[sort]'?: any;
-      params: Record<string, string>;
     },
     params: RequestParams = {},
   ) =>
@@ -315,7 +313,7 @@ export class MyApi<SecurityDataType = unknown> extends HttpClient<SecurityDataTy
    *
    * @tags organization, monitoring, put, Monitoring, order
    * @name ChangeStatus
-   * @summary Change status
+   * @summary Update status
    * @request PUT:/v1/monitoring/{orderId}
    * @response `200` `string` Success
    * @response `401` `void` Unauthorized
@@ -443,7 +441,7 @@ export class MyApi<SecurityDataType = unknown> extends HttpClient<SecurityDataTy
    *
    * @tags get, advertisement, My Advertisements, user, account
    * @name GetAds1
-   * @summary Get all ads
+   * @summary Get all my ads
    * @request GET:/v1/account/advertisements
    * @response `200` `(Order | Product)` Success
    * @response `400` `void` Bad request param
@@ -462,6 +460,7 @@ export class MyApi<SecurityDataType = unknown> extends HttpClient<SecurityDataTy
     params: RequestParams = {},
   ) =>
     this.request<IAdsResponse, void>({
+      //change types for response
       path: `/v1/account/advertisements`,
       method: 'GET',
       query: query,
@@ -472,7 +471,7 @@ export class MyApi<SecurityDataType = unknown> extends HttpClient<SecurityDataTy
    *
    * @tags advertisement, My Advertisements, user, put, account
    * @name UpdateAd
-   * @summary Update ad
+   * @summary Update my ad
    * @request PUT:/v1/account/advertisements
    * @response `200` `string` Success
    * @response `400` `void` Validation failed
@@ -511,7 +510,6 @@ export class MyApi<SecurityDataType = unknown> extends HttpClient<SecurityDataTy
       page?: any;
       /** default 10 */
       size?: any;
-      params: Record<string, string>;
     },
     params: RequestParams = {},
   ) =>
@@ -538,14 +536,13 @@ export class MyApi<SecurityDataType = unknown> extends HttpClient<SecurityDataTy
       dto: CreateAdRequest;
       images?: File[];
     },
-    // data: FormData,
     params: RequestParams = {},
   ) =>
     this.request<string, void>({
       path: `/v1/market`,
       method: 'POST',
       body: data,
-      type: ContentType.FormData,
+      type: ContentType.Json,
       ...params,
     });
   /**
@@ -643,7 +640,7 @@ export class MyApi<SecurityDataType = unknown> extends HttpClient<SecurityDataTy
       path: `/v1/auth/phone-available`,
       method: 'POST',
       body: data,
-      type: ContentType.Json,
+      type: ContentType.Text,
       ...params,
     });
   /**
@@ -661,7 +658,7 @@ export class MyApi<SecurityDataType = unknown> extends HttpClient<SecurityDataTy
       path: `/v1/auth/logout`,
       method: 'POST',
       body: data,
-      type: ContentType.Json,
+      type: ContentType.Text,
       ...params,
     });
   /**
@@ -738,15 +735,20 @@ export class MyApi<SecurityDataType = unknown> extends HttpClient<SecurityDataTy
    * @response `404` `void` User not found
    */
   updateAvatar = (
+    query: {
+      /** content type "image/" */
+      avatar: any;
+    },
     data: {
       /** @format binary */
-      avatar: File;
+      avatar?: File;
     },
     params: RequestParams = {},
   ) =>
     this.request<string, void>({
       path: `/v1/account/profile/avatar`,
       method: 'POST',
+      query: query,
       body: data,
       type: ContentType.FormData,
       ...params,
@@ -771,7 +773,13 @@ export class MyApi<SecurityDataType = unknown> extends HttpClient<SecurityDataTy
       page?: any;
       /** Page size */
       size?: any;
-      params: Record<string, string>;
+      dateType?: any;
+      /** If dateType is not null, then dateFrom is required */
+      dateFrom?: any;
+      /** If dateType is not null, then dateTo is required */
+      dateTo?: any;
+      /** Sorting property. Equals to object field. Can be multiplesorting properties. Default "acceptedAt" */
+      '[sort]'?: any;
     },
     params: RequestParams = {},
   ) =>
@@ -797,7 +805,7 @@ export class MyApi<SecurityDataType = unknown> extends HttpClient<SecurityDataTy
   confirmOrder = (
     query: {
       /** Code for confirming acceptance request */
-      c: string;
+      code: string;
     },
     params: RequestParams = {},
   ) =>
@@ -817,12 +825,11 @@ export class MyApi<SecurityDataType = unknown> extends HttpClient<SecurityDataTy
    * @response `200` `PageOrganizationSummary` Organizations paged list
    */
   getAllOrganizations = (
-    query: {
+    query?: {
       /** default 0 */
       page?: any;
       /** default 10 */
       size?: any;
-      params: Record<string, string>;
     },
     params: RequestParams = {},
   ) =>
@@ -885,7 +892,7 @@ export class MyApi<SecurityDataType = unknown> extends HttpClient<SecurityDataTy
       ...params,
     });
   /**
-   * @description Get a list of positions to which user can invite. Drop down request
+   * @description Get a list of positions to which user can invite. Drop down request. Evaluates requesting user's permissions
    *
    * @tags Organization, organization, get, position, employee, account
    * @name GetPositionsDropdown
@@ -915,7 +922,7 @@ export class MyApi<SecurityDataType = unknown> extends HttpClient<SecurityDataTy
    * @response `404` `void` User or organization not found
    */
   getOrders = (
-    query: {
+    query?: {
       /** true, null or false */
       active?: any;
       /** accepted, deadline, completed */
@@ -930,7 +937,6 @@ export class MyApi<SecurityDataType = unknown> extends HttpClient<SecurityDataTy
       size?: any;
       /** Sorting property. Equals to object field. Can be multiplesorting properties. Default "acceptedAt" */
       '[sort]'?: any;
-      params: Record<string, string>;
     },
     params: RequestParams = {},
   ) =>
@@ -954,14 +960,13 @@ export class MyApi<SecurityDataType = unknown> extends HttpClient<SecurityDataTy
    */
   getEmployee = (
     employeeId: number,
-    query: {
+    query?: {
       /** Page number. Default 0 */
       page?: any;
       /** Page size. Default 10 */
       size?: any;
       /** true or false, default true. Returns nested paged list of orders */
       active?: any;
-      params: Record<string, string>;
     },
     params: RequestParams = {},
   ) =>
@@ -1002,7 +1007,7 @@ export class MyApi<SecurityDataType = unknown> extends HttpClient<SecurityDataTy
    * @response `404` `void` User or organization not found
    */
   getOrdersHistory = (
-    query: {
+    query?: {
       /** true, null or false */
       active?: any;
       /** accepted, deadline, completed */
@@ -1017,7 +1022,6 @@ export class MyApi<SecurityDataType = unknown> extends HttpClient<SecurityDataTy
       size?: any;
       /** Sorting property. Equals to object field. Can be multiplesorting properties. Default "acceptedAt" */
       '[sort]'?: any;
-      params: Record<string, string>;
     },
     params: RequestParams = {},
   ) =>
@@ -1061,7 +1065,7 @@ export class MyApi<SecurityDataType = unknown> extends HttpClient<SecurityDataTy
    * @request GET:/v1/account/purchases/{productId}
    * @response `200` `FullProductCard` Success
    * @response `401` `void` Unauthorized
-   * @response `404` `void` Card not found
+   * @response `404` `void` Purchase not found
    */
   getPurchase = (productId: number, params: RequestParams = {}) =>
     this.request<FullProductCard, void>({
@@ -1091,7 +1095,7 @@ export class MyApi<SecurityDataType = unknown> extends HttpClient<SecurityDataTy
    *
    * @tags get, advertisement, My Advertisements, user, account
    * @name GetAd1
-   * @summary Get one ad
+   * @summary Get one my ad
    * @request GET:/v1/account/advertisements/{advertisementId}
    * @response `200` `(FullOrder | FullProduct)` Success
    * @response `401` `void` Unauthorized

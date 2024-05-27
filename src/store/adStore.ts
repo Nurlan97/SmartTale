@@ -1,11 +1,9 @@
-import axios from 'axios';
 import { makeAutoObservable } from 'mobx';
 import uniqid from 'uniqid';
 
 import { CreateAdRequest } from '../api/data-contracts';
 import { MyApi } from '../api/V1';
 import modalStore, { Modals } from './modalStore';
-import userStore from './userStore';
 
 const api = new MyApi();
 interface IPlaceAd {
@@ -192,9 +190,7 @@ export default class adStore {
       }
     }
     try {
-      const response = await api.placeAdvertisement(obj, {
-        headers: { Authorization: `Bearer ${userStore.accessToken}` },
-      });
+      const response = await api.placeAdvertisement(obj);
       this.resetForm();
     } catch (error) {
       console.log(error);
