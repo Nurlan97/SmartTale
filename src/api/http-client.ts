@@ -14,9 +14,12 @@ import type {
   AxiosRequestConfig,
   AxiosResponse,
   HeadersDefaults,
+  InternalAxiosRequestConfig,
   ResponseType,
 } from 'axios';
 import axios from 'axios';
+import { isTokenExpired, removeCookie } from '../utils/helpers';
+import { userStore } from '../store';
 
 export type QueryParamsType = Record<string | number, any>;
 
@@ -53,7 +56,14 @@ export enum ContentType {
   UrlEncoded = 'application/x-www-form-urlencoded',
   Text = 'text/plain',
 }
-
+const redirectToAuth = (config: InternalAxiosRequestConfig<any>) => {
+  const abortCtrl = new AbortController();
+  abortCtrl.abort();
+  config.signal = abortCtrl.signal;
+  removeCookie('accessToken');
+  removeCookie('refreshToken');
+  window.location.assign(`${window.location.origin}/#/authorization`);
+};
 export class HttpClient<SecurityDataType = unknown> {
   public instance: AxiosInstance;
   private securityData: SecurityDataType | null = null;
@@ -74,6 +84,36 @@ export class HttpClient<SecurityDataType = unknown> {
     this.secure = secure;
     this.format = format;
     this.securityWorker = securityWorker;
+    this.instance.interceptors.request.use(async (config) => {
+      if (userStore.isAuth) {
+        if (isTokenExpired(userStore.accessToken)) {
+          if (isTokenExpired(userStore.refreshToken)) {
+            redirectToAuth(config);
+          } else {
+            await userStore.refreshTokens();
+            config.headers['Authorization'] = `Bearer ${userStore.accessToken}`;
+          }
+        } else {
+          config.headers['Authorization'] = `Bearer ${userStore.accessToken}`;
+        }
+      }
+      // if (!!config.headers['Authorization']) {
+      //   const oldAccessToken = String(config.headers['Authorization']).split(' ')[1];
+      //   if (!oldAccessToken) {
+      //     redirectToAuth(config);
+      //   } else {
+      //     if (isTokenExpired(oldAccessToken)) {
+      //       if (isTokenExpired(userStore.refreshToken)) {
+      //         redirectToAuth(config);
+      //       } else {
+      //         await userStore.refreshTokens();
+      //         config.headers['Authorization'] = `Bearer ${userStore.accessToken}`;
+      //       }
+      //     }
+      //   }
+      // }
+      return config;
+    });
   }
 
   public setSecurityData = (data: SecurityDataType | null) => {

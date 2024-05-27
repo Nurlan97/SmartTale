@@ -13,7 +13,7 @@ const ServicesPage = observer(() => {
     <div className={styles.page}>
       <Header path='Маркетплейс/Услуги' title='Услуги' />
       <Grid array={servicesStore.data.content} columns={columns} />
-      <PageBtnGroup store={servicesStore} />
+      <PageBtnGroup store={servicesStore} setPage={servicesStore.setPage} />
     </div>
   );
 });

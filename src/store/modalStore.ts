@@ -1,10 +1,9 @@
 import { makeAutoObservable } from 'mobx';
-import { fromPromise } from 'mobx-utils';
 
 import { FullOrderCard, FullProductCard } from '../api/data-contracts';
 import { MyApi } from '../api/V1';
-import userStore from './userStore';
-export enum SimpleModals {
+
+export enum Modals {
   closeOrder = 'closeOrder',
   errorOrder = 'errorOrder',
   errorValidation = 'errorValidation',
@@ -12,20 +11,13 @@ export enum SimpleModals {
   successOrder = 'successOrder',
   successPurchase = 'successPurchase',
   successSubscribe = 'successSubscribe',
-}
-export enum ChoiseModals {
   deleteAd = 'deleteAd',
   hideAd = 'hideAd',
   exit = 'exit',
-}
-
-export enum ModalsTypes {
-  simpleModal = 'simpleModal', //Модалки с одной кнопкой
-  choiseModal = 'choiseModal', //Модалки с двумя кнопками
-  descriptionModal = 'descriptionModal', //Модалки с описанием объявления или заказа
-  changePhotoModal = 'changePhotoModal', //Модалка изменения фото профиля
-  inviteEmployer = 'inviteEmployer', //Модалка приглашения сотрудника
-  loader = '',
+  descriptionModal = 'descriptionModal',
+  changePhotoModal = 'changePhotoModal',
+  inviteEmployer = 'inviteEmployer',
+  loader = 'loader',
 }
 interface IDetailed {
   id: number;
@@ -79,9 +71,8 @@ class modalStore {
     title: '',
     views: 0,
   };
-  currentSimple: SimpleModals = SimpleModals.errorValidation;
-  currentChoise: ChoiseModals = ChoiseModals.hideAd;
-  currentType: ModalsTypes | null = ModalsTypes.loader;
+  currentModal: Modals | null = null;
+
   constructor() {
     makeAutoObservable(this);
   }
@@ -90,41 +81,38 @@ class modalStore {
   };
   openDescription = async (id: number, path: string) => {
     this.isOpen = true;
-    this.currentType = ModalsTypes.loader;
+    this.currentModal = Modals.loader;
     try {
-      const response = await api.getAd(id, {
-        headers: { Authorization: `Bearer ${userStore.accessToken}` },
-      });
+      const response = await api.getAd(id);
       this.detailed = response.data;
       if (path === '/my-purchases' || path === '/equipment' || path === '/services') {
         this.detailedExt.path = pathObj[path];
       }
       this.detailedExt.activeImg = 0;
       this.detailedExt.activeTab = 'description';
-      this.currentType = ModalsTypes.descriptionModal;
+      this.currentModal = Modals.descriptionModal;
     } catch (error) {
       console.log(error);
       this.isOpen = false;
     }
   };
-  openChoise = (type: ChoiseModals) => {
-    this.currentType = ModalsTypes.choiseModal;
-    this.currentChoise = type;
+  openModal = (type: Modals) => {
+    this.currentModal = type;
     this.isOpen = true;
   };
-  openSimple = (type: SimpleModals) => {
-    this.currentType = ModalsTypes.simpleModal;
-    this.currentSimple = type;
-    this.isOpen = true;
-  };
-  openChangePhoto = () => {
-    this.currentType = ModalsTypes.changePhotoModal;
-    this.isOpen = true;
-  };
-  openLoader = () => {
-    this.currentType = ModalsTypes.loader;
-    this.isOpen = true;
-  };
+  // openSimple = (type: SimpleModals) => {
+  //   this.currentType = ModalsTypes.simpleModal;
+  //   this.currentSimple = type;
+  //   this.isOpen = true;
+  // };
+  // openChangePhoto = () => {
+  //   this.currentType = ModalsTypes.changePhotoModal;
+  //   this.isOpen = true;
+  // };
+  // openLoader = () => {
+  //   this.currentType = ModalsTypes.loader;
+  //   this.isOpen = true;
+  // };
   setImage = (num: number) => () => {
     this.detailedExt.activeImg = num;
   };

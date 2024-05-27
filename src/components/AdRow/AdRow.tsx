@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 
 import { Card, Order, Product } from '../../api/data-contracts';
 import { appStore } from '../../store';
-import { IType } from '../../store/appStore';
 import { cutText } from '../../utils/helpers';
 import styles from './adRow.module.scss';
 interface IAd {

@@ -1,20 +1,17 @@
-import { useNavigate } from 'react-router-dom';
+import { observer } from 'mobx-react-lite';
 
-import { FullOrder } from '../../api/data-contracts';
-import { IType } from '../../store/userStore';
+import { FullOrder, FullProduct } from '../../api/data-contracts';
 import styles from './detailedAd.module.scss';
 
 interface IProps {
-  ad: FullOrder & IType;
+  ad: FullOrder | FullProduct;
 }
 
-const DetailedAd = ({ ad }: IProps) => {
-  const navigate = useNavigate();
+const DetailedAd = observer(({ ad }: IProps) => {
   return (
     <div>
-      <button onClick={() => navigate(-1)}>Назад</button>
-      <div className={styles.title}>{`Информация об ${
-        ad.type === 'equipment' ? 'оборудовании' : 'заказе'
+      <div className={styles.title}>{`Информация ${
+        'productId' in ad ? 'об оборудовании' : 'о заказе'
       }`}</div>
       <div className={styles.field}>
         <div className={styles.label}>Название</div>
@@ -25,7 +22,7 @@ const DetailedAd = ({ ad }: IProps) => {
         {ad.description}
       </div>
 
-      {ad.size && (
+      {'size' in ad && (
         <div className={styles.field}>
           <div className={styles.label}>Размеры</div>
           {ad.size}
@@ -36,7 +33,7 @@ const DetailedAd = ({ ad }: IProps) => {
         <div className={styles.label}>Стоимость в сомах</div>
         {ad.price ? ad.price : 'Стоимость договорная'}
       </div>
-      {ad.deadlineAt && (
+      {'deadlineAt' in ad && (
         <div className={styles.field}>
           <div className={styles.label}>Крайняя дата выполнения</div>
           {ad.deadlineAt}
@@ -55,6 +52,6 @@ const DetailedAd = ({ ad }: IProps) => {
       )}
     </div>
   );
-};
+});
 
 export default DetailedAd;

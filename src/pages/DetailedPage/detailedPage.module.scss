@@ -7,3 +7,15 @@
   flex-direction: column;
   text-align: start;
 }
+
+.footer {
+  margin-top: auto;
+  margin-bottom: 0;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+}
+.btnGroup {
+  display: flex;
+  gap: 16px;
+}

@@ -10,7 +10,7 @@ import {
   NavbarProfile,
 } from '../../assets';
 import { modalStore, userStore } from '../../store';
-import { ChoiseModals } from '../../store/modalStore';
+import { Modals } from '../../store/modalStore';
 import navbarStore from '../../store/navbarStore';
 import NavbarLink from '../../UI/NavbarLink/NavbarLink';
 import NavbarTab from '../../UI/NavbarTab/NavbarTab';
@@ -126,7 +126,7 @@ const NavBar = observer(({ path }: INavBar) => {
         {userStore.isAuth ? (
           <button
             className={styles.navbarExtit}
-            onClick={() => modalStore.openChoise(ChoiseModals.exit)}
+            onClick={() => modalStore.openModal(Modals.exit)}
           >
             <NavbarExit />
             <span className={styles.navbarExtitText}>Выйти</span>

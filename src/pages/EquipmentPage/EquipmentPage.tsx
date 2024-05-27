@@ -14,7 +14,7 @@ const EquipmentPage = observer(() => {
     <div className={styles.page}>
       <Header path='Маркетплейс/Оборудование' title='Оборудование' />
       <Grid array={equipmentStore.data.content} columns={columns} />
-      <PageBtnGroup store={equipmentStore} />
+      <PageBtnGroup store={equipmentStore} setPage={equipmentStore.setPage} />
     </div>
   );
 });

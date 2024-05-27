@@ -22,7 +22,7 @@ const Grid = observer(({ array, columns }: IGridParams) => {
     <div className={stylesObj[key]}>
       {array &&
         array.map((card) => {
-          return <Card card={card} key={card.productId} />;
+          return <Card card={card} key={card.advertisementId} />;
         })}
     </div>
   );
