@@ -19,6 +19,7 @@ import Login from './login.svg';
 import NavbarExit from './navbarExit.svg';
 import NavbarMarket from './navbarMarket.svg';
 import NavbarOrders from './navbarOrders.svg';
+import NavbarOrganization from './navbarOrganization.svg';
 import NavbarProfile from './navbarProfile.svg';
 import NoSort from './noSort.svg';
 import ArrowRight from './rightArrow.svg';
@@ -51,6 +52,7 @@ export {
   NavbarExit,
   NavbarMarket,
   NavbarOrders,
+  NavbarOrganization,
   NavbarProfile,
   NoSort,
   Search,

@@ -7,6 +7,7 @@ import {
   NavbarExit,
   NavbarMarket,
   NavbarOrders,
+  NavbarOrganization,
   NavbarProfile,
 } from '../../assets';
 import { modalStore, userStore } from '../../store';
@@ -25,6 +26,7 @@ const NavBar = observer(({ path }: INavBar) => {
   const profileRef = useRef<HTMLDivElement>(null);
   const ordersRef = useRef<HTMLDivElement>(null);
   const marketRef = useRef<HTMLDivElement>(null);
+  const organizationRef = useRef<HTMLDivElement>(null);
   const exitRef = useRef<HTMLDivElement>(null);
   const refObj: {
     [key: string]: RefObject<HTMLDivElement>;
@@ -32,6 +34,7 @@ const NavBar = observer(({ path }: INavBar) => {
     profile: profileRef,
     orders: ordersRef,
     market: marketRef,
+    organization: organizationRef,
     exit: exitRef,
   };
 
@@ -119,6 +122,26 @@ const NavBar = observer(({ path }: INavBar) => {
           <NavbarLink title='Оборудование' to='equipment' />
           <NavbarLink title='Услуги' to='services' />
           {userStore.isAuth && <NavbarLink title='Разместить заказ' to='place-order' />}
+        </div>
+      </div>
+      <div className={styles.horizontalLine}></div>
+      <div className={styles.navbarGroup}>
+        <NavbarTab
+          SVG={<NavbarOrganization />}
+          currentRef={organizationRef}
+          slag='organization'
+          title='Организация'
+          collapsed={navbarStore.tabs.organization}
+        />
+
+        <div
+          ref={organizationRef}
+          className={extendedLinkGroup(navbarStore.tabs.organization)}
+        >
+          <NavbarLink title='Информация' to='company-information' />
+          <NavbarLink title='Сотрудники' to='employees' />
+          <NavbarLink title='Должности' to='roles' />
+          <NavbarLink title='История' to='company-history' />
         </div>
       </div>
 
