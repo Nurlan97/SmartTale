@@ -108,8 +108,10 @@ export class HttpClient<SecurityDataType = unknown> {
           await userStore.refreshTokens();
           console.log('повторный запрос');
           return this.instance(originalRequest);
+        } else {
+          userStore.logout();
+          window.location.assign(`${window.location.origin}/#/authorization`);
         }
-        redirectToAuth(error);
       },
     );
   }

@@ -56,16 +56,18 @@
   border-bottom: 1px solid #8e8e93;
   width: 220px;
   height: 0px;
-  margin-bottom: 16px;
+  margin-bottom: 8px;
 }
 
 @mixin linkGroup {
   display: flex;
   flex-direction: column;
+  width: 100%;
   align-items: start;
-  padding-left: 20px;
-  border-left: 1px solid rgba(142, 142, 147, 1);
-  margin: 20px 0;
+  padding-left: 16px;
+
+  border-left: 1px solid rgba(142, 142, 147, 0.8);
+  margin: 12px 0 12px 30px;
   overflow: hidden;
 }
 
@@ -104,6 +106,6 @@
   margin-left: 12px;
 }
 
-.loginIcon{
+.loginIcon {
   width: 20px;
 }

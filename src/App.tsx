@@ -70,6 +70,10 @@ const App = observer(() => {
             <Route path='/my-purchases' element={<MyPurchases />} />
             <Route path='/orders-history' element={<OrderHistoryPage />} />
             <Route path='/company' element={<OrganizationPage />} />
+            <Route path='/company-information' element={<OrganizationPage />} />
+            <Route path='/employees' element={<OrganizationPage />} />
+            <Route path='/roles' element={<OrganizationPage />} />
+            <Route path='/company-history' element={<OrganizationPage />} />
           </Route>
           <Route element={<NoAuthRoute />}>
             <Route path='/registration' element={<RegistrationPage />}></Route>
