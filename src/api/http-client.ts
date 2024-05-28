@@ -14,9 +14,12 @@ import type {
   AxiosRequestConfig,
   AxiosResponse,
   HeadersDefaults,
+  InternalAxiosRequestConfig,
   ResponseType,
 } from 'axios';
 import axios from 'axios';
+import { isTokenExpired, removeCookie } from '../utils/helpers';
+import { userStore } from '../store';
 
 export type QueryParamsType = Record<string | number, any>;
 
@@ -53,7 +56,13 @@ export enum ContentType {
   UrlEncoded = 'application/x-www-form-urlencoded',
   Text = 'text/plain',
 }
-
+const redirectToAuth = (config: InternalAxiosRequestConfig<any>) => {
+  const abortCtrl = new AbortController();
+  abortCtrl.abort();
+  config.signal = abortCtrl.signal;
+  userStore.logout();
+  window.location.assign(`${window.location.origin}/#/authorization`);
+};
 export class HttpClient<SecurityDataType = unknown> {
   public instance: AxiosInstance;
   private securityData: SecurityDataType | null = null;
@@ -69,11 +78,42 @@ export class HttpClient<SecurityDataType = unknown> {
   }: ApiConfig<SecurityDataType> = {}) {
     this.instance = axios.create({
       ...axiosConfig,
-      baseURL: axiosConfig.baseURL || 'https://smart-tale-production.up.railway.app:443',
+      baseURL: axiosConfig.baseURL || 'https://smart-tale-production.up.railway.app',
     });
     this.secure = secure;
     this.format = format;
     this.securityWorker = securityWorker;
+    this.instance.interceptors.request.use(async (config) => {
+      if (userStore.isAuth) {
+        if (isTokenExpired(userStore.accessToken)) {
+          if (isTokenExpired(userStore.refreshToken)) {
+            redirectToAuth(config);
+          } else {
+            await userStore.refreshTokens();
+            config.headers['Authorization'] = `Bearer ${userStore.accessToken}`;
+          }
+        } else {
+          config.headers['Authorization'] = `Bearer ${userStore.accessToken}`;
+        }
+      }
+      return config;
+    });
+    this.instance.interceptors.response.use(
+      (response) => response,
+      async (error) => {
+        const originalRequest = error.config;
+        if (error.response.status === 401 && !originalRequest._retry) {
+          originalRequest._retry = true;
+          console.log('обновление токенов');
+          await userStore.refreshTokens();
+          console.log('повторный запрос');
+          return this.instance(originalRequest);
+        } else {
+          userStore.logout();
+          window.location.assign(`${window.location.origin}/#/authorization`);
+        }
+      },
+    );
   }
 
   public setSecurityData = (data: SecurityDataType | null) => {
@@ -104,7 +144,7 @@ export class HttpClient<SecurityDataType = unknown> {
 
   protected stringifyFormItem(formItem: unknown) {
     if (typeof formItem === 'object' && formItem !== null) {
-      return JSON.stringify(formItem);
+      return new Blob([JSON.stringify(formItem)], { type: 'application/json' });
     } else {
       return `${formItem}`;
     }

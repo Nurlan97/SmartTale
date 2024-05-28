@@ -5,6 +5,7 @@ export const initialValues = {
   firstName: '',
   middleName: '',
   email: '',
+  phoneNumber: '',
 };
 
 export interface ISubmitTypes {
@@ -12,18 +13,26 @@ export interface ISubmitTypes {
   firstName: string;
   middleName: string;
   email: string;
+  phoneNumber: string;
 }
 
 export const RegistrationSchema = Yup.object().shape({
   lastName: Yup.string().required('Обязательное поле для заполнения'),
-  name: Yup.string().required('Обязательное поле для заполнения'),
+  firstName: Yup.string().required('Обязательное поле для заполнения'),
   middleName: Yup.string().required('Обязательное поле для заполнения'),
   email: Yup.string()
     .required('Обязательное поле для заполнения')
     .email('Неправильный формат email адреса'),
+  phoneNumber: Yup.string().required('Обязательное поле для заполнения'),
 });
 
 export const formData = [
+  {
+    htmlFor: 'email',
+    label: 'Email*',
+    placeholder: 'Введите email',
+    id: 'email',
+  },
   {
     htmlFor: 'lastName',
     label: 'Фамилия*',
@@ -31,10 +40,10 @@ export const formData = [
     id: 'lastName',
   },
   {
-    htmlFor: 'name',
+    htmlFor: 'firstName',
     label: 'Имя*',
     placeholder: 'Введите имя',
-    id: 'name',
+    id: 'firstName',
   },
   {
     htmlFor: 'middleName',
@@ -43,9 +52,9 @@ export const formData = [
     id: 'middleName',
   },
   {
-    htmlFor: 'email',
-    label: 'Email*',
-    placeholder: 'Введите email',
-    id: 'email',
+    htmlFor: 'phoneNumber',
+    label: 'Телефон*',
+    placeholder: 'Введите номер телефона',
+    id: 'phoneNumber',
   },
 ];

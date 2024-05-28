@@ -6,6 +6,9 @@
   font-size: 16px;
   line-height: 150%;
   height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 @mixin disabled {

@@ -3,7 +3,7 @@ import { makeAutoObservable } from 'mobx';
 const tabsMap = new Map();
 tabsMap.set('profile', 'profile');
 tabsMap.set('my-ads', 'profile');
-tabsMap.set('my-buys', 'profile');
+tabsMap.set('my-purchases', 'profile');
 tabsMap.set('orders-history', 'profile');
 tabsMap.set('company', 'profile');
 tabsMap.set('orders-active', 'orders');
@@ -11,7 +11,11 @@ tabsMap.set('history', 'orders');
 tabsMap.set('equipment', 'market');
 tabsMap.set('services', 'market');
 tabsMap.set('place-order', 'market');
-export type AllowedStrings = 'profile' | 'orders' | 'market';
+tabsMap.set('company-information', 'organization');
+tabsMap.set('employees', 'organization');
+tabsMap.set('roles', 'organization');
+tabsMap.set('company-history', 'organization');
+export type AllowedStrings = 'profile' | 'orders' | 'market' | 'organization';
 
 class navbarStore {
   activeTab = 'profile';
@@ -31,7 +35,7 @@ class navbarStore {
     this.activeLink = active;
     this.activeTab = tabsMap.get(active);
   };
-  toggleTab = (tab: 'profile' | 'orders' | 'market') => {
+  toggleTab = (tab: 'profile' | 'orders' | 'market' | 'organization') => {
     this.tabs[tab] = this.tabs[tab] === 'extended' ? 'rolled up' : 'extended';
     if (this.queue.indexOf(tab) !== -1) this.queue.splice(this.queue.indexOf(tab), 1);
     this.queue.push(tab);

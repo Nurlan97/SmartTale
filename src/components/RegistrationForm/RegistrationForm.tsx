@@ -1,7 +1,9 @@
 import { useFormik } from 'formik';
 import { observer } from 'mobx-react-lite';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 
+import { useDebounce } from '../../hooks/useDebounce';
 import { userStore } from '../../store';
 import Button from '../../UI/Button/Button';
 import {
@@ -15,8 +17,29 @@ import FormInput from '../FormInput/FormInput';
 import styles from './RegistrationForm.module.scss';
 
 const RegistrationForm = observer(() => {
-  const onSubmit = ({ lastName, firstName, middleName, email }: ISubmitTypes) => {
-    console.log(lastName, firstName, middleName, email);
+  const [submit, setSubmit] = useState(false);
+  const onSubmit = ({
+    lastName,
+    firstName,
+    middleName,
+    email,
+    phoneNumber,
+  }: ISubmitTypes) => {
+    try {
+      setTimeout(async () => {
+        await userStore.fetchRegistration({
+          lastName,
+          firstName,
+          middleName,
+          email,
+          phoneNumber,
+        });
+      }, 500);
+    } catch (error) {
+      console.log(error);
+    }
+
+    setSubmit(true);
   };
 
   const formik = useFormik({
@@ -24,6 +47,17 @@ const RegistrationForm = observer(() => {
     onSubmit,
     validationSchema: RegistrationSchema,
   });
+  const debounceSearch = useDebounce((search: string) => {
+    if (search === '') return;
+    if (!formik.errors.email || formik.errors.email === 'Данный email занят') {
+      userStore.fetchAvailableEmail(search).then((data) => {
+        if (!data) formik.setFieldError('email', 'Данный email занят');
+      });
+    }
+  });
+  useEffect(() => {
+    debounceSearch(formik.values.email);
+  }, [formik.values.email]);
   return (
     <div className={styles.wrapper}>
       <form className={styles.form} onSubmit={formik.handleSubmit}>
@@ -40,13 +74,31 @@ const RegistrationForm = observer(() => {
           );
         })}
         <Checkbox checked={userStore.isRemember} onClick={userStore.toggleRemember} />
-        <Button color='blue' type='submit' width='100%'>
-          Зарегистрироваться
-        </Button>
+        {!submit &&
+          (Object.keys(formik.touched).length === 0 ? (
+            <Button color='blue' type='submit' width='100%'>
+              Зарегистрироваться
+            </Button>
+          ) : Object.keys(formik.errors).length !== 0 ? (
+            <Button color='white' type='submit' disabled={true}>
+              Заполните все поля
+            </Button>
+          ) : (
+            <Button color='blue' type='submit' width='100%'>
+              Зарегистрироваться
+            </Button>
+          ))}
+        {submit && (
+          <Button color='blue' type='submit' width='100%' disabled={true}>
+            <div className={styles.loaderWrapper}>
+              <div className={styles.loader}>Ожидаем...</div>
+            </div>
+          </Button>
+        )}
       </form>
       <div className={styles.loginLinkBlock}>
         <p>Уже зарегистрированы?</p>
-        <Link to='#'>Войти</Link>
+        <Link to='/authorization'>Войти</Link>
       </div>
     </div>
   );
