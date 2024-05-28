@@ -77,7 +77,10 @@ const ProfilePage = observer(() => {
             <p
               className={styles.name}
             >{`${userStore.lastName} ${userStore.firstName} ${userStore.middleName}`}</p>
-            <p className={styles.changePhoto}>Изменить фото профиля</p>
+
+            <label htmlFor='photo'>
+              <p className={styles.changePhoto}>Изменить фото профиля</p>
+            </label>
           </div>
         </div>
         <h3 className={styles.title}>Личные данные</h3>

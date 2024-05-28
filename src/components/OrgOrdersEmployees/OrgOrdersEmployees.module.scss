@@ -1,0 +1,79 @@
+.logoHeader {
+  text-align: left;
+  font-family: 'SF Pro', sans-serif;
+  font-weight: 400;
+  font-size: 24px;
+  line-height: 92%;
+  text-align: left;
+  color: #000;
+}
+.logo {
+  background: #fc0;
+  width: 70px;
+  height: 70px;
+  border-radius: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 20px;
+}
+.title {
+  font-family: 'SF Pro', sans-serif;
+  font-weight: 400;
+  font-size: 24px;
+  line-height: 92%;
+  color: #000;
+  margin-bottom: 12px;
+}
+.description {
+  font-family: 'SF Pro', sans-serif;
+  font-weight: 400;
+  font-size: 14px;
+  color: #000;
+  opacity: 0.6;
+}
+
+.btnGroup {
+  height: 56px;
+  margin-top: 32px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.btnList {
+  display: flex;
+  gap: 8px;
+}
+
+.list {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.table {
+  margin-top: 20px;
+  padding: 20px;
+  border-radius: 16px;
+  background: #fff;
+}
+.tableHeaderContainer {
+  // background: #000;
+  border-bottom: 1px solid rgb(233, 237, 247);
+}
+.tableHeader {
+  text-align: start;
+  padding-bottom: 20px;
+  color: #8e8e93;
+}
+
+.tableRow{
+  padding: 20px;
+}
+
+.fullName, .order {
+  text-decoration: underline;
+  font-size: 14px;
+  font-weight: 400; 
+}

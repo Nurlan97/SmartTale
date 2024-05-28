@@ -1,12 +1,12 @@
 import { ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { Card, Order, Product } from '../../api/data-contracts';
+import { Card, Order, OrderSummary, Product } from '../../api/data-contracts';
 import { appStore } from '../../store';
 import { cutText } from '../../utils/helpers';
 import styles from './adRow.module.scss';
 interface IAd {
-  item: Order | Product;
+  item: Order | Product | OrderSummary;
   children: ReactNode;
 }
 

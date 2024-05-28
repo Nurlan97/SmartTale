@@ -9,6 +9,8 @@
  * ---------------------------------------------------------------
  */
 
+import { ReactNode } from 'react';
+
 export interface CreateOrgRequest {
   name: string;
   description?: string;
@@ -280,21 +282,21 @@ export interface Employee {
 
 export interface PageEmployee {
   /** @format int32 */
-  totalPages?: number;
+  totalPages: number;
   /** @format int64 */
-  totalElements?: number;
+  totalElements: number;
   /** @format int32 */
-  size?: number;
-  content?: Employee[];
+  size: number;
+  content: Employee[];
   /** @format int32 */
-  number?: number;
-  sort?: SortObject;
-  pageable?: PageableObject;
+  number: number;
+  sort: SortObject;
+  pageable: PageableObject;
   /** @format int32 */
-  numberOfElements?: number;
-  first?: boolean;
-  last?: boolean;
-  empty?: boolean;
+  numberOfElements: number;
+  first: boolean;
+  last: boolean;
+  empty: boolean;
 }
 
 export interface AssignedEmployee {
@@ -501,21 +503,21 @@ export interface FullOrderCard {
 
 export interface PageSmallOrder {
   /** @format int32 */
-  totalPages?: number;
+  totalPages: number;
   /** @format int64 */
-  totalElements?: number;
+  totalElements: number;
   /** @format int32 */
-  size?: number;
-  content?: SmallOrder[];
+  size: number;
+  content: SmallOrder[];
   /** @format int32 */
-  number?: number;
-  sort?: SortObject;
-  pageable?: PageableObject;
+  number: number;
+  sort: SortObject;
+  pageable: PageableObject;
   /** @format int32 */
-  numberOfElements?: number;
-  first?: boolean;
-  last?: boolean;
-  empty?: boolean;
+  numberOfElements: number;
+  first: boolean;
+  last: boolean;
+  empty: boolean;
 }
 
 export interface SmallOrder {
