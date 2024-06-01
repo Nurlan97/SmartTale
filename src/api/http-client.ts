@@ -102,6 +102,9 @@ export class HttpClient<SecurityDataType = unknown> {
       (response) => response,
       async (error) => {
         const originalRequest = error.config;
+        if (!userStore.isAuth) {
+          return Promise.reject(error);
+        }
         if (error.response.status === 401 && !originalRequest._retry) {
           originalRequest._retry = true;
           console.log('обновление токенов');

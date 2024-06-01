@@ -1,41 +1,38 @@
 .columnWrapper {
-    min-width: 218px;
-    padding: 20px;
-    border-radius: 10px;
-    background-color: #fff;
-  }
-  
-  .dropPlaceholder {
-    height: 35px;
-    background-color: transparent;
-    margin-top: 15px;
-  }
-  
-  .columnHeaderWrapper {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    padding: 8px 10px;
-    border-radius: 10px;
-    border: none;
-  }
+  min-width: 218px;
+  padding: 20px;
+  border-radius: 10px;
+  background-color: #fff;
+}
 
-  .expecting {
-    background:#C3FFFB;
-  }
-  
-  .inprogress {
-    background: #C5E6FF;
-  }
-  
-  .checking {
-    background: #FFFBA1;
-  }
-  
-  .sent {
-    background: #FFD9A1;
-  }
-  .delivered {
-    background: #E6FFA1;
-  }
+@mixin header {
+  display: flex;
+  padding: 8px 10px;
+  border-radius: 10px;
+  border: none;
+  justify-content: center;
+  align-items: center;
+}
+.pending {
+  @include header;
+  background: #c3fffb;
+}
+
+.inProgress {
+  @include header;
+  background: #c5e6ff;
+}
+
+.checking {
+  @include header;
+  background: #fffba1;
+}
+
+.dispatched {
+  @include header;
+  background: #ffd9a1;
+}
+.arrived {
+  @include header;
+  background: #e6ffa1;
+}

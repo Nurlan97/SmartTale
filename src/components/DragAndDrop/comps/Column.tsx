@@ -1,39 +1,31 @@
-import { FC, useMemo } from "react";
-import { Droppable } from "../primitives/Droppable";
-import { DraggableElement } from "./DraggableElement";
-import styles from "./Column.module.scss";
+import { useDroppable } from '@dnd-kit/core';
 
-export interface IElement {
-  id: string;
-  content: string;
-  column: string;
+import { DashboardOrder } from '../../../api/data-contracts';
+import { toCamelCase } from '../../../utils/helpers';
+import { IColumn } from '../DragAndDrop';
+import styles from './Column.module.scss';
+import OrderCard from './OrderCard';
+
+interface Props {
+  elements: Array<DashboardOrder>;
+  column: IColumn;
 }
 
-interface IColumn {
-  name: string;
-  elements: IElement[];
-  style: string; 
-}
-
-export const Column: FC<IColumn> = ({ name, style, elements }) => {
-  console.log("Column Props:", { elements });
-  const columnIdentifier = useMemo(() => style.toLowerCase(), [style]);
+export const Column = ({ column, elements }: Props) => {
+  const { setNodeRef } = useDroppable({
+    id: column.id,
+    data: {
+      type: 'Column',
+      column,
+    },
+  });
 
   return (
-    <div className={styles.columnWrapper}>
-      <div className={`${styles.columnHeaderWrapper} ${styles[columnIdentifier]}`}>
-        <h3 className={styles.heading}>{name}</h3>
-      </div>
-      <Droppable id={columnIdentifier}>
-        {elements.map((elm, elmIndex) => (
-          <DraggableElement
-            key={`draggable-element-${elmIndex}-${columnIdentifier}`}
-            identifier={elm.id}
-            content={elm.content}
-          />
-        ))}
-        <div className={styles.dropPlaceholder} />
-      </Droppable>
+    <div className={styles.columnWrapper} ref={setNodeRef}>
+      <div className={styles[toCamelCase(column.id)]}>{column.title}</div>
+      {elements.map((elm, ind) => (
+        <OrderCard order={elm} key={ind} />
+      ))}
     </div>
   );
 };

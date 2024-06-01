@@ -205,7 +205,6 @@ class appStore {
   getMyOrganizationOrders = async () => {
     try {
       const response = await api.getOrders({ active: true });
-      console.log('Response', response.data);
       this.myOrganization.orders = response.data;
     } catch (error) {
       console.error('Failed to fetch orders', error);

@@ -25,6 +25,7 @@ import NoSort from './noSort.svg';
 import ArrowRight from './rightArrow.svg';
 import ArrowRightDouble from './rightDoubleArrow.svg';
 import Search from './search.svg';
+import Clock from './time.svg';
 import ArrowUp from './upArrow.svg';
 
 export {
@@ -39,6 +40,7 @@ export {
   Bell,
   Calendar,
   CheckMark,
+  Clock,
   Cross,
   defaultImage,
   defaultPhoto,
