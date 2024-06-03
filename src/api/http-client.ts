@@ -84,6 +84,9 @@ export class HttpClient<SecurityDataType = unknown> {
     this.format = format;
     this.securityWorker = securityWorker;
     this.instance.interceptors.request.use(async (config) => {
+      if (config.baseURL?.includes('refresh-token')) {
+        return config;
+      }
       if (userStore.isAuth) {
         if (isTokenExpired(userStore.accessToken)) {
           if (isTokenExpired(userStore.refreshToken)) {
@@ -102,6 +105,9 @@ export class HttpClient<SecurityDataType = unknown> {
       (response) => response,
       async (error) => {
         const originalRequest = error.config;
+        if (!userStore.isAuth) {
+          return Promise.reject(error);
+        }
         if (error.response.status === 401 && !originalRequest._retry) {
           originalRequest._retry = true;
           console.log('обновление токенов');

@@ -3,6 +3,7 @@ import { injectStores } from '@mobx-devtools/tools';
 import PlaceOrderStore from './adStore';
 import appStore from './appStore';
 import equipmentStore from './equipmentStore';
+import kanbanStore from './kanbanStore';
 import modalStore from './modalStore';
 import navbarStore from './navbarStore';
 import servicesStore from './servicesStore';
@@ -25,12 +26,14 @@ injectStores({
   userStore,
   modalStore,
   appStore,
+  kanbanStore,
 });
 
 export {
   appStore,
   createPlaceOrderStore,
   equipmentStore,
+  kanbanStore,
   modalStore,
   navbarStore,
   servicesStore,

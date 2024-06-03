@@ -8,8 +8,10 @@ import ModalContainer from './components/ModalContainer/ModalContainer';
 import NavBar from './components/NavBar/NavBar';
 import NoAuthRoute from './components/NoAuthRoute/NoAuthRoute';
 import AuthorizationPage from './pages/AuthorizationPage/AuthorizationPage';
+import CurrentOrdersPage from './pages/CurrentOrdersPage/CurrentOrdersPage';
 import DetailedPage from './pages/DetailedPage/DetailedPage';
 import EquipmentPage from './pages/EquipmentPage/EquipmentPage';
+import HistoryPage from './pages/HistoryPage/HistoryPage';
 import MyAdsPage from './pages/MyAdsPage/MyAdsPage';
 import MyPurchases from './pages/MyPurchases/MyPurchases';
 import OrderHistoryPage from './pages/OrderHistoryPage/OrderHistoryPage';
@@ -63,6 +65,8 @@ const App = observer(() => {
           <Route path='/services' element={<ServicesPage />} />
 
           <Route element={<AuthRoute />}>
+            <Route path='/history' element={<HistoryPage />} />
+            <Route path='/orders-active' element={<CurrentOrdersPage />} />
             <Route path='/place-order' element={<PlaceOrderPage />} />
             <Route path='/profile' element={<ProfilePage />} />
             <Route path='/my-ads' element={<MyAdsPage />} />

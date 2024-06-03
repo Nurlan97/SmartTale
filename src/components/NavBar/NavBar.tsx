@@ -125,25 +125,27 @@ const NavBar = observer(({ path }: INavBar) => {
         </div>
       </div>
       <div className={styles.horizontalLine}></div>
-      <div className={styles.navbarGroup}>
-        <NavbarTab
-          SVG={<NavbarOrganization />}
-          currentRef={organizationRef}
-          slag='organization'
-          title='Организация'
-          collapsed={navbarStore.tabs.organization}
-        />
+      {userStore.isAuth && (
+        <div className={styles.navbarGroup}>
+          <NavbarTab
+            SVG={<NavbarOrganization />}
+            currentRef={organizationRef}
+            slag='organization'
+            title='Организация'
+            collapsed={navbarStore.tabs.organization}
+          />
 
-        <div
-          ref={organizationRef}
-          className={extendedLinkGroup(navbarStore.tabs.organization)}
-        >
-          <NavbarLink title='Информация' to='company-information' />
-          <NavbarLink title='Сотрудники' to='employees' />
-          <NavbarLink title='Должности' to='roles' />
-          <NavbarLink title='История' to='company-history' />
+          <div
+            ref={organizationRef}
+            className={extendedLinkGroup(navbarStore.tabs.organization)}
+          >
+            <NavbarLink title='Информация' to='company-information' />
+            <NavbarLink title='Сотрудники' to='employees' />
+            <NavbarLink title='Должности' to='roles' />
+            <NavbarLink title='История' to='company-history' />
+          </div>
         </div>
-      </div>
+      )}
 
       <div ref={exitRef} className={styles.navbarFooter}>
         {userStore.isAuth ? (

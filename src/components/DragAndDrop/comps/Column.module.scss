@@ -1,0 +1,39 @@
+.columnWrapper {
+  min-width: 218px;
+  min-height: 500px;
+  padding: 20px;
+  border-radius: 10px;
+  background-color: #fff;
+}
+
+@mixin header {
+  display: flex;
+  padding: 8px 10px;
+  border-radius: 10px;
+  border: none;
+  justify-content: center;
+  align-items: center;
+}
+.pending {
+  @include header;
+  background: #c3fffb;
+}
+
+.inProgress {
+  @include header;
+  background: #c5e6ff;
+}
+
+.checking {
+  @include header;
+  background: #fffba1;
+}
+
+.dispatched {
+  @include header;
+  background: #ffd9a1;
+}
+.arrived {
+  @include header;
+  background: #e6ffa1;
+}

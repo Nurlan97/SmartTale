@@ -83,6 +83,10 @@ export function formatDate2(dateString: string | undefined) {
   return `${day}.${month}.${year}`;
 }
 
+export function toCamelCase(str: string) {
+  return str.toLowerCase().replace(/[^a-zA-Z0-9]+(.)/g, (m, chr) => chr.toUpperCase());
+}
+
 export const isTokenExpired = (token: string) => {
   if (!token) return true;
   if (token === 'undefined') return true;
