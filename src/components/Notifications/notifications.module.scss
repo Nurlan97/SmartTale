@@ -28,10 +28,13 @@
 }
 
 .body {
-  min-height: 50px;
   width: 100%;
 }
-
+.empty {
+  color: #8e8e93;
+  padding: 12px;
+  width: 100%;
+}
 .button {
   padding: 18px 16px;
 }

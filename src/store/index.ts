@@ -6,6 +6,7 @@ import equipmentStore from './equipmentStore';
 import kanbanStore from './kanbanStore';
 import modalStore from './modalStore';
 import navbarStore from './navbarStore';
+import notifyStore from './notifyStore';
 import servicesStore from './servicesStore';
 import userStore from './userStore';
 
@@ -27,6 +28,7 @@ injectStores({
   modalStore,
   appStore,
   kanbanStore,
+  notifyStore,
 });
 
 export {
@@ -36,6 +38,7 @@ export {
   kanbanStore,
   modalStore,
   navbarStore,
+  notifyStore,
   servicesStore,
   userStore,
 };

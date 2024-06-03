@@ -63,6 +63,7 @@ const redirectToAuth = (config: InternalAxiosRequestConfig<any>) => {
   userStore.logout();
   window.location.assign(`${window.location.origin}/#/authorization`);
 };
+
 export class HttpClient<SecurityDataType = unknown> {
   public instance: AxiosInstance;
   private securityData: SecurityDataType | null = null;
@@ -84,7 +85,7 @@ export class HttpClient<SecurityDataType = unknown> {
     this.format = format;
     this.securityWorker = securityWorker;
     this.instance.interceptors.request.use(async (config) => {
-      if (config.baseURL?.includes('refresh-token')) {
+      if (config.url?.includes('refresh-token')) {
         return config;
       }
       if (userStore.isAuth) {
@@ -93,6 +94,7 @@ export class HttpClient<SecurityDataType = unknown> {
             redirectToAuth(config);
           } else {
             await userStore.refreshTokens();
+
             config.headers['Authorization'] = `Bearer ${userStore.accessToken}`;
           }
         } else {
@@ -110,13 +112,12 @@ export class HttpClient<SecurityDataType = unknown> {
         }
         if (error.response.status === 401 && !originalRequest._retry) {
           originalRequest._retry = true;
-          console.log('обновление токенов');
           await userStore.refreshTokens();
-          console.log('повторный запрос');
           return this.instance(originalRequest);
         } else {
           userStore.logout();
           window.location.assign(`${window.location.origin}/#/authorization`);
+          return Promise.reject(error);
         }
       },
     );

@@ -1,0 +1,74 @@
+.wrapper {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: calc(100% - 12px);
+  box-sizing: border-box;
+  padding: 6px;
+  margin: 6px;
+
+  &:hover {
+    background-color: #f1f2f3;
+    border-radius: 12px;
+  }
+}
+
+.body {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  width: 100%;
+  gap: 6px;
+}
+.description {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+}
+.title {
+  font-family: 'SF Pro Text', sans-serif;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 143%;
+  color: #202223;
+}
+.text {
+  text-align: start;
+}
+.date {
+  min-width: 100px;
+  width: 100px;
+}
+@mixin logo {
+  width: 32px;
+  height: 32px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.accept {
+  @include logo;
+  background-color: #fffba1;
+}
+.status {
+  @include logo;
+  background-color: #c3fffb;
+}
+.advice {
+  @include logo;
+  background-color: #c5e6ff;
+}
+@mixin read {
+  width: 8px;
+  height: 8px;
+  padding: 4px;
+  border-radius: 4px;
+}
+.readed {
+  @include read;
+}
+.unreaded {
+  @include read;
+  background-color: #ffcc00;
+}
