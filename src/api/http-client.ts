@@ -84,6 +84,9 @@ export class HttpClient<SecurityDataType = unknown> {
     this.format = format;
     this.securityWorker = securityWorker;
     this.instance.interceptors.request.use(async (config) => {
+      if (config.baseURL?.includes('refresh-token')) {
+        return config;
+      }
       if (userStore.isAuth) {
         if (isTokenExpired(userStore.accessToken)) {
           if (isTokenExpired(userStore.refreshToken)) {
