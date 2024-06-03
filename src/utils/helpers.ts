@@ -89,9 +89,8 @@ export function toCamelCase(str: string) {
 
 export const isTokenExpired = (token: string) => {
   if (!token) return true;
+  console.log(token);
   if (token === 'undefined') return true;
   const expiry = JSON.parse(atob(token.split('.')[1])).exp;
-
-  // console.log(JSON.parse(atob(token.split('.')[1])).orgId);
   return Math.floor(new Date().getTime() / 1000) >= expiry;
 };
