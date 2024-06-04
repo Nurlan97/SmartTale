@@ -131,23 +131,25 @@ class kanbanStore {
   }
   getOrders = async () => {
     try {
-      const response = await api.getDashboard();
-      this.orders = response.data;
+      // const response = await api.getDashboard();
+      // this.orders = response.data;
     } catch (error) {
       console.log(error);
     }
   };
 
-  moveOrder = (event: DragEvent) => {
+  moveOrder = (event: DragEvent, activeOrder: DashboardOrder | null) => {
     const { active, over } = event;
     if (!over) return;
     const activeId = active.id;
     runInAction(() => {
       try {
-        const activeIndex = this.orders.findIndex((order) => order.id === activeId);
-        this.orders[activeIndex].status = over.id;
-        const order = this.orders.splice(activeIndex, 1);
-        this.orders.unshift(order[0]);
+        if (activeOrder && over.data.current.column.allow.includes(activeOrder?.status)) {
+          const activeIndex = this.orders.findIndex((order) => order.id === activeId);
+          this.orders[activeIndex].status = over.id;
+          const order = this.orders.splice(activeIndex, 1);
+          this.orders.unshift(order[0]);
+        }
       } catch (error) {
         console.log(error);
       }
@@ -155,7 +157,7 @@ class kanbanStore {
   };
   updateOrder = async (event: DragEvent) => {
     try {
-      if (event.over?.id) return api.changeStatus(event.active.id, event.over?.id);
+      // if (event.over?.id) return api.changeStatus(event.active.id, event.over?.id);
     } catch (error) {
       console.log(error);
       throw new Error('Error');

@@ -72,7 +72,7 @@ export const DragAndDrop = observer(() => {
     event.active.data.current && setActiveOrder({ ...event.active.data.current.order });
   };
   const onDragOver = async (event: DragEvent) => {
-    kanbanStore.moveOrder(event);
+    kanbanStore.moveOrder(event, activeOrder);
   };
   const onDragEnd = async (event: DragEvent) => {
     try {

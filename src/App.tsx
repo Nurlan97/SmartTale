@@ -20,7 +20,7 @@ import PlaceOrderPage from './pages/PlaceOrderPage/PlaceOrderPage';
 import ProfilePage from './pages/ProfilePage/ProfilePage';
 import RegistrationPage from './pages/RegistrationPage/RegistrationPage';
 import ServicesPage from './pages/ServicesPage/ServicesPage';
-import { userStore } from './store';
+import { notifyStore, userStore } from './store';
 import { getCookie, isTokenExpired, removeCookie } from './utils/helpers';
 
 const App = observer(() => {
@@ -46,7 +46,10 @@ const App = observer(() => {
       removeCookie('accessToken');
       removeCookie('refreshToken');
     }
-  });
+  }, []);
+  useEffect(() => {
+    notifyStore.connect();
+  }, []);
   const location = useLocation();
   const [showNavbar, setShowNavbar] = useState(true);
 
