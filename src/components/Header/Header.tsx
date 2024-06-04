@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { Bell } from '../../assets';
+import { notifyStore } from '../../store';
 import SearchInput from '../../UI/SearchInput/SearchInput';
 import Notifications from '../Notifications/Notifications';
 import styles from './header.module.scss';
@@ -21,6 +22,7 @@ const Header = ({ path, title }: IHeader) => {
       setShowNotify(false);
     }, 2000);
   };
+
   return (
     <div className={styles.wrapper}>
       <div className={styles.path}>{path}</div>
