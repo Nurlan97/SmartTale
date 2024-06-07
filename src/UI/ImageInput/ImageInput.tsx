@@ -20,6 +20,7 @@ const ImageInput = observer(({ store }: IImageInput) => {
               <button
                 className={styles.deleteImage}
                 onClick={() => store.deleteImage(ind)}
+                type='button'
               >
                 <DeleteImg />
               </button>
@@ -52,7 +53,6 @@ const ImageInput = observer(({ store }: IImageInput) => {
           />
         </>
       )}
-      {/* <button onClick={placeOrderStore.calcActions}>test</button> */}
     </div>
   );
 });

@@ -1,0 +1,40 @@
+.wrapper {
+  border-radius: 8px;
+  width: 459px;
+  box-shadow:
+    0 8px 20px -4px rgba(23, 24, 24, 0.12),
+    0 3px 6px -3px rgba(23, 24, 24, 0.08);
+  background: #fff;
+  font-family: 'SF Pro Text', sans-serif;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 143%;
+  color: #202223;
+  position: absolute;
+  top: 64px;
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  z-index: 20;
+}
+
+.title {
+  padding: 18px 16px;
+}
+.line {
+  border-bottom: 1px solid #8e8e93;
+  width: 459px;
+  height: 0px;
+}
+
+.body {
+  width: 100%;
+}
+.empty {
+  color: #8e8e93;
+  padding: 12px;
+  width: 100%;
+}
+.button {
+  padding: 18px 16px;
+}

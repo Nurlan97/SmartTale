@@ -1,9 +1,9 @@
-import { SmallOrder } from './src/api/data-contracts';
+import { Card, SmallOrder } from './src/api/data-contracts';
 
-export const cardsArray = [
+export const cardsArray: Card[] = [
   {
     publishedAt: '',
-    productId: 1,
+    advertisementId: 1,
     imageUrl: 'http://dummyimage.com/286x282.png/cc0000/ffffff',
     title: 'There Be Dragons',
     price: 546,
@@ -15,7 +15,7 @@ export const cardsArray = [
   },
   {
     publishedAt: '',
-    productId: 2,
+    advertisementId: 2,
     imageUrl: 'http://dummyimage.com/286x282.png/5fa2dd/ffffff',
     title: 'Prometheus',
     price: 1196,
@@ -27,7 +27,7 @@ export const cardsArray = [
   },
   {
     publishedAt: '',
-    productId: 3,
+    advertisementId: 3,
     imageUrl: 'http://dummyimage.com/286x282.png/ff4444/ffffff',
     title: 'Adventures of Baron Munchausen, The',
     price: 521,
@@ -39,7 +39,7 @@ export const cardsArray = [
   },
   {
     publishedAt: '',
-    productId: 4,
+    advertisementId: 4,
     imageUrl: 'http://dummyimage.com/286x282.png/cc0000/ffffff',
     title: 'Harry Potter and the Deathly Hallows: Part 1',
     price: 1337,
@@ -51,7 +51,7 @@ export const cardsArray = [
   },
   {
     publishedAt: '',
-    productId: 5,
+    advertisementId: 5,
     imageUrl: 'http://dummyimage.com/286x282.png/cc0000/ffffff',
     title: 'Force of Evil',
     price: 352,
@@ -63,7 +63,7 @@ export const cardsArray = [
   },
   {
     publishedAt: '',
-    productId: 6,
+    advertisementId: 6,
     imageUrl: 'http://dummyimage.com/286x282.png/cc0000/ffffff',
     title: 'Flight That Fought Back, The',
     price: 431,
@@ -75,7 +75,7 @@ export const cardsArray = [
   },
   {
     publishedAt: '',
-    productId: 7,
+    advertisementId: 7,
     imageUrl: 'http://dummyimage.com/286x282.png/dddddd/000000',
     title: 'Looking for Lenny ',
     price: 1812,
@@ -87,7 +87,7 @@ export const cardsArray = [
   },
   {
     publishedAt: '',
-    productId: 8,
+    advertisementId: 8,
     imageUrl: 'http://dummyimage.com/286x282.png/ff4444/ffffff',
     title:
       'Year My Parents Went on Vacation, The (O Ano em Que Meus Pais Saíram de Férias)',
@@ -99,7 +99,7 @@ export const cardsArray = [
   },
   {
     publishedAt: '',
-    productId: 9,
+    advertisementId: 9,
     imageUrl: 'http://dummyimage.com/286x282.png/ff4444/ffffff',
     title: 'Machine, The',
     price: 792,
@@ -111,7 +111,7 @@ export const cardsArray = [
   },
   {
     publishedAt: '',
-    productId: 10,
+    advertisementId: 10,
     publishedBy: 1,
     imageUrl: 'http://dummyimage.com/286x282.png/cc0000/ffffff',
     title: 'Angela',

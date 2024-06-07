@@ -9,6 +9,8 @@
  * ---------------------------------------------------------------
  */
 
+import { ReactNode } from 'react';
+
 export interface CreateOrgRequest {
   name: string;
   description?: string;
@@ -39,8 +41,8 @@ export interface UpdateEmployeeRequest {
 export interface UpdateTaskRequest {
   /** @format int64 */
   taskId: number;
-  addEmployees: number[];
-  removeEmployees: number[];
+  addedEmployees: number[];
+  removedEmployees: number[];
   comment?: string;
 }
 
@@ -170,10 +172,10 @@ export interface PageOrganizationSummary {
   number?: number;
   sort?: SortObject;
   pageable?: PageableObject;
-  first?: boolean;
-  last?: boolean;
   /** @format int32 */
   numberOfElements?: number;
+  first?: boolean;
+  last?: boolean;
   empty?: boolean;
 }
 
@@ -261,10 +263,10 @@ export interface PageOrderSummary {
   number?: number;
   sort?: SortObject;
   pageable?: PageableObject;
-  first?: boolean;
-  last?: boolean;
   /** @format int32 */
   numberOfElements?: number;
+  first?: boolean;
+  last?: boolean;
   empty?: boolean;
 }
 
@@ -280,21 +282,21 @@ export interface Employee {
 
 export interface PageEmployee {
   /** @format int32 */
-  totalPages?: number;
+  totalPages: number;
   /** @format int64 */
-  totalElements?: number;
+  totalElements: number;
   /** @format int32 */
-  size?: number;
-  content?: Employee[];
+  size: number;
+  content: Employee[];
   /** @format int32 */
-  number?: number;
-  sort?: SortObject;
-  pageable?: PageableObject;
-  first?: boolean;
-  last?: boolean;
+  number: number;
+  sort: SortObject;
+  pageable: PageableObject;
   /** @format int32 */
-  numberOfElements?: number;
-  empty?: boolean;
+  numberOfElements: number;
+  first: boolean;
+  last: boolean;
+  empty: boolean;
 }
 
 export interface AssignedEmployee {
@@ -302,7 +304,7 @@ export interface AssignedEmployee {
   userId: number;
   name: string;
   avatarUrl: string;
-  reward?: number;
+  reward: number;
 }
 
 export interface EmployeeDto {
@@ -332,10 +334,10 @@ export interface PageTask {
   number?: number;
   sort?: SortObject;
   pageable?: PageableObject;
-  first?: boolean;
-  last?: boolean;
   /** @format int32 */
   numberOfElements?: number;
+  first?: boolean;
+  last?: boolean;
   empty?: boolean;
 }
 
@@ -366,6 +368,8 @@ export interface Task {
   publisherPhoneNumber: string;
 }
 
+
+
 export interface DashboardOrder {
   /** @format int64 */
   id: number;
@@ -379,8 +383,8 @@ export interface DashboardOrder {
     | 'COMPLETED'
     | 'CANCELED';
   title: string;
-  key?: string;
-  comment?: string;
+  key: string;
+  comment: string;
   /** @format date */
   deadlineAt?: string;
 }
@@ -420,12 +424,12 @@ export interface MonitoringOrder {
 
 export interface Card {
   /** @format int64 */
-  productId: number;
+  advertisementId: number;
   /** @format date-time */
   publishedAt: string;
   title: string;
   description: string;
-  price?: number;
+  price: number;
   imageUrl: string;
   /** @format int64 */
   publishedBy: number;
@@ -435,21 +439,21 @@ export interface Card {
 
 export interface PageCard {
   /** @format int32 */
-  totalPages?: number;
+  totalPages: number;
   /** @format int64 */
-  totalElements?: number;
+  totalElements: number;
   /** @format int32 */
-  size?: number;
-  content?: Card[];
+  size: number;
+  content: Card[];
   /** @format int32 */
-  number?: number;
-  sort?: SortObject;
-  pageable?: PageableObject;
-  first?: boolean;
-  last?: boolean;
+  number: number;
+  sort: SortObject;
+  pageable: PageableObject;
   /** @format int32 */
-  numberOfElements?: number;
-  empty?: boolean;
+  numberOfElements: number;
+  first: boolean;
+  last: boolean;
+  empty: boolean;
 }
 
 export interface FullProductCard {
@@ -466,7 +470,7 @@ export interface FullProductCard {
   /** @format int64 */
   publishedBy: number;
   publisherName: string;
-  publisherAvatarUrl?: string;
+  publisherAvatarUrl: string;
   publisherPhoneNumber: string;
   publisherEmail: string;
   /** @format int64 */
@@ -478,9 +482,9 @@ export interface FullOrderCard {
   advertisementId: number;
   title: string;
   description: string;
-  price?: number;
+  price: number;
   imageUrls: string[];
-  size?: string;
+  size: string;
   /** @format date-time */
   publishedAt: string;
   /** @format date */
@@ -501,21 +505,21 @@ export interface FullOrderCard {
 
 export interface PageSmallOrder {
   /** @format int32 */
-  totalPages?: number;
+  totalPages: number;
   /** @format int64 */
-  totalElements?: number;
+  totalElements: number;
   /** @format int32 */
-  size?: number;
-  content?: SmallOrder[];
+  size: number;
+  content: SmallOrder[];
   /** @format int32 */
-  number?: number;
-  sort?: SortObject;
-  pageable?: PageableObject;
-  first?: boolean;
-  last?: boolean;
+  number: number;
+  sort: SortObject;
+  pageable: PageableObject;
   /** @format int32 */
-  numberOfElements?: number;
-  empty?: boolean;
+  numberOfElements: number;
+  first: boolean;
+  last: boolean;
+  empty: boolean;
 }
 
 export interface SmallOrder {
@@ -580,6 +584,7 @@ export interface Order {
   publishedAt: string;
   /** @format int32 */
   acceptancesCount: number;
+  isClosed: boolean;
 }
 
 export interface Product {
@@ -591,6 +596,7 @@ export interface Product {
   imageUrl: string;
   /** @format date-time */
   publishedAt: string;
+  isClosed: boolean;
 }
 
 export interface AcceptanceRequestDto {
@@ -615,8 +621,8 @@ export interface FullOrder {
   organizationLogoUrl: string;
   title: string;
   description: string;
-  price?: number;
-  size?: string;
+  price: number;
+  size: string;
   /** @format date */
   deadlineAt?: string;
   imageUrls: string[];
@@ -633,7 +639,7 @@ export interface FullProduct {
   publishedAt: string;
   title: string;
   description: string;
-  price?: number;
+  price: number;
   imageUrls: string[];
   /** @format int64 */
   views: number;

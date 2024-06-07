@@ -1,5 +1,9 @@
+import { useEffect, useState } from 'react';
+
 import { Bell } from '../../assets';
+import { notifyStore } from '../../store';
 import SearchInput from '../../UI/SearchInput/SearchInput';
+import Notifications from '../Notifications/Notifications';
 import styles from './header.module.scss';
 interface IHeader {
   path: string;
@@ -7,6 +11,18 @@ interface IHeader {
 }
 const Header = ({ path, title }: IHeader) => {
   const thin = window.innerWidth < 990;
+  let timeout: NodeJS.Timeout;
+  const [showNotify, setShowNotify] = useState(false);
+  const mouseEnterHandler = () => {
+    if (timeout) clearTimeout(timeout);
+    setShowNotify(true);
+  };
+  const mouseLeaveHandler = () => {
+    timeout = setTimeout(() => {
+      setShowNotify(false);
+    }, 2000);
+  };
+
   return (
     <div className={styles.wrapper}>
       <div className={styles.path}>{path}</div>
@@ -24,7 +40,13 @@ const Header = ({ path, title }: IHeader) => {
             value='test'
             width='400px'
           />
-          <Bell />
+          <Bell onMouseEnter={mouseEnterHandler} onMouseLeave={mouseLeaveHandler} />
+          {showNotify && (
+            <Notifications
+              onMouseEnter={mouseEnterHandler}
+              onMouseLeave={mouseLeaveHandler}
+            />
+          )}
         </div>
       </div>
       <div className={styles.horizontalLine}></div>

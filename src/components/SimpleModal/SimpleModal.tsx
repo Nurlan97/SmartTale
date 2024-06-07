@@ -1,63 +1,71 @@
 import { modalStore } from '../../store';
+import { Modals } from '../../store/modalStore';
 import Button from '../../UI/Button/Button';
 import styles from './simpleModal.module.scss';
 
 const SimpleModal = () => {
-  const modalObj = {
-    closeOrder: {
-      emoji: '🎉',
-      title: 'Заказ №234\nзавершен!',
-      description: 'Заказ теперь неактивный и имеет статус “выполнен” у всех сотрудников',
-      button: 'Понятно',
-    },
-    errorOrder: {
-      emoji: '😔',
-      title: 'Ой, \nВы опоздали...',
-      description: 'Заказ был принят другим пользователем',
-      button: 'Посмотреть другие заказы',
-    },
-    errorValidation: {
-      emoji: '🤔',
-      title: 'Заполните обязательные поля',
-      description: 'Они отмечены красной звездочкой',
-      button: 'Заполнить',
-    },
-    successChanges: {
-      emoji: '🎉',
-      title: 'Изменения\nсохранены!',
-      description: 'Вы обновили права доступа для данной организации',
-      button: 'Понятно',
-    },
-    successOrder: {
-      emoji: '🥳',
-      title: 'Поздравляем! \n Вы приняли заказ!',
-      description: 'Ваш заказ отображается в вашем личном кабинете',
-      button: 'Посмотреть',
-    },
-    successPurchase: {
-      emoji: '🥳',
-      title: 'Поздравляем!\nВы купили оборудование!',
-      description: 'Подробная информация отправлена вам на почту',
-      button: 'Посмотреть',
-    },
-    successSubscribe: {
-      emoji: '🥳',
-      title: 'Ура!\nПодписка уже в пути!',
-      description: 'С вами свяжется наш администратор',
-      button: 'Понятно',
-    },
-  };
+  const map = new Map();
+
+  map.set(Modals.closeOrder, {
+    emoji: '🎉',
+    title: 'Заказ №234\nзавершен!',
+    description: 'Заказ теперь неактивный и имеет статус “выполнен” у всех сотрудников',
+    button: 'Понятно',
+    handler: () => {},
+  });
+  map.set(Modals.errorOrder, {
+    emoji: '😔',
+    title: 'Ой, \nВы опоздали...',
+    description: 'Заказ был принят другим пользователем',
+    button: 'Посмотреть другие заказы',
+    handler: () => {},
+  });
+  map.set(Modals.errorValidation, {
+    emoji: '🤔',
+    title: 'Заполните обязательные поля',
+    description: 'Они отмечены красной звездочкой',
+    button: 'Заполнить',
+    handler: () => {},
+  });
+  map.set(Modals.successChanges, {
+    emoji: '🎉',
+    title: 'Изменения\nсохранены!',
+    description: 'Вы обновили права доступа для данной организации',
+    button: 'Понятно',
+    handler: () => {},
+  });
+  map.set(Modals.successOrder, {
+    emoji: '🥳',
+    title: 'Поздравляем! \n Вы приняли заказ!',
+    description: 'Ваш заказ отображается в вашем личном кабинете',
+    button: 'Посмотреть',
+    handler: () => {},
+  });
+  map.set(Modals.successPurchase, {
+    emoji: '🥳',
+    title: 'Поздравляем!\nВы купили оборудование!',
+    description: 'Подробная информация отправлена вам на почту',
+    button: 'Посмотреть',
+    handler: () => {},
+  });
+  map.set(Modals.successSubscribe, {
+    emoji: '🥳',
+    title: 'Ура!\nПодписка уже в пути!',
+    description: 'С вами свяжется наш администратор',
+    button: 'Понятно',
+    handler: () => {},
+  });
 
   return (
-    modalStore.currentSimple && (
+    modalStore.currentModal && (
       <div className={styles.wrapper}>
-        <div className={styles.emoji}>{modalObj[modalStore.currentSimple].emoji}</div>
-        <div className={styles.title}>{modalObj[modalStore.currentSimple].title}</div>
+        <div className={styles.emoji}>{map.get(modalStore.currentModal).emoji}</div>
+        <div className={styles.title}>{map.get(modalStore.currentModal).title}</div>
         <div className={styles.description}>
-          {modalObj[modalStore.currentSimple].description}
+          {map.get(modalStore.currentModal).description}
         </div>
         <Button color='blue' type='button' handler={modalStore.closeModal}>
-          {modalObj[modalStore.currentSimple].button}
+          {map.get(modalStore.currentModal).button}
         </Button>
       </div>
     )

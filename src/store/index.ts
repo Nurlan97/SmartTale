@@ -3,16 +3,18 @@ import { injectStores } from '@mobx-devtools/tools';
 import PlaceOrderStore from './adStore';
 import appStore from './appStore';
 import equipmentStore from './equipmentStore';
+import kanbanStore from './kanbanStore';
 import modalStore from './modalStore';
 import navbarStore from './navbarStore';
+import notifyStore from './notifyStore';
 import servicesStore from './servicesStore';
 import userStore from './userStore';
 
 const createPlaceOrderStore = (images: string[]) => {
   const placeOrderStoreInstance = new PlaceOrderStore(images);
-  injectStores({
-    placeOrderStoreInstance,
-  });
+  // injectStores({
+  //   placeOrderStoreInstance,
+  // });
   return placeOrderStoreInstance;
 };
 const emptyPlaceOrderStore = new PlaceOrderStore([]);
@@ -25,14 +27,18 @@ injectStores({
   userStore,
   modalStore,
   appStore,
+  kanbanStore,
+  notifyStore,
 });
 
 export {
   appStore,
   createPlaceOrderStore,
   equipmentStore,
+  kanbanStore,
   modalStore,
   navbarStore,
+  notifyStore,
   servicesStore,
   userStore,
 };

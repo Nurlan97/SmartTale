@@ -1,78 +1,78 @@
 import { ru } from 'date-fns/locale';
 import { observer } from 'mobx-react-lite';
-import { useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import DatePicker, { registerLocale } from 'react-datepicker';
 
-import DropDownFilterDate, {
-  dateFilters,
-} from '../../components/DropDownFilterDate/DropDownFilterDate';
+import DropDownFilterDate from '../../components/DropDownFilterDate/DropDownFilterDate';
 import Header from '../../components/Header/Header';
 import TableCustom from '../../components/TableCustom/TableCustom';
-import myPurchasesStore from '../../store/myPurchasesStore';
+import orderHistoryStore from '../../store/orderHistoryStore';
 import Button from '../../UI/Button/Button';
 import DateRangeCustomInput from '../../UI/DateRangeCustomInput/DateRangeCustomInput';
 import styles from './orderHistoryPage.module.scss';
 
 registerLocale('ru', ru);
-type TDate = [Date | null, Date | null];
+
 const OrderHistoryPage = observer(() => {
   const tableRef = useRef<HTMLTableElement>(null);
-  const [dateRange, setDateRange] = useState<TDate>([null, null]);
-  const [startDate, endDate] = dateRange;
-  const [filter, setFilter] = useState<dateFilters>(dateFilters.empty);
+
+  useEffect(() => {
+    orderHistoryStore.getOrders('active');
+  }, []);
   return (
     <div className={styles.page}>
       <Header path='Личный кабинет/История заказов' title='История заказов' />
       <div className={styles.filterGroup}>
         <div className={styles.btnGrp}>
           <Button
-            color={myPurchasesStore.activeTab === 'active' ? 'orange' : 'white'}
+            color={orderHistoryStore.activeTab === 'active' ? 'orange' : 'white'}
             type='button'
             height='40px'
-            handler={myPurchasesStore.setActiveTab('active')}
+            handler={orderHistoryStore.setActiveTab('active')}
           >
             Активные
           </Button>
           <Button
-            color={myPurchasesStore.activeTab === 'history' ? 'orange' : 'white'}
+            color={orderHistoryStore.activeTab === 'history' ? 'orange' : 'white'}
             type='button'
             height='40px'
-            handler={myPurchasesStore.setActiveTab('history')}
+            handler={orderHistoryStore.setActiveTab('history')}
           >
             Завершенные
           </Button>
         </div>
-        <div className={styles.btnGrp}>
+        {/* <div className={styles.btnGrp}>
           <DropDownFilterDate
             tableRef={tableRef}
-            setDate={setDateRange}
-            filter={filter}
-            setFilter={setFilter}
+            setDate={orderHistoryStore.setDateRange}
+            filter={orderHistoryStore.dateFilter.currentType}
+            setFilter={orderHistoryStore.setFilter}
           />
           <div>
             <DatePicker
+              // swapRange={true}
               selectsRange={true}
-              startDate={startDate}
-              endDate={endDate}
+              startDate={orderHistoryStore.dateFilter.from}
+              endDate={orderHistoryStore.dateFilter.to}
               onChange={(update) => {
-                setDateRange(update);
+                orderHistoryStore.setDateRange(update);
               }}
               customInput={<DateRangeCustomInput />}
               locale='ru'
               // isClearable={true}
             />
           </div>
-        </div>
+        </div> */}
       </div>
 
       <TableCustom
         myRef={tableRef}
-        headers={myPurchasesStore.table.headers}
-        rows={myPurchasesStore.data.content}
-        styling={myPurchasesStore.table.style}
-        transform={myPurchasesStore.table.transform}
-        sorting={myPurchasesStore.table.sorting}
-        setSorting={myPurchasesStore.setSorting}
+        headers={orderHistoryStore.table.headers}
+        rows={orderHistoryStore.data.content}
+        styling={orderHistoryStore.table.style}
+        transform={orderHistoryStore.table.transform}
+        sorting={orderHistoryStore.table.sorting}
+        setSorting={orderHistoryStore.setSorting}
       />
     </div>
   );

@@ -1,0 +1,77 @@
+.wrapper {
+  background: #f3f4fd;
+  border-radius: 10px;
+  height: 131px;
+  min-width: 178px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: start;
+  text-align: start;
+  margin-top: 12px;
+  padding: 12px;
+  font-family: 'SF Pro', sans-serif;
+  cursor: grab;
+}
+.title {
+  font-weight: 700;
+  font-size: 16px;
+  color: #000;
+}
+.description {
+  opacity: 0.56;
+  font-weight: 400;
+  font-size: 14px;
+  height: 60px;
+}
+.date {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: 'SF Pro', sans-serif;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 157%;
+  letter-spacing: -0.03em;
+  color: #000;
+}
+@keyframes expand {
+  0% {
+    height: 0px;
+  }
+  100% {
+    height: 131px;
+  }
+}
+
+@mixin over {
+  background: #fcfcff;
+  border-radius: 10px;
+  height: 131px;
+  min-width: 178px;
+  margin-top: 12px;
+  animation: expand 0.3s normal;
+}
+.pending {
+  @include over;
+  border: 4px solid #c3fffb;
+}
+
+.inProgress {
+  @include over;
+  border: 4px solid #c5e6ff;
+}
+
+.checking {
+  @include over;
+  border: 4px solid #fffba1;
+}
+
+.dispatched {
+  @include over;
+  border: 4px solid #ffd9a1;
+}
+.arrived {
+  @include over;
+  border: 4px solid #e6ffa1;
+}

@@ -14,9 +14,12 @@ import type {
   AxiosRequestConfig,
   AxiosResponse,
   HeadersDefaults,
+  InternalAxiosRequestConfig,
   ResponseType,
 } from 'axios';
 import axios from 'axios';
+import { isTokenExpired, removeCookie } from '../utils/helpers';
+import { userStore } from '../store';
 
 export type QueryParamsType = Record<string | number, any>;
 
@@ -53,6 +56,13 @@ export enum ContentType {
   UrlEncoded = 'application/x-www-form-urlencoded',
   Text = 'text/plain',
 }
+const redirectToAuth = (config: InternalAxiosRequestConfig<any>) => {
+  const abortCtrl = new AbortController();
+  abortCtrl.abort();
+  config.signal = abortCtrl.signal;
+  userStore.logout();
+  window.location.assign(`${window.location.origin}/#/authorization`);
+};
 
 export class HttpClient<SecurityDataType = unknown> {
   public instance: AxiosInstance;
@@ -74,6 +84,43 @@ export class HttpClient<SecurityDataType = unknown> {
     this.secure = secure;
     this.format = format;
     this.securityWorker = securityWorker;
+    this.instance.interceptors.request.use(async (config) => {
+      if (config.url?.includes('refresh-token')) {
+        return config;
+      }
+      if (userStore.isAuth) {
+        if (isTokenExpired(userStore.accessToken)) {
+          if (isTokenExpired(userStore.refreshToken)) {
+            redirectToAuth(config);
+          } else {
+            await userStore.refreshTokens();
+
+            config.headers['Authorization'] = `Bearer ${userStore.accessToken}`;
+          }
+        } else {
+          config.headers['Authorization'] = `Bearer ${userStore.accessToken}`;
+        }
+      }
+      return config;
+    });
+    this.instance.interceptors.response.use(
+      (response) => response,
+      async (error) => {
+        const originalRequest = error.config;
+        if (!userStore.isAuth) {
+          return Promise.reject(error);
+        }
+        if (error.response.status === 401 && !originalRequest._retry) {
+          originalRequest._retry = true;
+          await userStore.refreshTokens();
+          return this.instance(originalRequest);
+        } else {
+          userStore.logout();
+          window.location.assign(`${window.location.origin}/#/authorization`);
+          return Promise.reject(error);
+        }
+      },
+    );
   }
 
   public setSecurityData = (data: SecurityDataType | null) => {
@@ -104,7 +151,7 @@ export class HttpClient<SecurityDataType = unknown> {
 
   protected stringifyFormItem(formItem: unknown) {
     if (typeof formItem === 'object' && formItem !== null) {
-      return JSON.stringify(formItem);
+      return new Blob([JSON.stringify(formItem)], { type: 'application/json' });
     } else {
       return `${formItem}`;
     }

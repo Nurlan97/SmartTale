@@ -1,10 +1,11 @@
-import axios from 'axios';
+import { useFormik } from 'formik';
 import { observer } from 'mobx-react-lite';
 import { useEffect } from 'react';
 
 import { NavbarProfile } from '../../assets';
 import Header from '../../components/Header/Header';
 import { modalStore, userStore } from '../../store';
+import { Modals } from '../../store/modalStore';
 import Button from '../../UI/Button/Button';
 import Input from '../../UI/Input/Input';
 import PhoneInput from '../../UI/PhoneInput/PhoneInput';
@@ -12,15 +13,35 @@ import Subscribe from '../../UI/Subscribe/Subscribe';
 import styles from './profilePage.module.scss';
 
 const ProfilePage = observer(() => {
+  const formik = useFormik({
+    initialValues: {
+      firstName: userStore.firstName,
+      middleName: userStore.middleName,
+      lastName: userStore.lastName,
+      phone: userStore.phone,
+      email: userStore.email,
+    },
+    onSubmit: (values) => {
+      const data = {
+        firstName: values.firstName,
+        lastName: values.lastName,
+        middleName: values.middleName,
+        email: values.email,
+        phoneNumber: values.phone,
+        valid: true,
+      };
+      userStore.updateProfile(data);
+    },
+  });
   useEffect(() => {
-    // userStore.getUser();
-    console.log('getUser');
+    userStore.getUser();
   }, []);
+
   return (
     <div className={styles.page}>
       <div>
         <Header path='Личный кабинет/Профиль' title='Ваш профиль' />
-        <Subscribe period={''} />
+        <Subscribe period={userStore.subscribePeriod} />
         <div className={styles.profileHeader}>
           {userStore.profilePhoto ? (
             <>
@@ -35,7 +56,7 @@ const ProfilePage = observer(() => {
                 id='photo'
                 className={styles.hiddenInput}
                 type='button'
-                onClick={modalStore.openChangePhoto}
+                onClick={() => modalStore.openModal(Modals.changePhotoModal)}
               ></button>
             </>
           ) : (
@@ -47,51 +68,62 @@ const ProfilePage = observer(() => {
                 id='emptyPhoto'
                 className={styles.hiddenInput}
                 type='button'
+                onClick={() => modalStore.openModal(Modals.changePhotoModal)}
               ></button>
             </>
           )}
 
           <div>
-            <p className={styles.name}>Кирилл Олейников</p>
-            <p className={styles.changePhoto}>Изменить фото профиля</p>
+            <p
+              className={styles.name}
+            >{`${userStore.lastName} ${userStore.firstName} ${userStore.middleName}`}</p>
+
+            <label htmlFor='photo'>
+              <p className={styles.changePhoto}>Изменить фото профиля</p>
+            </label>
           </div>
         </div>
         <h3 className={styles.title}>Личные данные</h3>
         <div className={styles.personalInformation}>
           <Input
-            onChange={userStore.changeFirstName}
-            value={userStore.firstName}
+            onChange={formik.handleChange}
+            value={formik.values.firstName}
             label='Имя'
             disabled={!userStore.profileEdit}
+            id='firstName'
           />
           <Input
-            onChange={userStore.changeLastName}
-            value={userStore.lastName}
+            onChange={formik.handleChange}
+            value={formik.values.lastName}
             label='Фамилия'
             disabled={!userStore.profileEdit}
+            id='lastName'
           />
           <div className={styles.fullWidthInput}>
             <Input
-              onChange={userStore.changeMiddleName}
-              value={userStore.middleName}
+              onChange={formik.handleChange}
+              value={formik.values.middleName}
               label='Отчество'
               disabled={!userStore.profileEdit}
+              id='middleName'
             />
           </div>
         </div>
         <h3 className={styles.title}>Контактные данные</h3>
         <div className={styles.contactInformation}>
           <Input
-            onChange={userStore.changeEmail}
-            value={userStore.email}
+            onChange={formik.handleChange}
+            value={formik.values.email}
             label='Почта'
             disabled={!userStore.profileEdit}
+            id='email'
           />
           <PhoneInput
-            onChange={userStore.changePhone}
-            value={userStore.phone}
+            onChange={formik.handleChange}
+            value={formik.values.phone}
             label='Номер телефона'
             disabled={!userStore.profileEdit}
+            id='phone'
           />
         </div>
       </div>
@@ -104,7 +136,10 @@ const ProfilePage = observer(() => {
               color='white'
               type='button'
               width='fit-content'
-              handler={userStore.changeProfileEdit}
+              handler={() => {
+                formik.resetForm();
+                userStore.changeProfileEdit();
+              }}
             >
               Отменить изменения
             </Button>
@@ -112,7 +147,10 @@ const ProfilePage = observer(() => {
               color='orange'
               type='button'
               width='fit-content'
-              handler={userStore.changeProfileEdit}
+              handler={() => {
+                formik.submitForm();
+                userStore.changeProfileEdit();
+              }}
             >
               Сохранить изменения
             </Button>

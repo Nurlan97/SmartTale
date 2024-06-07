@@ -78,6 +78,13 @@ const AuthorizationForm = observer(() => {
         <p>Ещё не зарегистрированы?</p>
         <Link to='/registration'>Зарегистрироваться</Link>
       </div>
+      <div className={styles.registrationLinkInline}>
+        <span>Нажмите </span>
+        <Link to='/equipment' className={styles.inlineLink}>
+          сюда,{' '}
+        </Link>
+        <span> чтобы попасть на маркетплейс не авторизованным</span>
+      </div>
     </div>
   );
 });
