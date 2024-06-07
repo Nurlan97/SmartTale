@@ -640,7 +640,7 @@ export class MyApi<SecurityDataType = unknown> extends HttpClient<SecurityDataTy
       path: `/v1/auth/phone-available`,
       method: 'POST',
       body: data,
-      type: ContentType.Json,
+      type: ContentType.Text,
       ...params,
     });
   /**
@@ -685,7 +685,7 @@ export class MyApi<SecurityDataType = unknown> extends HttpClient<SecurityDataTy
       method: 'POST',
       query: query,
       body: data,
-      type: ContentType.Json,
+      type: ContentType.Text,
       ...params,
     });
   /**
@@ -702,7 +702,7 @@ export class MyApi<SecurityDataType = unknown> extends HttpClient<SecurityDataTy
       path: `/v1/auth/email-available`,
       method: 'POST',
       body: data,
-      type: ContentType.Json,
+      type: ContentType.Text,
       ...params,
     });
   /**

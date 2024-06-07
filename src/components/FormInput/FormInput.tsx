@@ -1,5 +1,6 @@
 import { FormikProps } from 'formik';
 import { observer } from 'mobx-react-lite';
+import { useEffect, useState } from 'react';
 
 import Input from '../../UI/Input/Input';
 import styles from './FormInput.module.scss';
@@ -12,8 +13,8 @@ type FormType = {
   formik: FormikProps<any>;
 };
 
-const FormInput = observer(({ htmlFor, label, placeholder, id, formik }: FormType) => {
-  const isError = formik.errors[htmlFor] ? formik.errors[htmlFor] : ' ';
+const FormInput = ({ htmlFor, label, placeholder, id, formik }: FormType) => {
+  const isError = formik.errors[htmlFor] ? formik.errors[htmlFor] : '';
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (htmlFor === 'phoneNumber') {
       const regex = new RegExp(/^\+?[0-9]*$/);
@@ -36,10 +37,10 @@ const FormInput = observer(({ htmlFor, label, placeholder, id, formik }: FormTyp
         onBlur={formik.handleBlur}
       />
       <p className={styles.errors}>
-        {`${!!isError && !!formik.touched[htmlFor] ? isError : ' '}`}
+        {`${!!isError && !!formik.touched[htmlFor] ? isError : ''}`}
       </p>
     </div>
   );
-});
+};
 
 export default FormInput;

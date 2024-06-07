@@ -41,7 +41,7 @@ class userStore {
     'https://img.freepik.com/free-psd/3d-illustration-of-person-with-sunglasses_23-2149436188.jpg?size=338&ext=jpg&ga=GA1.1.2116175301.1714435200&semt=ais';
   subscribePeriod = '';
   isRemember = false;
-  authenticationStage: 1 | 2 | 3 = 1;
+  authenticationStage: 1 | 2 | 3 | 4 = 1;
   isAuth = false;
   anyAds = false;
 
@@ -68,25 +68,24 @@ class userStore {
     try {
       const result = await api.register(registrationData);
       runInAction(() => {
-        this.email = result.data;
-        this.authenticationStage = 2;
+        this.email = registrationData.email;
+        this.authenticationStage = 3;
       });
     } catch (error) {
       console.error(error);
     }
   };
   fetchAvailableEmail = async (emailValue: string) => {
-    // function debounce(cb, delay = 1000) {
-    //   let timeout;
-    //   return (...args) => {
-    //     clearTimeout(timeout);
-    //     timeout = setTimeout(() => {
-    //       cb(...args);
-    //     }, delay);
-    //   };
-    // }
     try {
       const result = await api.isEmailAvailable(emailValue);
+      return result.data;
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  fetchAvailablePhone = async (phoneValue: string) => {
+    try {
+      const result = await api.isPhoneAvailable(phoneValue);
       return result.data;
     } catch (error) {
       console.log(error);
@@ -101,7 +100,7 @@ class userStore {
     //promise - сам промис
     //fullfilled - каллбек вызовется если промис зарезолвится
     //rejected - каллбек вызовется если промис зереджектится
-    this.authenticationStage = 3; //включаем лоадер
+    this.authenticationStage = 4; //включаем лоадер
     fullPromise(
       api.verifyEmail(data),
       (value) => {
@@ -120,7 +119,7 @@ class userStore {
       (error) => {
         runInAction(() => {
           console.error(error);
-          this.authenticationStage = 2;
+          this.authenticationStage = 3;
           this.invalidCode = true;
         });
       },
@@ -142,9 +141,10 @@ class userStore {
   fetchAuthorization = async (authorizationData: string) => {
     try {
       await api.login(authorizationData);
+      console.log(authorizationData);
       runInAction(() => {
         this.email = authorizationData;
-        this.authenticationStage = 2;
+        this.authenticationStage = 3;
       });
     } catch (error) {
       console.error(error);

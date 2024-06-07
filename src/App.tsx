@@ -19,7 +19,7 @@ import ServicesPage from './pages/ServicesPage/ServicesPage';
 
 const App = observer(() => {
   const location = useLocation();
-  const [showNavbar, setShowNavbar] = useState(true);
+  const [showNavbar, setShowNavbar] = useState(false);
 
   useEffect(() => {
     // Список путей, на которых навбар не должен отображаться, это страницы авторизаций

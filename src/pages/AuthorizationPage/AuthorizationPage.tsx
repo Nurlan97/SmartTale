@@ -8,17 +8,18 @@ import AuthenticationWrapper from '../../UI/AuthenticationWrapper/Authentication
 const AuthorizationPage = observer(() => {
   const subtitleObject = {
     1: 'Введите вашу почту, чтобы войти в систему',
-    2: 'Отправлен 4-хзначный код на указанную почту',
-    3: 'Пару секунд и вы в системе! 😃',
+    2: 'Введите вашу почту, чтобы войти в систему',
+    3: 'Отправлен 4-хзначный код на указанную почту',
+    4: 'Пару секунд и вы в системе! 😃',
   };
   return (
     <AuthenticationWrapper
       title='Вход'
       subtitle={subtitleObject[userStore.authenticationStage]}
-      isLoading={userStore.authenticationStage === 3}
+      isLoading={userStore.authenticationStage === 4}
     >
       {userStore.authenticationStage === 1 && <AuthorizationForm />}
-      {userStore.authenticationStage === 2 && <ConfirmationForm />}
+      {userStore.authenticationStage === 3 && <ConfirmationForm />}
     </AuthenticationWrapper>
   );
 });
