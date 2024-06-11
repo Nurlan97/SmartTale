@@ -29,7 +29,7 @@ class userStore {
   profilePhoto = '';
   subscribePeriod = '';
   isRemember = false;
-  authenticationStage: 1 | 2 | 3 = 1;
+  authenticationStage: 1 | 2 | 3 | 4 = 1;
   isAuth = false;
   anyAds = false;
   invalidCode = false;
@@ -46,8 +46,8 @@ class userStore {
     try {
       const result = await myApi.register(registrationData);
       runInAction(() => {
-        this.email = result.data;
-        this.authenticationStage = 2;
+        this.email = registrationData.email;
+        this.authenticationStage = 3;
       });
     } catch (error) {
       console.error(error);
@@ -61,29 +61,49 @@ class userStore {
       console.log(error);
     }
   };
-  sendVerificationCode = async (data: VerificationRequest, navigate: () => void) => {
-    this.authenticationStage = 3;
+  fetchAvailablePhone = async (phoneValue: string) => {
     try {
-      const response = await myApi.verifyEmail(data);
-      runInAction(() => {
-        this.setTokens(response.data.accessToken, response.data.refreshToken);
-
-        if (this.isRemember) {
-          setCookie('accessToken', response.data.accessToken, 1);
-          setCookie('refreshToken', response.data.refreshToken, 168);
-        }
-      });
-      this.getUser();
-      setTimeout(() => {
-        navigate();
-      }, 500);
+      const result = await api.isPhoneAvailable(phoneValue);
+      return result.data;
     } catch (error) {
-      runInAction(() => {
-        console.error(error);
-        this.authenticationStage = 2;
-        this.invalidCode = true;
-      });
+      console.log(error);
     }
+  };
+  sendVerificationCode = async (
+    data: VerificationRequest,
+    // navigate: NavigateFunction,
+    navigate: () => void,
+  ) => {
+    //функция fullPromise принимает 3 аргумента
+    //promise - сам промис
+    //fullfilled - каллбек вызовется если промис зарезолвится
+    //rejected - каллбек вызовется если промис зереджектится
+    this.authenticationStage = 4; //включаем лоадер
+    fullPromise(
+      api.verifyEmail(data),
+      (value) => {
+        runInAction(() => {
+          this.accessToken = value.data.accessToken;
+          this.refreshToken = value.data.refreshToken;
+          this.isAuth = true;
+          if (this.isRemember) {
+            setCookie('accessToken', value.data.accessToken, 1);
+            setCookie('refreshToken', value.data.refreshToken, 168);
+          }
+        });
+        this.getUser();
+        setTimeout(() => {
+          navigate();
+        }, 500);
+      },
+      (error) => {
+        runInAction(() => {
+          console.error(error);
+          this.authenticationStage = 3;
+          this.invalidCode = true;
+        });
+      },
+    );
   };
 
   resendVerificationCode = async () => {
@@ -103,7 +123,7 @@ class userStore {
       await myApi.login(authorizationData);
       runInAction(() => {
         this.email = authorizationData;
-        this.authenticationStage = 2;
+        this.authenticationStage = 3;
       });
     } catch (error) {
       console.error(error);
