@@ -56,7 +56,7 @@ class userStore {
   fetchAvailableEmail = async (emailValue: string) => {
     try {
       const result = await myApi.isEmailAvailable(emailValue);
-      return result.data;
+      return result;
     } catch (error) {
       console.log(error);
     }
@@ -74,11 +74,7 @@ class userStore {
     // navigate: NavigateFunction,
     navigate: () => void,
   ) => {
-    //функция fullPromise принимает 3 аргумента
-    //promise - сам промис
-    //fullfilled - каллбек вызовется если промис зарезолвится
-    //rejected - каллбек вызовется если промис зереджектится
-    this.authenticationStage = 4; //включаем лоадер
+    this.authenticationStage = 4;
     try {
       const response = await myApi.verifyEmail(data);
       runInAction(() => {
@@ -128,7 +124,6 @@ class userStore {
   };
   getUser = async () => {
     try {
-      // const response = await myApi.getProfile();
       const response = await myApi.getProfile();
       runInAction(() => {
         this.firstName = response.data.firstName;

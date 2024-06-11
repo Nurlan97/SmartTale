@@ -21,8 +21,8 @@ export const RegistrationSchema = Yup.object().shape({
   firstName: Yup.string().required('Обязательное поле для заполнения'),
   middleName: Yup.string().required('Обязательное поле для заполнения'),
   email: Yup.string()
-    .required('Обязательное поле для заполнения')
-    .email('Неправильный формат email адреса'),
+    .email('Неправильный формат email адреса')
+    .required('Обязательное поле для заполнения'),
   phoneNumber: Yup.string().required('Обязательное поле для заполнения'),
 });
 

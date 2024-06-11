@@ -54,33 +54,28 @@ const RegistrationForm = observer(() => {
     initialValues,
     onSubmit,
     validationSchema: RegistrationSchema,
+    validateOnBlur: false,
   });
 
-  console.log(formik.touched);
-  console.log(formik.errors);
   const debounceEmailSearch = useDebounce((search: string) => {
     if (search === '') return;
-
     if (formik.errors.email !== 'Неправильный формат email адреса') {
-      userStore.fetchAvailableEmail(search).then((data) => {
-        if (!data) formik.setFieldError('email', 'Данный email занят');
+      userStore.fetchAvailableEmail(search).then((response) => {
+        if (response?.status === 200 && !response?.data) {
+          formik.setFieldError('email', 'Данный email занят');
+        }
       });
     }
   });
 
   const debouncePhoneSearch = useDebounce((search: string) => {
     if (search === '') return;
-    // if (
-    //   !formik.errors.phoneNumber ||
-    //   formik.errors.phoneNumber === 'Указанный вами номер занят'
-    // ) {
+
     userStore.fetchAvailablePhone(search).then((data) => {
       if (!data) formik.setFieldError('phoneNumber', 'Указанный вами номер занят');
     });
-    // }
   });
 
-  // const isFormEmpty = Object.keys(formik.touched).length === 0;
   const hasErrors = Object.keys(formik.errors).length !== 0;
   const isContactDataFilled = (values: typeof initialValues) => {
     return values.email !== '' && values.phoneNumber !== '';
@@ -110,24 +105,16 @@ const RegistrationForm = observer(() => {
         type: 'submit',
         width: '100%',
         disabled: hasErrors,
-        // children: isFormEmpty
-        //   ? 'Зарегистрироваться'
-        //   : hasErrors
-        //     ? 'Зарегистрироваться'
-        //     : 'Зарегистрироваться',
         children: 'Зарегистрироваться',
       };
 
   useEffect(() => {
+    formik.validateField('email');
+    if (formik.values.email !== '') formik.setFieldTouched('email', true);
     debounceEmailSearch(formik.values.email);
-    // if (formik.values.phoneNumber) debouncePhoneSearch(formik.values.phoneNumber);
-    // if (formik.values.email) console.log('Email request');
-    // if (formik.values.phoneNumber) console.log('Phone request');
   }, [formik.values.email]);
   useEffect(() => {
     debouncePhoneSearch(formik.values.phoneNumber);
-    // if (formik.values.phoneNumber) debouncePhoneSearch(formik.values.phoneNumber);
-    // if (formik.values.phoneNumber) console.log('Phone request');
   }, [formik.values.phoneNumber]);
 
   return (
@@ -147,30 +134,6 @@ const RegistrationForm = observer(() => {
             );
           }
         })}
-        {userStore.authenticationStage === 2 && (
-          <Checkbox checked={userStore.isRemember} onClick={userStore.toggleRemember} />
-        )}
-        {/* {!isSubmitting &&
-          (Object.keys(formik.touched).length === 0 ? (
-            <Button color='blue' type='submit' width='100%'>
-              Зарегистрироваться
-            </Button>
-          ) : Object.keys(formik.errors).length !== 0 ? (
-            <Button color='white' type='submit' disabled={true}>
-              Заполните все поля
-            </Button>
-          ) : (
-            <Button color='blue' type='submit' width='100%'>
-              Зарегистрироваться
-            </Button>
-          ))}
-        {isSubmitting && (
-          <Button color='blue' type='submit' width='100%' disabled={isSubmitting}>
-            <div className={styles.loaderWrapper}>
-              <div className={styles.loader}>Ожидаем...</div>
-            </div>
-          </Button>
-        )} */}
 
         {userStore.authenticationStage === 1 && (
           <Button color='blue' type='button' width='100%' handler={handleNextStage}>
@@ -178,14 +141,17 @@ const RegistrationForm = observer(() => {
           </Button>
         )}
         {userStore.authenticationStage === 2 && (
-          <Button
-            color={buttonProps.color}
-            type={buttonProps.type}
-            width={buttonProps.width}
-            disabled={isSubmitting}
-          >
-            Зарегистрироваться
-          </Button>
+          <>
+            <Checkbox checked={userStore.isRemember} onClick={userStore.toggleRemember} />
+            <Button
+              color={buttonProps.color}
+              type={buttonProps.type}
+              width={buttonProps.width}
+              disabled={isSubmitting}
+            >
+              Зарегистрироваться
+            </Button>
+          </>
         )}
       </form>
       <div className={styles.loginLinkBlock}>
