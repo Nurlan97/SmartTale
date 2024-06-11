@@ -63,7 +63,7 @@ class userStore {
   };
   fetchAvailablePhone = async (phoneValue: string) => {
     try {
-      const result = await api.isPhoneAvailable(phoneValue);
+      const result = await myApi.isPhoneAvailable(phoneValue);
       return result.data;
     } catch (error) {
       console.log(error);
@@ -79,31 +79,28 @@ class userStore {
     //fullfilled - каллбек вызовется если промис зарезолвится
     //rejected - каллбек вызовется если промис зереджектится
     this.authenticationStage = 4; //включаем лоадер
-    fullPromise(
-      api.verifyEmail(data),
-      (value) => {
-        runInAction(() => {
-          this.accessToken = value.data.accessToken;
-          this.refreshToken = value.data.refreshToken;
-          this.isAuth = true;
-          if (this.isRemember) {
-            setCookie('accessToken', value.data.accessToken, 1);
-            setCookie('refreshToken', value.data.refreshToken, 168);
-          }
-        });
-        this.getUser();
-        setTimeout(() => {
-          navigate();
-        }, 500);
-      },
-      (error) => {
-        runInAction(() => {
-          console.error(error);
-          this.authenticationStage = 3;
-          this.invalidCode = true;
-        });
-      },
-    );
+    try {
+      const response = await myApi.verifyEmail(data);
+      runInAction(() => {
+        this.accessToken = response.data.accessToken;
+        this.refreshToken = response.data.refreshToken;
+        this.isAuth = true;
+        if (this.isRemember) {
+          setCookie('accessToken', response.data.accessToken, 1);
+          setCookie('refreshToken', response.data.refreshToken, 168);
+        }
+      });
+      this.getUser();
+      setTimeout(() => {
+        navigate();
+      }, 500);
+    } catch (error) {
+      runInAction(() => {
+        console.error(error);
+        this.authenticationStage = 3;
+        this.invalidCode = true;
+      });
+    }
   };
 
   resendVerificationCode = async () => {
