@@ -2,9 +2,9 @@ import { observer } from 'mobx-react-lite';
 
 import { userStore } from '../../store';
 import Button from '../../UI/Button/Button';
-import styles from './placeOrderDummy.module.scss';
+import styles from './placeAdvDummy.module.scss';
 
-const PlaceOrderDummy = observer(() => {
+const PlaceAdvDummy = observer(() => {
   return (
     <div className={styles.wrapper}>
       <div className={styles.innerBlock}>
@@ -37,4 +37,4 @@ const PlaceOrderDummy = observer(() => {
   );
 });
 
-export default PlaceOrderDummy;
+export default PlaceAdvDummy;

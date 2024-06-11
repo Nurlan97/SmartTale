@@ -147,6 +147,30 @@
   color: #8e8e93;
   margin: 16px 0;
 }
+.footer{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.quantityGroup{
+  display: flex;
+  flex-direction: column;
+   color: #717175;
+}
+.quantitySelector{
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.quantityBtn {
+  background-color: #fc0;
+  width: 24px;
+  height: 24px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 .button {
   min-width: 50%;
   align-self: flex-end;

@@ -1,15 +1,17 @@
-import { makeAutoObservable } from 'mobx';
+import { makeAutoObservable, runInAction } from 'mobx';
 import uniqid from 'uniqid';
 
-import { CreateAdRequest } from '../api/data-contracts';
-import { MyApi } from '../api/V1';
+import {
+  CreateJobRequest,
+  CreateOrderRequest,
+  CreateProductRequest,
+  OrderFull,
+  PositionSummary,
+  ProductFull,
+} from '../api/data-contracts';
+import { myApi } from '../api/V1';
 import modalStore, { Modals } from './modalStore';
 
-const api = new MyApi();
-interface IPlaceAd {
-  dto: CreateAdRequest;
-  images?: File[];
-}
 interface IImage {
   type: 'currentImages' | 'additionalImages';
   index: number;
@@ -40,11 +42,12 @@ interface REPLACE {
   arrayPosition: number;
   filePosiiton: number;
 }
-
+export type AdType = 'Order' | 'Product' | 'Job';
 export default class adStore {
+  ad: Array<OrderFull | ProductFull> = [];
   isLoading = false;
   showForm = true;
-  type: 'Order' | 'Product' = 'Product';
+  type: AdType = 'Product';
   currentImages: Array<string> = [];
   #viewedImages: IImage[] = [];
   #oldImages: IImage[] = [];
@@ -52,17 +55,22 @@ export default class adStore {
   additionalFiles: File[] = [];
   viewedImages: Array<string> = [];
   imageActions: IAction[] = [];
+  posiitons: PositionSummary[] = [];
 
-  constructor(imagesArr: string[]) {
-    this.currentImages = imagesArr;
-    imagesArr.forEach((val, ind) => {
-      this.#viewedImages.push({ index: ind, type: 'currentImages', id: uniqid() });
-    });
-    this.#oldImages = [...this.#viewedImages];
-    this.updateViewed();
+  constructor(id?: number) {
+    if (id) {
+      this.fetchAd(id);
+      this.currentImages = this.ad[0].imageUrls;
+      this.currentImages.forEach((val, ind) => {
+        this.#viewedImages.push({ index: ind, type: 'currentImages', id: uniqid() });
+      });
+      this.#oldImages = [...this.#viewedImages];
+      this.updateViewed();
+    }
+
     makeAutoObservable(this, {}, { autoBind: true });
   }
-  setType = (type: 'Product' | 'Order') => {
+  setType = (type: AdType) => () => {
     this.type = type;
   };
   calcActions = () => {
@@ -179,9 +187,13 @@ export default class adStore {
     });
     this.updateViewed();
   };
-  placeAd = async (dto: CreateAdRequest, images: File[] = []) => {
+  placeAd = async (
+    dto: CreateProductRequest | CreateOrderRequest | CreateJobRequest,
+    images: File[] = [],
+  ) => {
     modalStore.openModal(Modals.loader);
-    const obj = { dto: dto, images: images };
+    // const obj = { dto: dto, images: images };
+    const obj = { dto: dto };
     const formData = new FormData();
     formData.append('dto', new Blob([JSON.stringify(dto)], { type: 'application/json' }));
     if (images) {
@@ -190,7 +202,7 @@ export default class adStore {
       }
     }
     try {
-      const response = await api.placeAdvertisement(obj);
+      const response = await myApi.placeAdvertisement(obj);
       this.resetForm();
     } catch (error) {
       console.log(error);
@@ -208,5 +220,39 @@ export default class adStore {
     this.additionalFiles = [];
     this.viewedImages = [];
     this.imageActions = [];
+  };
+  fetchAd = async (id: number) => {
+    try {
+      const response = await myApi.getMyAd(id);
+      this.ad = [];
+      this.ad.push(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  getDropdownPositions = async () => {
+    const response = await myApi.getPositionsDropdown();
+    runInAction(() => {
+      this.posiitons = response.data;
+    });
+  };
+  updateAd = async (
+    dto: CreateProductRequest | CreateOrderRequest | CreateJobRequest,
+
+    id: number,
+  ) => {
+    const imageActions = this.calcActions();
+    const obj = {
+      dto: { ...dto, advertisementId: id, imageActions: imageActions },
+    };
+
+    const formData = new FormData();
+    formData.append('dto', new Blob([JSON.stringify(dto)], { type: 'application/json' }));
+    if (this.additionalFiles) {
+      for (const image of this.additionalFiles) {
+        formData.append('images', image);
+      }
+    }
+    const response = await myApi.updateAd(obj);
   };
 }

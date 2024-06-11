@@ -1,8 +1,10 @@
-import { makeAutoObservable } from 'mobx';
+import { Client } from '@stomp/stompjs';
+import { makeAutoObservable, runInAction } from 'mobx';
 
 import { IMessage } from '../api/interfaces-ws';
-import stompClient from '../api/ws';
+import { createClient } from '../api/stomp';
 import { INotify } from '../components/Notify/Notify';
+import { isTokenExpired } from '../utils/helpers';
 import userStore from './userStore';
 
 const defaultData: INotify[] = [
@@ -33,33 +35,24 @@ const defaultData: INotify[] = [
 ];
 class notifyStore {
   notifications: INotify[] = defaultData;
+  client: Client | null = null;
   constructor() {
     makeAutoObservable(this);
   }
   connect = () => {
-    if (userStore.accessToken) {
-      stompClient.connect(
-        { Authorization: `Bearer ${userStore.accessToken}` },
-        (frame) => {
-          const decodedToken = JSON.parse(atob(userStore.accessToken.split('.')[1]));
-          const userId = decodedToken.userId;
-          const orgId = decodedToken.orgId;
-
-          stompClient.subscribe(`/user/${userId}/push`, (message) => {
-            const notification = JSON.parse(message.body);
-            console.log(notification);
-          });
-          if (orgId > 0) {
-            stompClient.subscribe(`/org/${orgId}/push`, (message) => {
-              const notification = JSON.parse(message.body);
-              console.log(notification);
-            });
-          }
-        },
-      );
+    console.log('notifystore connect');
+    if (!isTokenExpired(userStore.accessToken)) {
+      this.client = createClient(userStore.accessToken);
+      // this.client.beforeConnect = () => {
+      //   if (this.client) {
+      //     this.client.connectHeaders = {
+      //       Authorization: `Bearer ${userStore.accessToken}`,
+      //     };
+      //   }
+      // };
+      this.client.activate();
     }
   };
-
   markAsRead = (id: number) => {
     const index = this.notifications.findIndex((item) => item.id === id);
     this.notifications[index].readed = true;

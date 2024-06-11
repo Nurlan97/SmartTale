@@ -1,7 +1,7 @@
 import { observer } from 'mobx-react-lite';
 import { CSSProperties, JSXElementConstructor, useRef, useState } from 'react';
 
-import { Employee, OrderSummary, SmallOrder } from '../../api/data-contracts';
+import { Employee, SmallOrder } from '../../api/data-contracts';
 import { Asc, Desc, NoSort } from '../../assets';
 import styles from './tableCustom.module.scss';
 interface IHeader {

@@ -2,8 +2,8 @@ import { makeAutoObservable, runInAction, toJS } from 'mobx';
 import { CSSProperties } from 'react';
 
 import { tableData } from '../../mockData';
-import { PageSmallOrder } from '../api/data-contracts';
-import { MyApi } from '../api/V1';
+import { CustomPageSmallOrder } from '../api/data-contracts';
+import { myApi } from '../api/V1';
 import { formatDate } from '../utils/helpers';
 
 interface IStyle {
@@ -22,7 +22,6 @@ interface ITable {
   transform: ITransfrom;
   sorting: ISorting;
 }
-const api = new MyApi();
 
 const sorting: ISorting = {
   // acceptedAt: 'noSort',
@@ -121,7 +120,7 @@ const transform: ITransfrom = {
 };
 export type TDate = [Date | null, Date | null];
 export enum dateFilters {
-  accept = 'дате принятия',
+  accepted = 'дате принятия',
   deadline = 'дедлайну',
   completed = 'дате завершения',
   empty = '. . .',
@@ -144,25 +143,13 @@ class orderHistoryStore {
     from: null,
     to: null,
   };
-  data: PageSmallOrder = {
+  data: CustomPageSmallOrder = {
     totalPages: 0,
     totalElements: 0,
     size: 0,
     content: [],
     number: 0,
-    sort: { empty: false, sorted: false, unsorted: false },
-    pageable: {
-      offset: 0,
-      sort: { empty: false, sorted: false, unsorted: false },
-      pageNumber: 0,
-      pageSize: 0,
-      paged: false,
-      unpaged: false,
-    },
-    numberOfElements: 0,
-    first: false,
-    last: false,
-    empty: false,
+    isEmpty: false,
   };
   constructor() {
     makeAutoObservable(this);
@@ -184,7 +171,7 @@ class orderHistoryStore {
   };
   setActiveTab = (tab: 'active' | 'history') => async () => {
     try {
-      const response = await api.getOrders1({ q: tab });
+      const response = await myApi.getOrders1({ q: tab });
       runInAction(() => {
         this.activeTab = tab;
         this.data = response.data;
@@ -201,7 +188,7 @@ class orderHistoryStore {
   };
   getOrders = async (status: 'active' | 'history') => {
     try {
-      const response = await api.getOrders1({ q: status });
+      const response = await myApi.getOrders1({ q: status });
       runInAction(() => {
         this.data = response.data;
       });

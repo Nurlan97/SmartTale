@@ -1,20 +1,20 @@
 import { observer } from 'mobx-react-lite';
 import { useLocation } from 'react-router-dom';
 
-import { Card as ICard } from '../../api/data-contracts';
+import { Card as ICard, PurchaseSummary } from '../../api/data-contracts';
 import { defaultImage, defaultPhoto } from '../../assets';
 import { modalStore, navbarStore } from '../../store';
 import Button from '../../UI/Button/Button';
 import { cutText } from '../../utils/helpers';
 import styles from './card.module.scss';
 interface IProps {
-  card: Omit<ICard, 'publishedAt'>;
+  card: PurchaseSummary | ICard;
 }
 const Card = observer(({ card }: IProps) => {
+  const id = 'purchaseId' in card ? card.purchaseId : card.advertisementId;
   const location = useLocation();
   const buttonHandler = () => {
-    console.log('id', card);
-    modalStore.openDescription(card.advertisementId, location.pathname);
+    modalStore.openDescription(id, location.pathname);
   };
   return (
     <div className={styles.cardWrapper}>
@@ -27,7 +27,7 @@ const Card = observer(({ card }: IProps) => {
         <div className={styles.headBlock}>
           <span>{cutText(card.title, 15)}</span>
           <span className={styles.price}>
-            {card.price ? `${card.price} сом` : 'Договорная'}
+            {'price' in card ? `${card.price} сом` : 'Договорная'}
           </span>
         </div>
         <div className={styles.authorBlock}>

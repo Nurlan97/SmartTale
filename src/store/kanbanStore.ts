@@ -1,10 +1,9 @@
 import { makeAutoObservable, runInAction } from 'mobx';
 
-import { DashboardOrder } from '../api/data-contracts';
-import { MyApi } from '../api/V1';
+import { OrderDashboard } from '../api/data-contracts';
+import { myApi } from '../api/V1';
 import { DragEvent, IColumn } from '../components/DragAndDrop/DragAndDrop';
 
-const api = new MyApi();
 const COLUMNS: IColumn[] = [
   {
     title: 'В ожидании',
@@ -30,7 +29,7 @@ const COLUMNS: IColumn[] = [
 ];
 export const DEFAULT_COLUMN = COLUMNS[0].id;
 
-const DEFAULT_DATA_STATE: Array<DashboardOrder> = [
+const DEFAULT_DATA_STATE: Array<OrderDashboard> = [
   {
     id: 1,
     title: 'Marketing Manager',
@@ -125,20 +124,22 @@ const DEFAULT_DATA_STATE: Array<DashboardOrder> = [
 
 class kanbanStore {
   columns: IColumn[] = COLUMNS;
-  orders: Array<DashboardOrder> = DEFAULT_DATA_STATE;
+  orders: Array<OrderDashboard> = DEFAULT_DATA_STATE;
+  prevOrders: Array<OrderDashboard> = DEFAULT_DATA_STATE;
   constructor() {
     makeAutoObservable(this);
   }
   getOrders = async () => {
     try {
-      // const response = await api.getDashboard();
-      // this.orders = response.data;
+      const response = await myApi.getDashboard();
+      this.orders = response.data;
+      this.prevOrders = response.data;
     } catch (error) {
       console.log(error);
     }
   };
 
-  moveOrder = (event: DragEvent, activeOrder: DashboardOrder | null) => {
+  moveOrder = (event: DragEvent, activeOrder: OrderDashboard | null) => {
     const { active, over } = event;
     if (!over) return;
     const activeId = active.id;
@@ -157,10 +158,13 @@ class kanbanStore {
   };
   updateOrder = async (event: DragEvent) => {
     try {
-      // if (event.over?.id) return api.changeStatus(event.active.id, event.over?.id);
+      if (event.over?.id) {
+        await myApi.changeStatus(event.active.id, event.over?.id);
+        this.prevOrders = this.orders;
+      }
     } catch (error) {
+      this.orders = this.prevOrders;
       console.log(error);
-      throw new Error('Error');
     }
   };
 }

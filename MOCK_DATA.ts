@@ -1,6 +1,6 @@
-import { OrderSummary } from './src/api/data-contracts';
+import { OrderAccepted } from './src/api/data-contracts';
 
-export const MOCK_DATA: OrderSummary[] = [
+export const MOCK_DATA: OrderAccepted[] = [
   {
     orderId: 56,
     key: 'Ara',

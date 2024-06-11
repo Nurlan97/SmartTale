@@ -87,8 +87,12 @@ const NavBar = observer(({ path }: INavBar) => {
               <NavbarLink title='Профиль' to='profile' />
               <NavbarLink title='Мои объявления' to='my-ads' />
               <NavbarLink title='Мои покупки' to='my-purchases' />
-              <NavbarLink title='История заказов' to='orders-history' />
-              <NavbarLink title='Организация' to='company' />
+              {(userStore.subscribePeriod || userStore.orgId) && (
+                <NavbarLink title='История заказов' to='orders-history' />
+              )}
+              {(userStore.subscribePeriod || userStore.orgId) && (
+                <NavbarLink title='Организация' to='company' />
+              )}
             </div>
           </div>
           <div className={styles.horizontalLine}></div>
@@ -121,11 +125,14 @@ const NavBar = observer(({ path }: INavBar) => {
         <div ref={marketRef} className={extendedLinkGroup(navbarStore.tabs.market)}>
           <NavbarLink title='Оборудование' to='equipment' />
           <NavbarLink title='Услуги' to='services' />
-          {userStore.isAuth && <NavbarLink title='Разместить заказ' to='place-order' />}
+          <NavbarLink title='Работа' to='job' />
+          {userStore.isAuth && (
+            <NavbarLink title='Разместить объявление' to='place-adv' />
+          )}
         </div>
       </div>
       <div className={styles.horizontalLine}></div>
-      {userStore.isAuth && (
+      {userStore.isAuth && (userStore.subscribePeriod || userStore.orgId) && (
         <div className={styles.navbarGroup}>
           <NavbarTab
             SVG={<NavbarOrganization />}

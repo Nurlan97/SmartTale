@@ -5,7 +5,6 @@ import { useEffect } from 'react';
 const useScrollbar = (root: React.RefObject<HTMLDivElement>, hasScroll: boolean) => {
   useEffect(() => {
     let scrollbars = null;
-
     if (root.current && hasScroll) {
       scrollbars = OverlayScrollbars(root.current, {
         scrollbars: {
