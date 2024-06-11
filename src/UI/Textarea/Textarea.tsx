@@ -14,10 +14,12 @@ interface IInput {
   value: string; // собстенно значение как в простом инпуте
   width?: string; //можно указать производльную ширину, обязательно строкой с единицой измерения
   margin?: string;
+  disabled?: boolean;
 }
 
 const Textarea = ({
   border = false,
+  disabled = false,
   height,
   id,
   isError = false,
@@ -46,6 +48,7 @@ const Textarea = ({
           {required && <b style={{ color: '#FF3B30' }}>{' *'}</b>}
         </div>
         <textarea
+          disabled={disabled}
           value={value}
           onChange={onChange}
           placeholder={placeholder}

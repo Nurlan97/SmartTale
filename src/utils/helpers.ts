@@ -1,3 +1,7 @@
+import { InternalAxiosRequestConfig } from 'axios';
+
+import { userStore } from '../store';
+
 export function setCookie(name: string, value: string, hours: number) {
   let expires = '';
   if (hours) {
@@ -86,10 +90,33 @@ export function formatDate2(dateString: string | undefined) {
 export function toCamelCase(str: string) {
   return str.toLowerCase().replace(/[^a-zA-Z0-9]+(.)/g, (m, chr) => chr.toUpperCase());
 }
+export const decodeJWT = (token: string) => {
+  const obj: {
+    authorities: number;
+    exp: number;
+    hierarchy: number;
+    iat: number;
+    iss: string;
+    orgId: number;
+    roles: string;
+    sub: string;
+    tokenType: string;
+    userId: number;
+  } = JSON.parse(atob(token.split('.')[1]));
+  return obj;
+};
 
 export const isTokenExpired = (token: string) => {
   if (!token) return true;
   if (token === 'undefined') return true;
-  const expiry = JSON.parse(atob(token.split('.')[1])).exp;
+  const expiry = decodeJWT(token).exp;
   return Math.floor(new Date().getTime() / 1000) >= expiry;
+};
+
+export const redirectToAuth = (config: InternalAxiosRequestConfig<any>) => {
+  const abortCtrl = new AbortController();
+  abortCtrl.abort();
+  config.signal = abortCtrl.signal;
+  userStore.logout();
+  window.location.assign(`${window.location.origin}/#/authorization`);
 };

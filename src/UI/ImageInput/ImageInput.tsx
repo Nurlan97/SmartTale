@@ -1,14 +1,15 @@
 import { observer } from 'mobx-react-lite';
 
 import { DeleteImg } from '../../assets';
-import { typePlaceOrderStore } from '../../store';
+import { typePlaceAdvStore } from '../../store';
 import styles from './imageInput.module.scss';
 
 interface IImageInput {
-  store: typePlaceOrderStore;
+  store: typePlaceAdvStore;
+  disabled?: boolean;
 }
 
-const ImageInput = observer(({ store }: IImageInput) => {
+const ImageInput = observer(({ store, disabled = false }: IImageInput) => {
   return (
     <div className={styles.photoContainer}>
       {store.viewedImages.map((img, ind) => {
@@ -17,15 +18,21 @@ const ImageInput = observer(({ store }: IImageInput) => {
             <label htmlFor={`current${ind}`} className={styles.inputPhotoFilled}>
               <img className={styles.smallImg} src={img} alt='Change' />
               <div className={styles.changeImage}>Change photo</div>
-              <button
-                className={styles.deleteImage}
-                onClick={() => store.deleteImage(ind)}
-                type='button'
-              >
-                <DeleteImg />
-              </button>
+              {!disabled && (
+                <>
+                  <div className={styles.changeImage}>Change photo</div>
+                  <button
+                    className={styles.deleteImage}
+                    onClick={() => store.deleteImage(ind)}
+                    type='button'
+                  >
+                    <DeleteImg />
+                  </button>
+                </>
+              )}
             </label>
             <input
+              disabled={disabled}
               id={`current${ind}`}
               type='file'
               className={styles.hiddenInput}
@@ -37,7 +44,7 @@ const ImageInput = observer(({ store }: IImageInput) => {
           </div>
         );
       })}
-      {store.viewedImages.length < 5 && (
+      {store.viewedImages.length < 5 && !disabled && (
         <>
           <label htmlFor='newFile' className={styles.inputPhoto}>
             {<div className={styles.addFile}>+ Добавить файл</div>}

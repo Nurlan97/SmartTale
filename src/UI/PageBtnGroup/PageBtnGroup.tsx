@@ -27,25 +27,25 @@ const PageBtnGroup = ({ store, setPage }: IPagesBtnGroup) => {
         <ArrowLeft />
       </button>,
       <button className={styles.page} onClick={() => setPage(currPage - 1)}>
-        {currPage - 1}
+        {currPage}
       </button>,
     );
   pages.push(
     <button disabled className={styles.currentPage}>
-      {currPage}
+      {currPage + 1}
     </button>,
   );
 
   if (total !== 0 && currPage + 1 < total) {
     pages.push(
       <button className={styles.page} onClick={() => setPage(currPage + 1)}>
-        {currPage + 1}
+        {currPage + 2}
       </button>,
     );
     if (currPage + 2 < total) {
       pages.push(
         <button className={styles.page} onClick={() => setPage(currPage + 2)}>
-          {currPage + 2}
+          {currPage + 3}
         </button>,
       );
     }

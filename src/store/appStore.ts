@@ -4,48 +4,33 @@ import { MOCK_DATA } from '../../MOCK_DATA';
 import { MOCK_DATA_EMPLOYEES } from '../../MOCK_DATA_EMPLOYEES';
 import { cardsArray } from '../../mockData';
 import {
-  FullOrder,
-  FullProduct,
-  Order,
-  PageCard,
-  PageEmployee,
-  PageOrderSummary,
-  PageSmallOrder,
-  Product,
+  CustomPage,
+  CustomPageEmployee,
+  CustomPageOrderAccepted,
+  CustomPagePurchaseSummary,
+  CustomPageSmallOrder,
+  OrderFull,
+  ProductFull,
 } from '../api/data-contracts';
-import { MyApi } from '../api/V1';
+import { myApi } from '../api/V1';
 import modalStore from './modalStore';
 
-const api = new MyApi(); //создаем экземпляр нашего api
-
-export interface IAdsResponse {
-  totalPages: number;
-  totalElements: number;
-  size: number;
-  content: Order[] | Product[];
-  number: number;
-  sort: { empty: boolean; sorted: boolean; unsorted: boolean };
-  numberOfElements: number;
-  first: boolean;
-  last: boolean;
-  empty: boolean;
-}
 interface IMyAd {
   group: 'all' | 'orders' | 'products';
-  data: IAdsResponse;
-  detailed: Array<FullOrder | FullProduct>;
+  data: CustomPage;
+  detailed: Array<OrderFull | ProductFull>;
 }
 interface IMyBuys {
-  data: PageCard;
+  data: CustomPagePurchaseSummary;
 }
 interface IOrders {
-  data: Omit<PageSmallOrder, 'pageable'>;
+  data: CustomPageSmallOrder;
 }
 
 interface IMyOrganization {
   group: 'orders' | 'employees';
-  orders: Omit<PageOrderSummary, 'pageable'>;
-  employees: Omit<PageEmployee, 'pageable'>;
+  orders: CustomPageOrderAccepted;
+  employees: CustomPageEmployee;
   description: string;
   name: string;
   logoUrl: string;
@@ -53,22 +38,13 @@ interface IMyOrganization {
 
 class appStore {
   myOrders: IOrders = {
-    // group: 'orders',
     data: {
       totalPages: 0,
       totalElements: 0,
       size: 0,
       content: [],
       number: 0,
-      sort: {
-        empty: false,
-        sorted: false,
-        unsorted: false,
-      },
-      first: false,
-      last: false,
-      numberOfElements: 0,
-      empty: false,
+      isEmpty: false,
     },
   };
   myAds: IMyAd = {
@@ -79,11 +55,7 @@ class appStore {
       size: 10,
       content: [],
       number: 0,
-      sort: { empty: false, sorted: false, unsorted: false },
-      numberOfElements: 0,
-      first: false,
-      last: false,
-      empty: false,
+      isEmpty: false,
     },
     detailed: [],
   };
@@ -94,19 +66,7 @@ class appStore {
       size: 0,
       content: [],
       number: 0,
-      sort: { empty: false, sorted: false, unsorted: false },
-      pageable: {
-        offset: 0,
-        sort: { empty: false, sorted: false, unsorted: false },
-        pageNumber: 0,
-        pageSize: 0,
-        paged: false,
-        unpaged: false,
-      },
-      numberOfElements: 0,
-      first: false,
-      last: false,
-      empty: false,
+      isEmpty: false,
     },
   };
   myOrganization: IMyOrganization = {
@@ -120,15 +80,7 @@ class appStore {
       size: 0,
       content: [],
       number: 0,
-      sort: {
-        empty: false,
-        sorted: false,
-        unsorted: false,
-      },
-      first: false,
-      last: false,
-      numberOfElements: 0,
-      empty: false,
+      isEmpty: false,
     },
     employees: {
       totalPages: 0,
@@ -136,15 +88,7 @@ class appStore {
       size: 0,
       content: [],
       number: 0,
-      sort: {
-        empty: false,
-        sorted: false,
-        unsorted: false,
-      },
-      first: false,
-      last: false,
-      numberOfElements: 0,
-      empty: false,
+      isEmpty: false,
     },
   };
 
@@ -152,7 +96,7 @@ class appStore {
     makeAutoObservable(this);
   }
 
-  myAdsSetGroup = (group: 'all' | 'orders' | 'products') => {
+  myAdsSetGroup = (group: 'all' | 'orders' | 'products') => async () => {
     this.myAds.group = group;
     this.getMyAds();
   };
@@ -160,7 +104,7 @@ class appStore {
     // this.myAds.data.content = cardsArray;
 
     try {
-      const response = await api.getAds1({
+      const response = await myApi.getMyAds({
         q: this.myAds.group !== 'all' ? this.myAds.group : undefined,
         page: this.myAds.data.number,
         size: this.myAds.data.size,
@@ -170,18 +114,20 @@ class appStore {
       console.log(error);
     }
   };
-  myOrganizationSetGroup = (group: 'orders' | 'employees') => {
-    this.myOrganization.group = group;
-    if (group === 'orders') {
-      this.getMyOrganizationOrders();
+  myOrganizationSetGroup = (tab: 'orders' | 'employees') => async () => {
+    runInAction(() => {
+      this.myOrganization.group = tab;
+    });
+    if (tab === 'orders') {
+      await this.getMyOrganizationOrders();
     } else {
-      this.getMyOrganizationEmployees();
+      await this.getMyOrganizationEmployees();
     }
   };
   getDetailedAd = async (id: number) => {
     this.myAds.detailed = [];
     try {
-      const response = await api.getAd1(id);
+      const response = await myApi.getMyAd(id);
 
       this.myAds.detailed.push(response.data);
     } catch (error) {
@@ -189,7 +135,7 @@ class appStore {
     }
   };
   getMyBuys = async (page: number = 0, limit: number = 8) => {
-    const response = await api.getPurchases({ page: page, size: limit });
+    const response = await myApi.getPurchases({ page: page, size: limit });
     runInAction(() => {
       // this.myBuys.data.content = cardsArray;
       this.myBuys.data = response.data;
@@ -199,13 +145,15 @@ class appStore {
     this.getMyBuys(undefined, limit);
   };
   getMyOrders = async (status: 'active' | 'completed') => {
-    const response = await api.getOrders1({ q: status });
+    const response = await myApi.getOrders1({ q: status });
     this.myOrders.data = response.data;
   };
   getMyOrganizationOrders = async () => {
     try {
-      const response = await api.getOrders({ active: true });
-      this.myOrganization.orders = response.data;
+      const response = await myApi.getOrders({ active: true });
+      runInAction(() => {
+        this.myOrganization.orders = response.data;
+      });
     } catch (error) {
       console.error('Failed to fetch orders', error);
     }
@@ -213,8 +161,10 @@ class appStore {
   };
   getMyOrganizationEmployees = async () => {
     try {
-      const response = await api.getEmployees();
-      this.myOrganization.employees = response.data;
+      const response = await myApi.getEmployees();
+      runInAction(() => {
+        this.myOrganization.employees = response.data;
+      });
     } catch (error) {
       console.log(error);
     }
@@ -224,11 +174,11 @@ class appStore {
     return this.myOrganization.group === 'orders';
   }
   deleteAd = async (id: number) => {
-    await api.interactWithAd(id, '3');
+    await myApi.interactWithAd(id, '3');
     modalStore.closeModal();
   };
   closeAd = async (id: number) => {
-    await api.interactWithAd(id, '1');
+    await myApi.interactWithAd(id, '1');
     modalStore.closeModal();
   };
   setMyPurchasesePage = (page: number) => {
@@ -236,7 +186,7 @@ class appStore {
   };
   getMyOrganization = async () => {
     try {
-      const response = await api.getOrganization();
+      const response = await myApi.getOrganization();
       runInAction(() => {
         this.myOrganization.description = response.data.description;
         this.myOrganization.logoUrl = response.data.logoUrl;

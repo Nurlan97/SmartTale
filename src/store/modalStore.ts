@@ -1,7 +1,7 @@
 import { makeAutoObservable } from 'mobx';
 
-import { FullOrderCard, FullProductCard } from '../api/data-contracts';
-import { MyApi } from '../api/V1';
+import { JobCard, OrderCard, ProductCard } from '../api/data-contracts';
+import { myApi } from '../api/V1';
 
 export enum Modals {
   closeOrder = 'closeOrder',
@@ -19,24 +19,7 @@ export enum Modals {
   inviteEmployer = 'inviteEmployer',
   loader = 'loader',
 }
-interface IDetailed {
-  id: number;
-  path: string;
-  title: string;
-  deadline: string;
-  status: string;
-  price: number;
-  authorImg: string;
-  author: string;
-  images: string[];
-  activeImg: number;
-  type: string;
-  activeTab: 'description' | 'contacts' | 'size';
-  description: string;
-  contacts: string;
-  size: string;
-}
-const api = new MyApi();
+
 const pathObj = {
   '/my-purchases': 'Личный кабинет/Мои покупки',
   '/equipment': 'Маркетплейс/Оборудование',
@@ -47,30 +30,12 @@ class modalStore {
   isLoading = false;
   error = '';
   detailedExt: {
+    id: number;
     path: string;
     activeImg: number;
     activeTab: 'description' | 'size' | 'contacts';
-  } = { activeImg: 0, activeTab: 'description', path: '' };
-  detailed: FullProductCard | FullOrderCard = {
-    acceptedBy: 0,
-    advertisementId: 0,
-    deadlineAt: '',
-    description: '',
-    imageUrls: [],
-    organizationLogoUrl: '',
-    organizationName: '',
-    price: 0,
-    publishedAt: '',
-    publishedBy: 0,
-    publisherAvatarUrl: '',
-    publisherEmail: '',
-    publisherName: '',
-    publisherPhoneNumber: '',
-    purchasedAt: '',
-    size: '',
-    title: '',
-    views: 0,
-  };
+  } = { id: 0, activeImg: 0, activeTab: 'description', path: '' };
+  detailed: Array<OrderCard | ProductCard | JobCard> = [];
   currentModal: Modals | null = null;
 
   constructor() {
@@ -80,11 +45,13 @@ class modalStore {
     this.isOpen = false;
   };
   openDescription = async (id: number, path: string) => {
+    this.detailed = [];
     this.isOpen = true;
     this.currentModal = Modals.loader;
+    this.detailedExt.id = id;
     try {
-      const response = await api.getAd(id);
-      this.detailed = response.data;
+      const response = await myApi.getAd(id);
+      this.detailed.push(response.data);
       if (path === '/my-purchases' || path === '/equipment' || path === '/services') {
         this.detailedExt.path = pathObj[path];
       }
@@ -118,6 +85,14 @@ class modalStore {
   };
   setActiveTab = (tab: 'description' | 'contacts' | 'size') => () => {
     this.detailedExt.activeTab = tab;
+  };
+  handleAdvertisement = (quantity?: number) => {
+    try {
+      myApi.handleAdvertisementAction(this.detailedExt.id, { quantity: quantity });
+      this.openModal(Modals.successPurchase);
+    } catch (error) {
+      console.log(error);
+    }
   };
 }
 

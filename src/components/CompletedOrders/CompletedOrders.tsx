@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import orderHistoryStore2 from '../../store/orderHistoryStore2';
 import Button from '../../UI/Button/Button';
 import DateRangeCustomInput from '../../UI/DateRangeCustomInput/DateRangeCustomInput';
+import TabSwitch from '../../UI/TabSwitch/TabSwitch';
 import AdRow from '../AdRow/AdRow';
 import DropDownFilterDate from '../DropDownFilterDate/DropDownFilterDate';
 import styles from './CompletedOrders.module.scss';
@@ -24,25 +25,15 @@ const CompletedOrders: React.FC = observer(() => {
     <div className={styles.container}>
       <h3 className={styles.title}>История заказов</h3>
       <div className={styles.wrapper}>
-        <div className={styles.buttonGroup}>
-          <Button
-            color={orderHistoryStore2.activeTab === 'active' ? 'orange' : 'white'}
-            type='button'
-            handler={orderHistoryStore2.setActiveTab('active')}
-            height='40px'
-          >
-            Текущие
-          </Button>
-          <Button
-            color={orderHistoryStore2.activeTab === 'history' ? 'orange' : 'white'}
-            type='button'
-            handler={orderHistoryStore2.setActiveTab('history')}
-            height='40px'
-          >
-            Выполненные
-          </Button>
-        </div>
-        <div className={styles.btnGrp}>
+        <TabSwitch
+          activeTab={orderHistoryStore2.activeTab}
+          tabs={[
+            { tab: 'active', title: 'Текущие' },
+            { tab: 'history', title: 'Выполненные' },
+          ]}
+          switchFunc={(tab: 'active' | 'history') => orderHistoryStore2.setActiveTab(tab)}
+        />
+        <div className={styles.filterGrp}>
           <DropDownFilterDate
             tableRef={tableRef}
             setDate={orderHistoryStore2.setDateRange}
@@ -51,6 +42,7 @@ const CompletedOrders: React.FC = observer(() => {
           />
           <div>
             <DatePicker
+              withPortal
               // swapRange={true}
               selectsRange={true}
               startDate={orderHistoryStore2.dateFilter.from}

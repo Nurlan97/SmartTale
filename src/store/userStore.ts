@@ -1,35 +1,23 @@
 import { makeAutoObservable, runInAction } from 'mobx';
 
 import {
-  FullOrder,
   RegistrationRequest,
   UpdateProfileRequest,
   VerificationRequest,
 } from '../api/data-contracts';
-import { MyApi } from '../api/V1';
-import { fullPromise, removeCookie } from '../utils/helpers';
+import { myApi } from '../api/V1';
+import { getRolesFromMask, Roles } from '../utils/authorizationHelpers';
+import { decodeJWT, removeCookie } from '../utils/helpers';
 import { setCookie } from '../utils/helpers';
 import modalStore, { Modals } from './modalStore';
-
-const api = new MyApi(); //создаем экземпляр нашего api
-interface IOneAd {
-  productId: number;
-  title: string;
-  type: string;
-  description: string;
-  imageUrl: string;
-}
-export interface IType {
-  type: 'equipment' | 'services';
-}
-
-interface IMyAd {
-  group: 'all' | 'service' | 'equipment';
-  data: IOneAd[];
-  detailed: FullOrder & IType;
-}
+import notifyStore from './notifyStore';
 
 class userStore {
+  userId: number | undefined = undefined;
+  orgId: number | undefined = undefined;
+  roles = '';
+  hierarchy: number | undefined = undefined;
+  authorities: Roles[] = [];
   accessToken = '';
   refreshToken = '';
   profileEdit = false;
@@ -56,7 +44,7 @@ class userStore {
 
   fetchRegistration = async (registrationData: RegistrationRequest) => {
     try {
-      const result = await api.register(registrationData);
+      const result = await myApi.register(registrationData);
       runInAction(() => {
         this.email = result.data;
         this.authenticationStage = 2;
@@ -67,7 +55,7 @@ class userStore {
   };
   fetchAvailableEmail = async (emailValue: string) => {
     try {
-      const result = await api.isEmailAvailable(emailValue);
+      const result = await myApi.isEmailAvailable(emailValue);
       return result.data;
     } catch (error) {
       console.log(error);
@@ -75,37 +63,33 @@ class userStore {
   };
   sendVerificationCode = async (data: VerificationRequest, navigate: () => void) => {
     this.authenticationStage = 3;
-    fullPromise(
-      api.verifyEmail(data),
-      (value) => {
-        runInAction(() => {
-          this.accessToken = value.data.accessToken;
-          this.refreshToken = value.data.refreshToken;
-          this.isAuth = true;
-          if (this.isRemember) {
-            setCookie('accessToken', value.data.accessToken, 1);
-            setCookie('refreshToken', value.data.refreshToken, 168);
-          }
-        });
-        this.getUser();
-        setTimeout(() => {
-          navigate();
-        }, 500);
-      },
-      (error) => {
-        runInAction(() => {
-          console.error(error);
-          this.authenticationStage = 2;
-          this.invalidCode = true;
-        });
-      },
-    );
+    try {
+      const response = await myApi.verifyEmail(data);
+      runInAction(() => {
+        this.setTokens(response.data.accessToken, response.data.refreshToken);
+
+        if (this.isRemember) {
+          setCookie('accessToken', response.data.accessToken, 1);
+          setCookie('refreshToken', response.data.refreshToken, 168);
+        }
+      });
+      this.getUser();
+      setTimeout(() => {
+        navigate();
+      }, 500);
+    } catch (error) {
+      runInAction(() => {
+        console.error(error);
+        this.authenticationStage = 2;
+        this.invalidCode = true;
+      });
+    }
   };
 
   resendVerificationCode = async () => {
     if (this.email !== '') {
       try {
-        await api.resend(this.email);
+        await myApi.resend(this.email);
       } catch (error) {
         console.error(error);
       }
@@ -116,7 +100,7 @@ class userStore {
 
   fetchAuthorization = async (authorizationData: string) => {
     try {
-      await api.login(authorizationData);
+      await myApi.login(authorizationData);
       runInAction(() => {
         this.email = authorizationData;
         this.authenticationStage = 2;
@@ -127,8 +111,8 @@ class userStore {
   };
   getUser = async () => {
     try {
-      // const response = await api.getProfile();
-      const response = await api.getProfile();
+      // const response = await myApi.getProfile();
+      const response = await myApi.getProfile();
       runInAction(() => {
         this.firstName = response.data.firstName;
         this.lastName = response.data.lastName;
@@ -151,7 +135,7 @@ class userStore {
   updatePhoto = async (file: File) => {
     modalStore.openModal(Modals.loader);
     try {
-      await api.updateAvatar({ avatar: 'any' }, { avatar: file });
+      await myApi.updateAvatar({ avatar: 'any' }, { avatar: file });
       this.profilePhoto = URL.createObjectURL(file);
     } catch (error) {
       console.log(error);
@@ -161,7 +145,7 @@ class userStore {
   updateProfile = async (data: UpdateProfileRequest) => {
     modalStore.openModal(Modals.loader);
     try {
-      const response = await api.updateProfile(data);
+      const response = await myApi.updateProfile(data);
       runInAction(() => {
         this.firstName = response.data.firstName;
         this.lastName = response.data.lastName;
@@ -181,33 +165,49 @@ class userStore {
   subscribe = async () => {
     modalStore.openModal(Modals.loader);
     try {
-      const response = await api.subscribe();
+      const response = await myApi.subscribe();
       modalStore.openModal(Modals.successSubscribe);
     } catch (error) {
       console.log(error);
     }
   };
-  setTokens = (accessToken: string, refreshToken: string) => {
+  setTokens = (accessToken: string, refreshToken: string, isRemember?: boolean) => {
     runInAction(() => {
+      this.isAuth = true;
       this.accessToken = accessToken;
       this.refreshToken = refreshToken;
-      setCookie('accessToken', accessToken, 1);
-      setCookie('refreshToken', refreshToken, 168);
+      this.orgId = decodeJWT(accessToken).orgId;
+      this.userId = decodeJWT(accessToken).userId;
+      this.hierarchy = decodeJWT(accessToken).hierarchy;
+      this.roles = decodeJWT(accessToken).roles;
+      this.authorities = getRolesFromMask(decodeJWT(accessToken).authorities);
+      console.log(getRolesFromMask(decodeJWT(accessToken).authorities));
+
+      notifyStore.connect();
+      if (isRemember) {
+        setCookie('accessToken', accessToken, 1);
+        setCookie('refreshToken', refreshToken, 168);
+        this.isRemember = true;
+      }
     });
   };
-  refreshTokens = async () => {
+  refreshTokens = async (refresh?: string, isRemember?: boolean) => {
     try {
-      console.log('refresh tokens');
-      const response = await api.refreshToken(`Bearer ${this.refreshToken}`);
+      const refreshToken = refresh ? refresh : this.refreshToken;
+      const response = await myApi.refreshToken(`Bearer ${refreshToken}`);
       runInAction(() => {
-        this.setTokens(response.data.accessToken, response.data.refreshToken);
+        this.setTokens(response.data.accessToken, response.data.refreshToken, isRemember);
       });
     } catch (error) {
       console.log(error);
     }
   };
   logout = () => {
-    this.isAuth = false;
+    this.userId = undefined;
+    this.orgId = undefined;
+    this.roles = '';
+    this.hierarchy = undefined;
+    this.authorities = [];
     this.accessToken = '';
     this.refreshToken = '';
     this.profileEdit = false;
@@ -220,6 +220,7 @@ class userStore {
     this.subscribePeriod = '';
     this.isRemember = false;
     this.authenticationStage = 1;
+    this.isAuth = false;
     this.anyAds = false;
     this.invalidCode = false;
     removeCookie('accessToken');

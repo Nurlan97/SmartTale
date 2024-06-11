@@ -1,5 +1,5 @@
 import { observer } from 'mobx-react-lite';
-import { useEffect, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 
 import styles from './App.module.scss';
@@ -12,46 +12,58 @@ import CurrentOrdersPage from './pages/CurrentOrdersPage/CurrentOrdersPage';
 import DetailedPage from './pages/DetailedPage/DetailedPage';
 import EquipmentPage from './pages/EquipmentPage/EquipmentPage';
 import HistoryPage from './pages/HistoryPage/HistoryPage';
+import JobPage from './pages/JobPage/JobPage';
 import MyAdsPage from './pages/MyAdsPage/MyAdsPage';
 import MyPurchases from './pages/MyPurchases/MyPurchases';
 import OrderHistoryPage from './pages/OrderHistoryPage/OrderHistoryPage';
 import OrganizationPage from './pages/OrganizationPage/OrganizationPage';
-import PlaceOrderPage from './pages/PlaceOrderPage/PlaceOrderPage';
+import PlaceAdvage from './pages/PlaceAdvPage/PlaceAdvPage';
 import ProfilePage from './pages/ProfilePage/ProfilePage';
 import RegistrationPage from './pages/RegistrationPage/RegistrationPage';
+import SearchPage from './pages/SearchPage/SearchPage';
 import ServicesPage from './pages/ServicesPage/ServicesPage';
 import { notifyStore, userStore } from './store';
 import { getCookie, isTokenExpired, removeCookie } from './utils/helpers';
 
 const App = observer(() => {
   const navigate = useNavigate();
-  useEffect(() => {
-    if (!userStore.isAuth) {
-      const accessToken = getCookie('accessToken');
-      const refreshToken = getCookie('refreshToken');
-      if (!!accessToken && !!refreshToken && !isTokenExpired(accessToken)) {
-        userStore.setTokens(accessToken, refreshToken);
-        userStore.getUser();
-        userStore.isAuth = true;
-        navigate('/equipment');
-        return;
+
+  useLayoutEffect(() => {
+    const func = async () => {
+      if (!userStore.isAuth) {
+        const accessToken = getCookie('accessToken');
+        const refreshToken = getCookie('refreshToken');
+        if (!!accessToken && !!refreshToken) {
+          if (!isTokenExpired(accessToken)) {
+            userStore.setTokens(accessToken, refreshToken, true);
+            userStore.getUser();
+            navigate('/equipment');
+            // if (!notifyStore.client) {
+            //   notifyStore.connect();
+            // }
+            return;
+          }
+          if (!isTokenExpired(refreshToken)) {
+            await userStore.refreshTokens(refreshToken, true);
+            userStore.getUser();
+            navigate('/equipment');
+            // if (!notifyStore.client) {
+            //   notifyStore.connect();
+            // }
+            return;
+          }
+        }
+        removeCookie('accessToken');
+        removeCookie('refreshToken');
+      } else {
+        // notifyStore.connect();
       }
-      if (!!refreshToken && !isTokenExpired(refreshToken)) {
-        userStore.refreshTokens();
-        userStore.getUser();
-        userStore.isAuth = true;
-        navigate('/equipment');
-        return;
-      }
-      removeCookie('accessToken');
-      removeCookie('refreshToken');
-    }
+    };
+    func();
   }, []);
-  useEffect(() => {
-    notifyStore.connect();
-  }, []);
+
   const location = useLocation();
-  const [showNavbar, setShowNavbar] = useState(true);
+  const [showNavbar, setShowNavbar] = useState(false);
 
   useEffect(() => {
     const noNavbarRoutes = ['/registration', '/authorization'];
@@ -66,11 +78,11 @@ const App = observer(() => {
         <Routes>
           <Route path='/equipment' element={<EquipmentPage />} />
           <Route path='/services' element={<ServicesPage />} />
-
+          <Route path='/job' element={<JobPage />} />
           <Route element={<AuthRoute />}>
             <Route path='/history' element={<HistoryPage />} />
             <Route path='/orders-active' element={<CurrentOrdersPage />} />
-            <Route path='/place-order' element={<PlaceOrderPage />} />
+            <Route path='/place-adv' element={<PlaceAdvage />} />
             <Route path='/profile' element={<ProfilePage />} />
             <Route path='/my-ads' element={<MyAdsPage />} />
             <Route path='/my-ads/:id' element={<DetailedPage />} />
@@ -81,6 +93,7 @@ const App = observer(() => {
             <Route path='/employees' element={<OrganizationPage />} />
             <Route path='/roles' element={<OrganizationPage />} />
             <Route path='/company-history' element={<OrganizationPage />} />
+            <Route path='/search' element={<SearchPage />} />
           </Route>
           <Route element={<NoAuthRoute />}>
             <Route path='/registration' element={<RegistrationPage />}></Route>

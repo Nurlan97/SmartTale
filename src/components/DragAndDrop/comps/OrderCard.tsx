@@ -1,13 +1,13 @@
 import { useDraggable } from '@dnd-kit/core';
 import { CSS } from '@dnd-kit/utilities';
 
-import { DashboardOrder } from '../../../api/data-contracts';
+import { OrderDashboard } from '../../../api/data-contracts';
 import { Clock } from '../../../assets';
 import { cutText, formatDate, toCamelCase } from '../../../utils/helpers';
 import styles from './orderCard.module.scss';
 
 interface Props {
-  order: DashboardOrder;
+  order: OrderDashboard;
 }
 
 const OrderCard = ({ order }: Props) => {

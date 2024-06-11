@@ -5,6 +5,7 @@
   width: 100%;
   font-family: 'SF Pro', sans-serif;
   font-weight: 400;
+  height: fit-content;
 }
 
 .path {
@@ -24,10 +25,14 @@
   gap: 20px;
   position: relative;
 }
+.search {
+  // position: relative;
+}
 .title {
   font-size: 34px;
   line-height: 124%;
   color: #000;
+  height: 50px;
 }
 .horizontalLine {
   border-bottom: 1px solid #8e8e93;

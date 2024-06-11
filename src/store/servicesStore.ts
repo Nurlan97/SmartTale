@@ -1,25 +1,20 @@
 import { makeAutoObservable, runInAction } from 'mobx';
 
 import { cardsArray } from '../../mockData';
-import { PageCard } from '../api/data-contracts';
-import { MyApi } from '../api/V1';
+import { CustomPageCard } from '../api/data-contracts';
+import { myApi } from '../api/V1';
 import modalStore, { Modals } from './modalStore';
 
-const api = new MyApi();
 class servicesStore {
   isLoading = false;
   detailedPage = 0;
-  data: Omit<PageCard, 'pageable'> = {
+  data: CustomPageCard = {
     totalPages: 0,
     totalElements: 0,
     size: 0,
     content: [],
     number: 0,
-    sort: { empty: false, sorted: false, unsorted: false },
-    first: false,
-    last: false,
-    numberOfElements: 0,
-    empty: false,
+    isEmpty: false,
   };
 
   constructor() {
@@ -39,7 +34,7 @@ class servicesStore {
     modalStore.openModal(Modals.loader);
     this.isLoading = true;
     try {
-      const response = await api.getAds({
+      const response = await myApi.getAds({
         type: 'orders',
         page: page,
         size: limit,

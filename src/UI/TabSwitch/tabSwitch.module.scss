@@ -1,0 +1,18 @@
+.switchBtnGroup {
+  overflow: hidden;
+  width: fit-content;
+  min-height: 40px;
+  border-radius: 12px;
+  border: 1px solid #8e8e93;
+  background-color: #8e8e93;
+  display: flex;
+  gap: 1px;
+}
+.switchBtn {
+  background-color: white;
+  padding: 8px;
+}
+.switchBtnActive {
+  background-color: #ffcc00;
+  padding: 8px;
+}

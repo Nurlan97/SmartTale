@@ -1,44 +1,50 @@
 import { injectStores } from '@mobx-devtools/tools';
 
-import PlaceOrderStore from './adStore';
+import PlaceAdvStore from './adStore';
 import appStore from './appStore';
 import equipmentStore from './equipmentStore';
+import jobStore from './jobStore';
 import kanbanStore from './kanbanStore';
 import modalStore from './modalStore';
 import navbarStore from './navbarStore';
 import notifyStore from './notifyStore';
+import searchStore from './searchStore';
 import servicesStore from './servicesStore';
 import userStore from './userStore';
 
-const createPlaceOrderStore = (images: string[]) => {
-  const placeOrderStoreInstance = new PlaceOrderStore(images);
+const createPlaceAdvStore = (id?: number) => {
+  const placeAdvStoreInstance = new PlaceAdvStore(id);
   // injectStores({
-  //   placeOrderStoreInstance,
+  //   placeAdvStoreInstance,
   // });
-  return placeOrderStoreInstance;
+  return placeAdvStoreInstance;
 };
-const emptyPlaceOrderStore = new PlaceOrderStore([]);
-export type typePlaceOrderStore = typeof emptyPlaceOrderStore;
+const emptyPlaceAdvStore = new PlaceAdvStore();
+export type typePlaceAdvStore = typeof emptyPlaceAdvStore;
 
 injectStores({
   equipmentStore,
   navbarStore,
+  jobStore,
   servicesStore,
   userStore,
   modalStore,
   appStore,
   kanbanStore,
+  searchStore,
   notifyStore,
 });
 
 export {
   appStore,
-  createPlaceOrderStore,
+  createPlaceAdvStore,
   equipmentStore,
+  jobStore,
   kanbanStore,
   modalStore,
   navbarStore,
   notifyStore,
+  searchStore,
   servicesStore,
   userStore,
 };

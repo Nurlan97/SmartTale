@@ -93,13 +93,7 @@ const ChoiseModal = () => {
             color='blue'
             type='button'
             handler={() => {
-              map
-                .get(modalStore.currentModal)
-                .handler(
-                  'orderId' in appStore.myAds.detailed[0]
-                    ? appStore.myAds.detailed[0].orderId
-                    : appStore.myAds.detailed[0].productId,
-                );
+              map.get(modalStore.currentModal).handler();
             }}
           >
             {map.get(modalStore.currentModal).button2}

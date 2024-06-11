@@ -102,7 +102,7 @@ const DropDownFilterDate = ({ tableRef, setDate, filter, setFilter }: IProps) =>
             >
               <button
                 type='button'
-                onClick={setDateHandler(dateFilters.accept)}
+                onClick={setDateHandler(dateFilters.accepted)}
                 className={styles.mainBtn}
               >
                 Дате принятия
@@ -110,19 +110,19 @@ const DropDownFilterDate = ({ tableRef, setDate, filter, setFilter }: IProps) =>
               {isAcceptHovering && (
                 <div className={styles.dropdownSubcontent} ref={acceptRef}>
                   <button
-                    onClick={setDateHandler(dateFilters.accept, dateRanges.week)}
+                    onClick={setDateHandler(dateFilters.accepted, dateRanges.week)}
                     className={styles.dropdownItem}
                   >
                     За последнюю неделю
                   </button>
                   <button
-                    onClick={setDateHandler(dateFilters.accept, dateRanges.month)}
+                    onClick={setDateHandler(dateFilters.accepted, dateRanges.month)}
                     className={styles.dropdownItem}
                   >
                     За последний месяц
                   </button>
                   <button
-                    onClick={setDateHandler(dateFilters.accept, dateRanges.year)}
+                    onClick={setDateHandler(dateFilters.accepted, dateRanges.year)}
                     className={styles.dropdownItem}
                   >
                     За последний год

@@ -8,7 +8,6 @@ import { modalStore, userStore } from '../../store';
 import { Modals } from '../../store/modalStore';
 import Button from '../../UI/Button/Button';
 import Input from '../../UI/Input/Input';
-import PhoneInput from '../../UI/PhoneInput/PhoneInput';
 import Subscribe from '../../UI/Subscribe/Subscribe';
 import styles from './profilePage.module.scss';
 
@@ -41,7 +40,8 @@ const ProfilePage = observer(() => {
     <div className={styles.page}>
       <div>
         <Header path='Личный кабинет/Профиль' title='Ваш профиль' />
-        <Subscribe period={userStore.subscribePeriod} />
+        {!userStore.orgId && <Subscribe period={userStore.subscribePeriod} />}
+
         <div className={styles.profileHeader}>
           {userStore.profilePhoto ? (
             <>
@@ -118,7 +118,7 @@ const ProfilePage = observer(() => {
             disabled={!userStore.profileEdit}
             id='email'
           />
-          <PhoneInput
+          <Input
             onChange={formik.handleChange}
             value={formik.values.phone}
             label='Номер телефона'

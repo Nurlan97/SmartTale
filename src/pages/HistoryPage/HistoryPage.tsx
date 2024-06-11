@@ -7,7 +7,7 @@ import styles from './historyPage.module.scss';
 const HistoryPage = () => {
   return (
     <div className={styles.page}>
-      <Header path='Заказы/Текущие заказы' title='История' />
+      <Header path='Заказы/История' title='История' />
       <CompletedOrders />
     </div>
   );
