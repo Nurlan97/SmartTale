@@ -41,7 +41,7 @@ class userStore {
   profilePhoto = '';
   subscribePeriod = '';
   isRemember = false;
-  authenticationStage: 1 | 2 | 3 = 1;
+  authenticationStage: 1 | 2 | 3 | 4 = 1;
   isAuth = false;
   anyAds = false;
   invalidCode = false;
@@ -58,8 +58,8 @@ class userStore {
     try {
       const result = await api.register(registrationData);
       runInAction(() => {
-        this.email = result.data;
-        this.authenticationStage = 2;
+        this.email = registrationData.email;
+        this.authenticationStage = 3;
       });
     } catch (error) {
       console.error(error);
@@ -73,8 +73,24 @@ class userStore {
       console.log(error);
     }
   };
-  sendVerificationCode = async (data: VerificationRequest, navigate: () => void) => {
-    this.authenticationStage = 3;
+  fetchAvailablePhone = async (phoneValue: string) => {
+    try {
+      const result = await api.isPhoneAvailable(phoneValue);
+      return result.data;
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  sendVerificationCode = async (
+    data: VerificationRequest,
+    // navigate: NavigateFunction,
+    navigate: () => void,
+  ) => {
+    //функция fullPromise принимает 3 аргумента
+    //promise - сам промис
+    //fullfilled - каллбек вызовется если промис зарезолвится
+    //rejected - каллбек вызовется если промис зереджектится
+    this.authenticationStage = 4; //включаем лоадер
     fullPromise(
       api.verifyEmail(data),
       (value) => {
@@ -95,7 +111,7 @@ class userStore {
       (error) => {
         runInAction(() => {
           console.error(error);
-          this.authenticationStage = 2;
+          this.authenticationStage = 3;
           this.invalidCode = true;
         });
       },
@@ -117,9 +133,10 @@ class userStore {
   fetchAuthorization = async (authorizationData: string) => {
     try {
       await api.login(authorizationData);
+      console.log(authorizationData);
       runInAction(() => {
         this.email = authorizationData;
-        this.authenticationStage = 2;
+        this.authenticationStage = 3;
       });
     } catch (error) {
       console.error(error);

@@ -51,7 +51,7 @@ const App = observer(() => {
     notifyStore.connect();
   }, []);
   const location = useLocation();
-  const [showNavbar, setShowNavbar] = useState(true);
+  const [showNavbar, setShowNavbar] = useState(false);
 
   useEffect(() => {
     const noNavbarRoutes = ['/registration', '/authorization'];
