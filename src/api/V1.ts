@@ -513,7 +513,7 @@ class MyApi<SecurityDataType = unknown> extends HttpClient<SecurityDataType> {
       path: `/v1/account/advertisements`,
       method: 'PUT',
       body: data,
-      type: ContentType.Json,
+      type: ContentType.FormData,
       ...params,
     });
   /**

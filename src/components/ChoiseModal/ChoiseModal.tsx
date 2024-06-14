@@ -42,41 +42,6 @@ const ChoiseModal = () => {
     },
   });
 
-  // const modalObj = {
-  //   deleteAd: {
-  //     emoji: '😔',
-  //     title: 'Удалить объявление?',
-  //     description: 'Объявление удалится навсегда!',
-  //     button1: 'Отменить',
-  //     button2: 'Удалить',
-  //     handler: (id: number) => {
-  //       appStore.deleteAd(id);
-  //     },
-  //   },
-  //   hideAd: {
-  //     emoji: '🙃',
-  //     title: 'Скрыть объявление?',
-  //     description: 'Объявление больше не будет доступно для просмотра в маркетплейсе',
-  //     button1: 'Отменить',
-  //     button2: 'Скрыть',
-  //     handler: (id: number) => {
-  //       appStore.closeAd(id);
-  //     },
-  //   },
-  //   exit: {
-  //     emoji: '🤔',
-  //     title: 'Вы действительно\nхотите выйти?',
-  //     description: 'Все данные будут сохранены!',
-  //     button1: 'Нет',
-  //     button2: 'Да',
-  //     handler: () => {
-  //       userStore.logout();
-  //       modalStore.closeModal();
-  //       navigate('/authorization');
-  //     },
-  //   },
-  // };
-
   return (
     modalStore.currentModal && (
       <div className={styles.wrapper}>

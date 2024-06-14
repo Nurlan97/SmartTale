@@ -1,21 +1,31 @@
 import { useFormik } from 'formik';
+import { observer } from 'mobx-react-lite';
+import { useLayoutEffect } from 'react';
 
+import { InviteRequest } from '../../api/data-contracts';
+import { modalStore } from '../../store';
 import Button from '../../UI/Button/Button';
+import CustomSelect from '../../UI/CustomSelect/CustomSelect';
 import Input from '../../UI/Input/Input';
 import styles from './inviteEmployerModal.module.scss';
 
-const InviteEmployerModal = () => {
+const InviteEmployerModal = observer(() => {
+  const initalValue: InviteRequest = {
+    email: '',
+    phoneNumber: '',
+    positionId: 0,
+  };
+  useLayoutEffect(() => {
+    modalStore.getPositions();
+  }, []);
   const formik = useFormik({
-    initialValues: {
-      email: '',
-      position: '',
-    },
+    initialValues: initalValue,
     onSubmit: (values) => {
-      console.log(values);
+      modalStore.senInvite(values);
     },
   });
   return (
-    <div className={styles.wrapper}>
+    <form className={styles.wrapper} onSubmit={formik.handleSubmit}>
       <div>Пригласить сотрудника</div>
       <Input
         value={formik.values.email}
@@ -24,16 +34,23 @@ const InviteEmployerModal = () => {
         id='email'
       />
       <Input
-        value={formik.values.position}
+        value={formik.values.phoneNumber}
         onChange={formik.handleChange}
-        label='Должность сотрудника'
-        id='position'
+        label='Введите телефон'
+        id='phoneNumber'
       />
-      <Button color='blue' type='button'>
+      <CustomSelect
+        current={formik.values.positionId}
+        options={modalStore.dropDownPositions}
+        handleChange={(key) => {
+          formik.setFieldValue('positionId', key);
+        }}
+      />
+      <Button color='blue' type='submit'>
         Отправить пришлашение
       </Button>
-    </div>
+    </form>
   );
-};
+});
 
 export default InviteEmployerModal;

@@ -6,14 +6,19 @@ import { DragEvent, IColumn } from '../components/DragAndDrop/DragAndDrop';
 
 const COLUMNS: IColumn[] = [
   {
-    title: 'В ожидании',
+    title: 'Не подтвержденные',
     id: 'PENDING',
-    allow: ['PENDING', 'IN_PROGRESS'],
+    allow: [],
+  },
+  {
+    title: 'В ожидании',
+    id: 'NEW',
+    allow: ['NEW', 'IN_PROGRESS'],
   },
   {
     title: 'В работе',
     id: 'IN_PROGRESS',
-    allow: ['PENDING', 'CHECKING', 'IN_PROGRESS'],
+    allow: ['NEW', 'CHECKING', 'IN_PROGRESS'],
   },
   {
     title: 'Проверка',

@@ -1,7 +1,8 @@
-import { Client, Message } from '@stomp/stompjs';
+import { Client } from '@stomp/stompjs';
 
-import { userStore } from '../store';
+import { notifyStore, userStore } from '../store';
 import { decodeJWT } from '../utils/helpers';
+import { IMessageOrg, IMessageUser } from './interfaces-ws';
 
 export const createClient = (token: string) => {
   const decodedToken = decodeJWT(token);
@@ -16,23 +17,22 @@ export const createClient = (token: string) => {
       console.log(str);
     },
     reconnectDelay: 20000,
-    // heartbeatIncoming: 4000,
-    // heartbeatOutgoing: 4000,
+
     onConnect: (frame) => {
       console.log('connected');
       client.subscribe(`/user/${userId}/push`, (message) => {
-        const notification = JSON.parse(message.body);
-        console.log(notification);
+        const notification: IMessageUser = JSON.parse(message.body);
+        notifyStore.addNotify(notification);
       });
       if (orgId !== 0) {
         client.subscribe(`/org/${orgId}/push`, (message) => {
-          const notification = JSON.parse(message.body);
-          console.log(notification);
+          const notification: IMessageOrg = JSON.parse(message.body);
+          notifyStore.addNotify(notification);
         });
       }
     },
     onDisconnect: (frame) => {
-      client.connectHeaders = { Authorization: `Bearer ${userStore.accessToken}` };
+      client.connectHeaders = { Authorization: `Bearer ${userStore.getToken}` };
     },
   });
 

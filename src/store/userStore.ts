@@ -1,6 +1,7 @@
 import { makeAutoObservable, runInAction } from 'mobx';
 
 import {
+  Organization,
   RegistrationRequest,
   UpdateProfileRequest,
   VerificationRequest,
@@ -33,6 +34,7 @@ class userStore {
   isAuth = false;
   anyAds = false;
   invalidCode = false;
+  organization: Organization | undefined = undefined;
 
   constructor() {
     makeAutoObservable(this);
@@ -78,8 +80,7 @@ class userStore {
     try {
       const response = await myApi.verifyEmail(data);
       runInAction(() => {
-        this.accessToken = response.data.accessToken;
-        this.refreshToken = response.data.refreshToken;
+        this.setTokens(response.data.accessToken, response.data.refreshToken);
         this.isAuth = true;
         if (this.isRemember) {
           setCookie('accessToken', response.data.accessToken, 1);
@@ -188,16 +189,16 @@ class userStore {
       this.isAuth = true;
       this.accessToken = accessToken;
       this.refreshToken = refreshToken;
-      this.orgId = decodeJWT(accessToken).orgId;
-      this.userId = decodeJWT(accessToken).userId;
-      this.hierarchy = decodeJWT(accessToken).hierarchy;
-      this.roles = decodeJWT(accessToken).roles;
-      this.authorities = getRolesFromMask(decodeJWT(accessToken).authorities);
-      console.log(getRolesFromMask(decodeJWT(accessToken).authorities));
-
+      const decodedJWT = decodeJWT(accessToken);
+      this.orgId = decodedJWT.orgId;
+      this.userId = decodedJWT.userId;
+      this.hierarchy = decodedJWT.hierarchy;
+      this.roles = decodedJWT.roles;
+      this.authorities = getRolesFromMask(decodedJWT.authorities);
+      // console.log(getRolesFromMask(decodeJWT(accessToken).authorities));
       notifyStore.connect();
       if (isRemember) {
-        setCookie('accessToken', accessToken, 1);
+        setCookie('accessToken', accessToken, 24);
         setCookie('refreshToken', refreshToken, 168);
         this.isRemember = true;
       }
@@ -237,6 +238,17 @@ class userStore {
     this.invalidCode = false;
     removeCookie('accessToken');
     removeCookie('refreshToken');
+  };
+  get getToken() {
+    return this.accessToken;
+  }
+  getOrganization = async () => {
+    try {
+      const response = await myApi.getOrganization();
+      this.organization = response.data;
+    } catch (error) {
+      console.log(error);
+    }
   };
 }
 

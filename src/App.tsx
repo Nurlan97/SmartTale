@@ -22,7 +22,7 @@ import ProfilePage from './pages/ProfilePage/ProfilePage';
 import RegistrationPage from './pages/RegistrationPage/RegistrationPage';
 import SearchPage from './pages/SearchPage/SearchPage';
 import ServicesPage from './pages/ServicesPage/ServicesPage';
-import { notifyStore, userStore } from './store';
+import { userStore } from './store';
 import { getCookie, isTokenExpired, removeCookie } from './utils/helpers';
 
 const App = observer(() => {
@@ -65,7 +65,7 @@ const App = observer(() => {
   const location = useLocation();
   const [showNavbar, setShowNavbar] = useState(false);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const noNavbarRoutes = ['/registration', '/authorization'];
     setShowNavbar(!noNavbarRoutes.includes(location.pathname));
   }, [location]);

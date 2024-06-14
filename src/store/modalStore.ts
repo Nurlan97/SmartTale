@@ -1,6 +1,13 @@
 import { makeAutoObservable } from 'mobx';
 
-import { JobCard, OrderCard, ProductCard } from '../api/data-contracts';
+import {
+  InviteRequest,
+  JobCard,
+  OrderCard,
+  PositionSummary,
+  ProductCard,
+  Purchase,
+} from '../api/data-contracts';
 import { myApi } from '../api/V1';
 
 export enum Modals {
@@ -23,19 +30,21 @@ export enum Modals {
 const pathObj = {
   '/my-purchases': 'Личный кабинет/Мои покупки',
   '/equipment': 'Маркетплейс/Оборудование',
-  '/services': 'Маркетплейс/Услуги',
+  '/services': 'Маркетплейс/Заказы',
+  '/job': 'Маркетплейс/Услуги',
 };
 class modalStore {
   isOpen = false;
   isLoading = false;
   error = '';
+  dropDownPositions: PositionSummary[] = [];
   detailedExt: {
     id: number;
     path: string;
     activeImg: number;
     activeTab: 'description' | 'size' | 'contacts';
   } = { id: 0, activeImg: 0, activeTab: 'description', path: '' };
-  detailed: Array<OrderCard | ProductCard | JobCard> = [];
+  detailed: Array<OrderCard | ProductCard | JobCard | Purchase> = [];
   currentModal: Modals | null = null;
 
   constructor() {
@@ -50,9 +59,20 @@ class modalStore {
     this.currentModal = Modals.loader;
     this.detailedExt.id = id;
     try {
-      const response = await myApi.getAd(id);
+      let response;
+      if (path === '/my-purchases') {
+        response = await myApi.getPurchase(id);
+      } else {
+        response = await myApi.getAd(id);
+      }
+
       this.detailed.push(response.data);
-      if (path === '/my-purchases' || path === '/equipment' || path === '/services') {
+      if (
+        path === '/my-purchases' ||
+        path === '/equipment' ||
+        path === '/services' ||
+        path === '/job'
+      ) {
         this.detailedExt.path = pathObj[path];
       }
       this.detailedExt.activeImg = 0;
@@ -67,19 +87,7 @@ class modalStore {
     this.currentModal = type;
     this.isOpen = true;
   };
-  // openSimple = (type: SimpleModals) => {
-  //   this.currentType = ModalsTypes.simpleModal;
-  //   this.currentSimple = type;
-  //   this.isOpen = true;
-  // };
-  // openChangePhoto = () => {
-  //   this.currentType = ModalsTypes.changePhotoModal;
-  //   this.isOpen = true;
-  // };
-  // openLoader = () => {
-  //   this.currentType = ModalsTypes.loader;
-  //   this.isOpen = true;
-  // };
+
   setImage = (num: number) => () => {
     this.detailedExt.activeImg = num;
   };
@@ -93,6 +101,18 @@ class modalStore {
     } catch (error) {
       console.log(error);
     }
+  };
+  getPositions = async () => {
+    try {
+      const response = await myApi.getPositionsDropdown();
+      this.dropDownPositions = response.data;
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  senInvite = (data: InviteRequest) => {
+    myApi.inviteEmployee(data);
+    this.closeModal();
   };
 }
 

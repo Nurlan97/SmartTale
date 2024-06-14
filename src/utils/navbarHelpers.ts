@@ -36,7 +36,7 @@ export const collapseCalc = (
   if (last.current)
     if (
       last.current.getBoundingClientRect().top + window.scrollY <
-      Number(start) + blockHeight + 186
+      Number(start) + blockHeight + 200
     ) {
       navbarStore.collapse();
       for (const key in refObj) {
