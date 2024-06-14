@@ -42,37 +42,57 @@ const style: IStyle = {
         backgroundColor: '#C3FFFB',
         borderRadius: '12px',
         padding: '12px',
+        display: 'flex',
+        justifyContent: 'center',
       },
-      NEW: { backgroundColor: '#C3FFFB', borderRadius: '12px', padding: '12px' },
+      NEW: {
+        backgroundColor: '#C3FFFB',
+        borderRadius: '12px',
+        padding: '12px',
+        display: 'flex',
+        justifyContent: 'center',
+      },
       IN_PROGRESS: {
         backgroundColor: '#C5E6FF',
         borderRadius: '12px',
         padding: '12px',
+        display: 'flex',
+        justifyContent: 'center',
       },
       CHECKING: {
         backgroundColor: '#FFFBA1',
         borderRadius: '12px',
         padding: '12px',
+        display: 'flex',
+        justifyContent: 'center',
       },
       DISPATCHED: {
         backgroundColor: '#FFD9A1',
         borderRadius: '12px',
         padding: '12px',
+        display: 'flex',
+        justifyContent: 'center',
       },
       ARRIVED: {
         backgroundColor: '#E6FFA1',
         borderRadius: '12px',
         padding: '12px',
+        display: 'flex',
+        justifyContent: 'center',
       },
       COMPLETED: {
         backgroundColor: '#E6FFA1',
         borderRadius: '12px',
         padding: '12px',
+        display: 'flex',
+        justifyContent: 'center',
       },
       CANCELED: {
         backgroundColor: '#E6FFA1',
         borderRadius: '12px',
         padding: '12px',
+        display: 'flex',
+        justifyContent: 'center',
       },
     };
 
@@ -171,9 +191,10 @@ class orderHistoryStore {
   };
   setActiveTab = (tab: 'active' | 'history') => async () => {
     try {
+      this.activeTab = tab;
       const response = await myApi.getOrders1({ q: tab });
+      this.getOrders(tab);
       runInAction(() => {
-        this.activeTab = tab;
         this.data = response.data;
         this.table.headers.pop();
         if (tab === 'active') {
@@ -191,6 +212,25 @@ class orderHistoryStore {
       const response = await myApi.getOrders1({ q: status });
       runInAction(() => {
         this.data = response.data;
+        // if (status === 'active')
+        //   this.data.content = tableData.filter(
+        //     (order) =>
+        //       order.status === 'NEW' ||
+        //       order.status === 'CHECKING' ||
+        //       order.status === 'IN_PROGRESS' ||
+        //       order.status === 'PENDING' ||
+        //       order.status === 'DISPATCHED' ||
+        //       order.status === 'CANCELED' ||
+        //       order.status === 'COMPLETED',
+        //   );
+        // else {
+        //   this.data.content = tableData.filter(
+        //     (order) =>
+        //       order.status === 'ARRIVED' ||
+        //       order.status === 'CANCELED' ||
+        //       order.status === 'COMPLETED',
+        //   );
+        // }
       });
     } catch (error) {
       console.log(error);

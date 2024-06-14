@@ -1,69 +1,118 @@
+import { IMessageOrg, IMessageUser, Messages } from '../../api/interfaces-ws';
 import { NavbarMarket, NavbarOrders, NavbarProfile } from '../../assets';
 import { notifyStore } from '../../store';
 import styles from './notify.module.scss';
 
-export interface INotify {
-  id: number;
-  type: 'advice' | 'status' | 'accept';
-  readed: boolean;
-  first: string;
-  second: string;
-  time: string;
-}
+type Props = { notify: IMessageUser | IMessageOrg };
+const Notify = ({ notify }: Props) => {
+  const notifyObj: {
+    text: string;
+    defaultLogo: React.VFC<React.SVGProps<SVGSVGElement>>;
+    style: string;
+    logo: string;
+    handlerCode: undefined | string;
+  } = {
+    text: '',
+    defaultLogo: NavbarProfile,
+    style: styles.market,
+    logo: '',
+    handlerCode: undefined,
+  };
 
-const Notify = (notify: INotify) => {
-  const notifyObj = {
-    advice: {
-      title: (first: string, second: string) => {
-        return `Объявление № ${first}`;
-      },
-      description: (first: string, second: string) => {
-        return `${second} откликнулся на ваше объявления`;
-      },
-      icon: <NavbarProfile />,
-    },
-    status: {
-      title: (first: string, second: string) => {
-        return 'Ваш статус обновлен';
-      },
-      description: (first: string, second: string) => {
-        return `Статус вашей задачи "${second}"`;
-      },
-      icon: <NavbarOrders />,
-    },
-    accept: {
-      title: (first: string, second: string) => {
-        return `Принят ваш отклик`;
-      },
-      description: (first: string, second: string) => {
-        return `${second} принял ваш отклик в объявлении ${first}`;
-      },
-      icon: <NavbarMarket />,
-    },
-  };
-  type ObjKey = keyof typeof notifyObj;
-  const key = notify.type as ObjKey;
-  const clickHandler = (id: number) => {
-    notifyStore.markAsRead(id);
-  };
+  function formatDate(date: Date): string {
+    const now = new Date();
+    const yesterday = new Date(now);
+    yesterday.setDate(now.getDate() - 1);
+
+    if (date.toDateString() === now.toDateString()) {
+      return `Сегодня в ${date.getHours()}:${date.getMinutes() < 10 ? '0' : ''}${date.getMinutes()}`;
+    } else if (date.toDateString() === yesterday.toDateString()) {
+      return `Вчера в ${date.getHours()}:${date.getMinutes() < 10 ? '0' : ''}${date.getMinutes()}`;
+    } else {
+      return date.toLocaleDateString('ru-RU', {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric',
+      });
+    }
+  }
+
+  switch (notify.data.sub) {
+    case Messages.OrderRequest:
+      notifyObj.text = `Комания ${notify.data.orgName} отозвалась на ваше объявление ${notify.data.title}`;
+      notifyObj.style = styles.orders;
+      notifyObj.defaultLogo = NavbarOrders;
+      notifyObj.logo = notify.data.logo;
+      notifyObj.handlerCode = notify.data.code;
+      break;
+    case Messages.UserInvite:
+      notifyObj.text = `Компания ${notify.data.orgName} приглашает вас к себе на работу`;
+      notifyObj.style = styles.profile;
+      notifyObj.defaultLogo = NavbarProfile;
+      notifyObj.logo = notify.data.logo;
+      notifyObj.handlerCode = notify.data.invId;
+      break;
+    case Messages.OrderConfirm:
+      notifyObj.text = `Пользователь ${notify.data.authorName}  подтвердил заказ ${notify.data.key}:${notify.data.title}`;
+      notifyObj.style = styles.orders;
+      notifyObj.defaultLogo = NavbarOrders;
+      notifyObj.logo = notify.data.authorAvatar;
+      break;
+    case Messages.OrderStatusUpdate:
+      notifyObj.text = `Сотрудник ${notify.data.employeeName} обновил заказ ${notify.data.key}:${notify.data.title}`;
+      notifyObj.style = styles.orders;
+      notifyObj.defaultLogo = NavbarOrders;
+      notifyObj.logo = notify.data.employeeAvatar;
+      break;
+    case Messages.OrderSuspend:
+      notifyObj.text = `Вас отстранили от заказа ${notify.data.key}:${notify.data.title}`;
+      notifyObj.style = styles.orders;
+      notifyObj.defaultLogo = NavbarOrders;
+      notifyObj.logo = notify.data.image;
+      break;
+    case Messages.OrderAppoint:
+      notifyObj.text = `Вас назначили на заказ ${notify.data.key}:${notify.data.title} текущий статус ${notify.data.status}`;
+      notifyObj.style = styles.orders;
+      notifyObj.defaultLogo = NavbarOrders;
+      notifyObj.logo = notify.data.image;
+      break;
+    case Messages.RolesUpdatePersonal:
+      notifyObj.text = `Ваша должность изменена: ${notify.data.title}`;
+      notifyObj.style = styles.profile;
+      notifyObj.defaultLogo = NavbarProfile;
+      break;
+    case Messages.RolesUpdateOrganization:
+      notifyObj.text = `Должность ${notify.data.title} изменена`;
+      notifyObj.style = styles.profile;
+      notifyObj.defaultLogo = NavbarProfile;
+      break;
+    case Messages.RolesAppointOrganization:
+      notifyObj.text = `Вы назначены на должность ${notify.data.title}`;
+      notifyObj.style = styles.profile;
+      notifyObj.defaultLogo = NavbarProfile;
+      break;
+  }
   return (
     <button
       type='button'
       className={styles.wrapper}
-      onClick={() => clickHandler(notify.id)}
+      // onClick={() => clickHandler(notify.id)}
     >
-      <div className={notify.readed ? styles.readed : styles.unreaded}></div>
-      <div className={styles[notify.type]}>{notifyObj[key].icon}</div>
+      <div className={notify.read ? styles.readed : styles.unreaded}></div>
+      <div className={notifyObj.style}>
+        {notifyObj.logo ? (
+          <img src={notifyObj.logo} alt={notify.data.sub} />
+        ) : (
+          <notifyObj.defaultLogo />
+        )}
+      </div>
+
       <div className={styles.body}>
         <div className={styles.description}>
-          <div className={styles.title}>
-            {notifyObj[key].title(notify.first, notify.second)}
-          </div>
-          <div className={styles.text}>
-            {notifyObj[key].description(notify.first, notify.second)}
-          </div>
+          <div className={styles.title}>{notify.data.sub}</div>
+          <div className={styles.text}>{notifyObj.text}</div>
         </div>
-        <div className={styles.date}>{notify.time}</div>
+        <div className={styles.date}>{formatDate(new Date(notify.timestamp))}</div>
       </div>
     </button>
   );

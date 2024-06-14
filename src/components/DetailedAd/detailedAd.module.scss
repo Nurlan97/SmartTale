@@ -37,3 +37,13 @@
   color: #000;
   margin: 20px 0;
 }
+.footer {
+  margin-top: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.btnGroup {
+  display: flex;
+  gap: 12px;
+}

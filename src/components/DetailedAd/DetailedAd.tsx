@@ -1,15 +1,11 @@
 import { useFormik } from 'formik';
 import { observer } from 'mobx-react-lite';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import {
-  CreateOrderRequest,
-  CreateProductRequest,
-  OrderFull,
-  ProductFull,
-} from '../../api/data-contracts';
-import { createPlaceAdvStore, modalStore } from '../../store';
+import { CreateOrderRequest, CreateProductRequest } from '../../api/data-contracts';
+import { modalStore } from '../../store';
+import adStore from '../../store/adStore';
 import { Modals } from '../../store/modalStore';
 import Button from '../../UI/Button/Button';
 import {
@@ -23,7 +19,7 @@ import ProductForm from '../PlaceAdvForm/ProductForm/ProductForm';
 import styles from './detailedAd.module.scss';
 
 interface IProps {
-  id: number;
+  store: adStore;
 }
 const initialProduct: CreateProductRequest = {
   title: '',
@@ -41,15 +37,33 @@ const initalOrder: CreateOrderRequest = {
   deadline: `${new Date(new Date().getTime() + 1 * 24 * 60 * 60 * 1000)}`,
   contactInfo: 'EMAIL',
 };
-const DetailedAd = observer(({ id }: IProps) => {
+const DetailedAd = observer(({ store }: IProps) => {
   const [isEdit, setIsEdit] = useState(false);
-  const store = createPlaceAdvStore(id);
-
   const schema = titleSchema.concat(descriptionSchema);
   const ad = store.ad[0];
   if ('orderId' in ad) {
     schema.concat(sizesSchema).concat(dateSchema);
   }
+
+  const initialProduct: CreateProductRequest = {
+    title: ad.title,
+    description: ad.description,
+    price: ad.price,
+    contactInfo: 'EMAIL',
+    quantity: 'quantity' in ad ? ad.quantity : 0,
+  };
+
+  const initalOrder: CreateOrderRequest = {
+    title: ad.title,
+    description: ad.description,
+    price: ad.price,
+    size: 'size' in ad ? ad.size : '',
+    deadline:
+      'deadlineAt' in ad
+        ? ad.deadlineAt
+        : `${new Date(new Date().getTime() + 1 * 24 * 60 * 60 * 1000)}`,
+    contactInfo: 'EMAIL',
+  };
   const formik = useFormik({
     initialValues: 'orderId' in ad ? initalOrder : initialProduct,
     enableReinitialize: true,
@@ -58,7 +72,7 @@ const DetailedAd = observer(({ id }: IProps) => {
       schema
         .validate({ ...values }, { abortEarly: false })
         .then(() => {
-          // store.placeAd(values, store.additionalFiles);
+          store.updateAd(values, 'productId' in ad ? ad.productId : ad.orderId);
           formik.resetForm();
         })
         .catch((e) => {
@@ -96,7 +110,7 @@ const DetailedAd = observer(({ id }: IProps) => {
         </Button>
         <div className={styles.btnGroup}>
           {isEdit ? (
-            <div className={styles.buttonGroup}>
+            <>
               <Button
                 color='white'
                 type='button'
@@ -119,11 +133,11 @@ const DetailedAd = observer(({ id }: IProps) => {
               >
                 Сохранить изменения
               </Button>
-            </div>
+            </>
           ) : (
             <>
               <Button
-                color='blue'
+                color='orange'
                 type='button'
                 width='fit-content'
                 handler={() => setIsEdit(true)}

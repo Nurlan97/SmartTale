@@ -30,7 +30,7 @@ const OrderForm = ({ formik, store, isEdit = true }: Props) => {
         label='Название'
         width='100%'
         id='title'
-        disabled={isEdit}
+        disabled={!isEdit}
       />
       <div className={styles.helper}>максимум 250 символов, минимум 5</div>
       <Textarea
@@ -40,7 +40,7 @@ const OrderForm = ({ formik, store, isEdit = true }: Props) => {
         label='Описание'
         width='100%'
         id='description'
-        disabled={isEdit}
+        disabled={!isEdit}
       />
       <div className={styles.helper}>максимум 1000 символов, минимум 5</div>
       <Input
@@ -49,7 +49,7 @@ const OrderForm = ({ formik, store, isEdit = true }: Props) => {
         label='Размеры'
         width='100%'
         id='sizes'
-        disabled={isEdit}
+        disabled={!isEdit}
       />
       <div className={styles.helper}>максимум 250 символов, минимум 5</div>
 
@@ -59,7 +59,7 @@ const OrderForm = ({ formik, store, isEdit = true }: Props) => {
         label='Стоимость в cомах'
         width='100%'
         id='price'
-        disabled={isEdit}
+        disabled={!isEdit}
       />
       <div className={styles.title}>Крайняя дата выполнения</div>
       <DatePicker
@@ -73,11 +73,11 @@ const OrderForm = ({ formik, store, isEdit = true }: Props) => {
         calendarStartDay={1}
         locale='ru'
         id='deadline'
-        disabled={isEdit}
+        disabled={!isEdit}
       />
 
       <div className={styles.title}>Галерея фотографий</div>
-      <ImageInput store={store} disabled={isEdit} />
+      <ImageInput store={store} disabled={!isEdit} />
       <div className={styles.title}>
         Выберите какую контактную информацию показывать в объявлении
       </div>
@@ -115,7 +115,7 @@ const OrderForm = ({ formik, store, isEdit = true }: Props) => {
           switchFunc={(tab: any) => () => {
             formik.setFieldValue('contactInfo', tab);
           }}
-          disabled={isEdit}
+          disabled={!isEdit}
         />
       </div>
     </div>

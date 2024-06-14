@@ -6,6 +6,7 @@ import { appStore, modalStore } from '../../store';
 import { Modals } from '../../store/modalStore';
 import orderHistoryStore2 from '../../store/orderHistoryStore2';
 import Button from '../../UI/Button/Button';
+import ScrollableWrapper from '../../UI/ScrollableWrapper/ScrollableWrapper';
 import TabSwitch from '../../UI/TabSwitch/TabSwitch';
 import AdRow from '../AdRow/AdRow';
 import TableCustom from '../TableCustom/TableCustom';
@@ -88,9 +89,10 @@ const OrgOrdersEmployees = observer(() => {
         ) : (
           <div className={styles.logo}>ST</div>
         )}
-
-        <h1 className={styles.title}>{appStore.myOrganization.name}</h1>
-        <div className={styles.description}>{appStore.myOrganization.description}</div>
+        <div className={styles.descriptionBlock}>
+          <h1 className={styles.title}>{appStore.myOrganization.name}</h1>
+          <div className={styles.description}>{appStore.myOrganization.description}</div>
+        </div>
       </div>
       <div className={styles.btnGroup}>
         <TabSwitch
@@ -112,23 +114,25 @@ const OrgOrdersEmployees = observer(() => {
           </Button>
         )}
       </div>
-      <div className={styles.list}>
-        {appStore.isActiveOrders &&
-          appStore.myOrganization.orders.content &&
-          appStore.myOrganization.orders.content.map((item, index) => (
-            <AdRow key={index} item={item}>
-              {item.price}
-            </AdRow>
-          ))}
-        {!appStore.isActiveOrders && (
-          <TableCustom
-            headers={headers}
-            rows={appStore.myOrganization.employees.content}
-            transform={transform}
-            styling={style}
-          />
-        )}
-      </div>
+      <ScrollableWrapper>
+        <div className={styles.list}>
+          {appStore.isActiveOrders &&
+            appStore.myOrganization.orders.content &&
+            appStore.myOrganization.orders.content.map((item, index) => (
+              <AdRow key={index} item={item}>
+                {item.price}
+              </AdRow>
+            ))}
+          {!appStore.isActiveOrders && (
+            <TableCustom
+              headers={headers}
+              rows={appStore.myOrganization.employees.content}
+              transform={transform}
+              styling={style}
+            />
+          )}
+        </div>
+      </ScrollableWrapper>
     </div>
   );
 });

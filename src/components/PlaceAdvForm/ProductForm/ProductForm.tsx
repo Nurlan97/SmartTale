@@ -37,7 +37,7 @@ const ProductForm = ({
         label='Название'
         width='100%'
         id='title'
-        disabled={isEdit}
+        disabled={!isEdit}
       />
       <div className={styles.helper}>максимум 250 символов, минимум 5</div>
       <Textarea
@@ -47,7 +47,7 @@ const ProductForm = ({
         label='Описание'
         width='100%'
         id='description'
-        disabled={isEdit}
+        disabled={!isEdit}
       />
       <div className={styles.helper}>максимум 1000 символов, минимум 5</div>
 
@@ -57,7 +57,7 @@ const ProductForm = ({
         label='Стоимость в cомах'
         width='100%'
         id='price'
-        disabled={isEdit}
+        disabled={!isEdit}
       />
 
       <Input
@@ -66,11 +66,11 @@ const ProductForm = ({
         label='Количество'
         width='100%'
         id='quantity'
-        disabled={isEdit}
+        disabled={!isEdit}
       />
 
       <div className={styles.title}>Галерея фотографий</div>
-      <ImageInput store={store} disabled={isEdit} />
+      <ImageInput store={store} disabled={!isEdit} />
       <div className={styles.title}>
         Выберите какую контактную информацию показывать в объявлении
       </div>
@@ -105,7 +105,7 @@ const ProductForm = ({
           switchFunc={(tab: any) => () => {
             setFieldValue('contactInfo', tab);
           }}
-          disabled={isEdit}
+          disabled={!isEdit}
         />
       </div>
     </div>

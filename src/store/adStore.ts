@@ -59,17 +59,21 @@ export default class adStore {
 
   constructor(id?: number) {
     if (id) {
-      this.fetchAd(id);
+      this.createStore(id);
+    }
+    makeAutoObservable(this);
+  }
+  createStore = async (id: number) => {
+    await this.fetchAd(id);
+    runInAction(() => {
       this.currentImages = this.ad[0].imageUrls;
       this.currentImages.forEach((val, ind) => {
         this.#viewedImages.push({ index: ind, type: 'currentImages', id: uniqid() });
       });
       this.#oldImages = [...this.#viewedImages];
       this.updateViewed();
-    }
-
-    makeAutoObservable(this, {}, { autoBind: true });
-  }
+    });
+  };
   setType = (type: AdType) => () => {
     this.type = type;
   };

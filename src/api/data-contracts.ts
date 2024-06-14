@@ -634,7 +634,8 @@ export interface ProductCard {
   publisherEmail: string;
   /** @format int64 */
   views: number;
-  canPurchase: boolean;
+  // canPurchase: boolean;
+  canHandle: boolean; //temporary
 }
 
 export interface OrderCard {
@@ -657,7 +658,8 @@ export interface OrderCard {
   publisherEmail: string;
   /** @format int64 */
   views: number;
-  canAccept: boolean;
+  // canAccept: boolean;
+  canHandle: boolean; //temporary
 }
 
 export interface JobCard {
@@ -676,11 +678,12 @@ export interface JobCard {
   organizationName: string;
   organizationLogoUrl: string;
   jobType: string;
-  applicantsCount: number;
+  applicantsCount: 0;
   location: string;
   applicationDeadline: string;
   views: number;
-  canApply: boolean;
+  // canApply: boolean;
+  canHandle: boolean; //temporary
 }
 
 export interface CustomPagePurchaseSummary {

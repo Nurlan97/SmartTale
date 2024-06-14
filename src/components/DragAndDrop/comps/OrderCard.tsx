@@ -29,15 +29,31 @@ const OrderCard = ({ order }: Props) => {
       ></div>
     );
   } else {
-    return (
-      <div ref={setNodeRef} className={styles.wrapper} {...listeners} {...attributes}>
-        <div>{order.title}</div>
-        <div className={styles.description}>{cutText(order.comment, 60)}</div>
-        <div className={styles.date}>
-          <Clock /> <p>{formatDate(order.deadlineAt)}</p>
+    if (
+      order.status === 'PENDING' ||
+      order.status === 'DISPATCHED' ||
+      order.status === 'ARRIVED'
+    ) {
+      return (
+        <div className={styles.notDruggable}>
+          <div>{order.title}</div>
+          <div className={styles.description}>{cutText(order.comment, 60)}</div>
+          <div className={styles.date}>
+            <Clock /> <p>{formatDate(order.deadlineAt)}</p>
+          </div>
         </div>
-      </div>
-    );
+      );
+    } else {
+      return (
+        <div ref={setNodeRef} className={styles.wrapper} {...listeners} {...attributes}>
+          <div>{order.title}</div>
+          <div className={styles.description}>{cutText(order.comment, 60)}</div>
+          <div className={styles.date}>
+            <Clock /> <p>{formatDate(order.deadlineAt)}</p>
+          </div>
+        </div>
+      );
+    }
   }
 };
 

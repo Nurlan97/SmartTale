@@ -27,36 +27,39 @@ const DescriptionModal = observer(() => {
         <img
           className={styles.bigImage}
           src={
-            card.imageUrls[modalStore.detailedExt.activeImg]
-              ? card.imageUrls[modalStore.detailedExt.activeImg]
-              : defaultImage
+            'imageUrl' in card
+              ? card.imageUrl
+              : card.imageUrls[modalStore.detailedExt.activeImg]
+                ? card.imageUrls[modalStore.detailedExt.activeImg]
+                : defaultImage
           }
           alt=''
         />
-        {card.imageUrls.map((img, ind) => {
-          return (
-            <button key={ind} onClick={modalStore.setImage(ind)}>
-              <img
-                className={
-                  ind === modalStore.detailedExt.activeImg
-                    ? styles.smallImageActive
-                    : styles.smallImage
-                }
-                src={img}
-                alt=''
-              />
-            </button>
-          );
-        })}
+        {'imageUrl' in card ? (
+          <img src={card.imageUrl} alt='' className={styles.smallImage} />
+        ) : (
+          card.imageUrls.map((img, ind) => {
+            return (
+              <button key={ind} onClick={modalStore.setImage(ind)}>
+                <img
+                  className={
+                    ind === modalStore.detailedExt.activeImg
+                      ? styles.smallImageActive
+                      : styles.smallImage
+                  }
+                  src={img}
+                  alt=''
+                />
+              </button>
+            );
+          })
+        )}
       </div>
       <div className={styles.descriptionPart}>
         <div>
           <div className={styles.path}>{modalStore.detailedExt.path}</div>
           <div className={styles.adTitle}>
             {card.title}
-            {/* {modalStore.detailed.status && (
-              <div className={styles.orderStatus}>{modalStore.detailed.status}</div>
-            )} */}
             {'deadlineAt' in card && (
               <div className={styles.orderStatus}>До {formatDate(card.deadlineAt)}</div>
             )}
@@ -100,8 +103,12 @@ const DescriptionModal = observer(() => {
           <div className={styles.tabDescription}>
             {modalStore.detailedExt.activeTab === 'contacts' && (
               <>
-                <p>{card.publisherPhoneNumber}</p>
-                <p>{card.publisherEmail}</p>
+                <p>
+                  {'publisherPhoneNumber' in card
+                    ? card.publisherPhoneNumber
+                    : card.phoneNumber}
+                </p>
+                <p>{'publisherEmail' in card ? card.publisherEmail : card.email}</p>
               </>
             )}
             {modalStore.detailedExt.activeTab === 'description' && (
@@ -113,39 +120,44 @@ const DescriptionModal = observer(() => {
           </div>
         </div>
         <div className={styles.footer}>
-          {'canPurchase' in card && card.canPurchase && card.quantity > 0 && (
-            <div className={styles.quantityGroup}>
-              <div>{`Доступно: ${card.quantity}`}</div>
-              <div>
-                Выбрать количество
-                <div className={styles.quantitySelector}>
-                  <button
-                    onClick={() => {
-                      if (quantity <= 1) return;
-                      setQuantity((prev) => prev - 1);
-                    }}
-                    className={styles.quantityBtn}
-                  >
-                    -
-                  </button>
-                  <div>{quantity}</div>
-                  <button
-                    className={styles.quantityBtn}
-                    onClick={() => {
-                      if (quantity >= card.quantity) return;
-                      setQuantity((prev) => prev + 1);
-                    }}
-                  >
-                    +
-                  </button>
+          {'canHandle' in card &&
+            card.canHandle &&
+            // 'canPurchase' in card &&
+            // card.canPurchase &&
+            'quantity' in card &&
+            card.quantity > 0 && (
+              <div className={styles.quantityGroup}>
+                <div>{`Доступно: ${card.quantity}`}</div>
+                <div>
+                  Выбрать количество
+                  <div className={styles.quantitySelector}>
+                    <button
+                      onClick={() => {
+                        if (quantity <= 1) return;
+                        setQuantity((prev) => prev - 1);
+                      }}
+                      className={styles.quantityBtn}
+                    >
+                      -
+                    </button>
+                    <div>{quantity}</div>
+                    <button
+                      className={styles.quantityBtn}
+                      onClick={() => {
+                        if (quantity >= card.quantity) return;
+                        setQuantity((prev) => prev + 1);
+                      }}
+                    >
+                      +
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
-          )}
+            )}
           <div className={styles.button}>
-            {(('canApply' in card && card.canApply) ||
-              ('canAccept' in card && card.canAccept) ||
-              ('canPurchase' in card && card.canPurchase)) && (
+            {/* || ('canApply' in card && card.canApply) || ('canAccept' in card &&
+            card.canAccept) || ('canPurchase' in card && card.canPurchase) */}
+            {'canHandle' in card && card.canHandle && (
               <Button
                 color='blue'
                 type='button'
@@ -156,7 +168,10 @@ const DescriptionModal = observer(() => {
                   modalStore.handleAdvertisement(queryQuantity);
                 }}
               >
-                Принять заказ
+                {'canHandle' in card && 'Подтвердить'}
+                {'canApply' in card && 'Подать заявку'}
+                {'canAccept' in card && 'Принять заказ'}
+                {'canPurchase' in card && 'Купить'}
               </Button>
             )}
           </div>

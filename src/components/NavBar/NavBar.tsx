@@ -22,6 +22,7 @@ interface INavBar {
   path: string;
 }
 const NavBar = observer(({ path }: INavBar) => {
+  console.log(path);
   const navigate = useNavigate();
   const profileRef = useRef<HTMLDivElement>(null);
   const ordersRef = useRef<HTMLDivElement>(null);
@@ -43,11 +44,11 @@ const NavBar = observer(({ path }: INavBar) => {
       ? styles.navbarLinkGroupExtended
       : styles.navbarLinkGroupRolled;
   };
-  const [windowSize, setWindowSize] = useState({ width: 0 });
+  const [windowSize, setWindowSize] = useState({ height: 0 });
 
   const handleSize = () => {
     setWindowSize({
-      width: window.innerWidth,
+      height: window.innerHeight,
     });
   };
 
@@ -87,29 +88,36 @@ const NavBar = observer(({ path }: INavBar) => {
               <NavbarLink title='Профиль' to='profile' />
               <NavbarLink title='Мои объявления' to='my-ads' />
               <NavbarLink title='Мои покупки' to='my-purchases' />
-              {(userStore.subscribePeriod || userStore.orgId) && (
+              {(!!userStore.subscribePeriod || !!userStore.orgId) && (
                 <NavbarLink title='История заказов' to='orders-history' />
               )}
-              {(userStore.subscribePeriod || userStore.orgId) && (
+              {(!!userStore.subscribePeriod || !!userStore.orgId) && (
                 <NavbarLink title='Организация' to='company' />
               )}
             </div>
           </div>
           <div className={styles.horizontalLine}></div>
-          <div className={styles.navbarGroup}>
-            <NavbarTab
-              SVG={<NavbarOrders />}
-              currentRef={ordersRef}
-              slag='orders'
-              title='Заказы'
-              collapsed={navbarStore.tabs.orders}
-            />
-            <div ref={ordersRef} className={extendedLinkGroup(navbarStore.tabs.orders)}>
-              <NavbarLink title='Текущие заказы' to='orders-active' />
-              <NavbarLink title='История' to='history' />
-            </div>
-          </div>
-          <div className={styles.horizontalLine}></div>
+          {!!userStore.orgId && (
+            <>
+              <div className={styles.navbarGroup}>
+                <NavbarTab
+                  SVG={<NavbarOrders />}
+                  currentRef={ordersRef}
+                  slag='orders'
+                  title='Заказы'
+                  collapsed={navbarStore.tabs.orders}
+                />
+                <div
+                  ref={ordersRef}
+                  className={extendedLinkGroup(navbarStore.tabs.orders)}
+                >
+                  <NavbarLink title='Текущие заказы' to='orders-active' />
+                  <NavbarLink title='История' to='history' />
+                </div>
+              </div>
+              <div className={styles.horizontalLine}></div>
+            </>
+          )}
         </>
       )}
 
@@ -124,34 +132,37 @@ const NavBar = observer(({ path }: INavBar) => {
 
         <div ref={marketRef} className={extendedLinkGroup(navbarStore.tabs.market)}>
           <NavbarLink title='Оборудование' to='equipment' />
-          <NavbarLink title='Услуги' to='services' />
-          <NavbarLink title='Работа' to='job' />
+          <NavbarLink title='Заказы' to='services' />
+          <NavbarLink title='Услуги' to='job' />
           {userStore.isAuth && (
             <NavbarLink title='Разместить объявление' to='place-adv' />
           )}
         </div>
       </div>
-      <div className={styles.horizontalLine}></div>
-      {userStore.isAuth && (userStore.subscribePeriod || userStore.orgId) && (
-        <div className={styles.navbarGroup}>
-          <NavbarTab
-            SVG={<NavbarOrganization />}
-            currentRef={organizationRef}
-            slag='organization'
-            title='Организация'
-            collapsed={navbarStore.tabs.organization}
-          />
 
-          <div
-            ref={organizationRef}
-            className={extendedLinkGroup(navbarStore.tabs.organization)}
-          >
-            <NavbarLink title='Информация' to='company-information' />
-            <NavbarLink title='Сотрудники' to='employees' />
-            <NavbarLink title='Должности' to='roles' />
-            <NavbarLink title='История' to='company-history' />
+      {userStore.isAuth && (!!userStore.subscribePeriod || !!userStore.orgId) && (
+        <>
+          <div className={styles.horizontalLine}></div>
+          <div className={styles.navbarGroup}>
+            <NavbarTab
+              SVG={<NavbarOrganization />}
+              currentRef={organizationRef}
+              slag='organization'
+              title='Организация'
+              collapsed={navbarStore.tabs.organization}
+            />
+
+            <div
+              ref={organizationRef}
+              className={extendedLinkGroup(navbarStore.tabs.organization)}
+            >
+              <NavbarLink title='Информация' to='company-information' />
+              <NavbarLink title='Сотрудники' to='employees' />
+              <NavbarLink title='Должности' to='roles' />
+              <NavbarLink title='История' to='company-history' />
+            </div>
           </div>
-        </div>
+        </>
       )}
 
       <div ref={exitRef} className={styles.navbarFooter}>

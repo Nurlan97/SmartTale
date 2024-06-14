@@ -17,7 +17,6 @@ const ImageInput = observer(({ store, disabled = false }: IImageInput) => {
           <div key={ind} className={styles.currentImages}>
             <label htmlFor={`current${ind}`} className={styles.inputPhotoFilled}>
               <img className={styles.smallImg} src={img} alt='Change' />
-              <div className={styles.changeImage}>Change photo</div>
               {!disabled && (
                 <>
                   <div className={styles.changeImage}>Change photo</div>

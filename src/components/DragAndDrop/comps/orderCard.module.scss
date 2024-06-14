@@ -1,4 +1,4 @@
-.wrapper {
+@mixin wrapper {
   background: #f3f4fd;
   border-radius: 10px;
   height: 131px;
@@ -11,7 +11,15 @@
   margin-top: 12px;
   padding: 12px;
   font-family: 'SF Pro', sans-serif;
+}
+
+.wrapper {
+  @include wrapper;
   cursor: grab;
+}
+
+.notDruggable {
+  @include wrapper;
 }
 .title {
   font-weight: 700;
@@ -53,6 +61,11 @@
   animation: expand 0.3s normal;
 }
 .pending {
+  @include over;
+  border: 4px solid #e4e4e4;;
+}
+
+.new {
   @include over;
   border: 4px solid #c3fffb;
 }

@@ -1,6 +1,7 @@
 import { makeAutoObservable, runInAction, toJS } from 'mobx';
 import { CSSProperties } from 'react';
 
+import { MOCK_DATA } from '../../MOCK_DATA';
 import { tableData } from '../../mockData';
 import { CustomPageOrderAccepted } from '../api/data-contracts';
 import { myApi } from '../api/V1';
@@ -83,9 +84,28 @@ class orderHistoryStore {
           ? this.dateFilter.currentType
           : undefined;
       }
-      const response = await myApi.getOrdersHistory(body);
+      // const response = await myApi.getOrdersHistory(body);
       runInAction(() => {
-        this.data = response.data;
+        // this.data = response.data;
+        if (this.activeTab === 'active') {
+          this.data.content = MOCK_DATA.filter(
+            (order) =>
+              order.status === 'NEW' ||
+              order.status === 'CHECKING' ||
+              order.status === 'IN_PROGRESS' ||
+              order.status === 'PENDING' ||
+              order.status === 'DISPATCHED' ||
+              order.status === 'CANCELED' ||
+              order.status === 'COMPLETED',
+          );
+        } else {
+          this.data.content = MOCK_DATA.filter(
+            (order) =>
+              order.status === 'ARRIVED' ||
+              order.status === 'CANCELED' ||
+              order.status === 'COMPLETED',
+          );
+        }
       });
     } catch (error) {
       console.log(error);

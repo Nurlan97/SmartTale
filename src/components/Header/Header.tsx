@@ -101,8 +101,10 @@ const Header = observer(({ path, title }: IHeader) => {
               )}
             </form>
           )}
+          <div className={notifyStore.hasUnreaded ? styles.bellHasUnreaded : styles.bell}>
+            <Bell onMouseEnter={mouseEnterHandler} onMouseLeave={mouseLeaveHandler} />
+          </div>
 
-          <Bell onMouseEnter={mouseEnterHandler} onMouseLeave={mouseLeaveHandler} />
           {showNotify && (
             <Notifications
               onMouseEnter={mouseEnterHandler}

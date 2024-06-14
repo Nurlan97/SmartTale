@@ -1,7 +1,7 @@
 import { observer } from 'mobx-react-lite';
 
 import { notifyStore } from '../../store';
-import Notify, { INotify } from '../Notify/Notify';
+import Notify from '../Notify/Notify';
 import styles from './notifications.module.scss';
 
 type Props = {
@@ -19,15 +19,21 @@ const Notifications = observer(({ onMouseEnter, onMouseLeave }: Props) => {
       <div className={styles.line}></div>
       <div className={styles.body}>
         {notifyStore.notifications.length > 0 ? (
-          notifyStore.notifications.map((notify, ind) => {
-            return <Notify {...notify} key={ind} />;
-          })
+          <>
+            {notifyStore.notifications.map((notify, ind) => {
+              return (
+                <>
+                  <Notify notify={notify} key={ind} />
+                  <div className={styles.line}></div>
+                </>
+              );
+            })}
+            <button className={styles.button}>Отметить все прочитанными</button>
+          </>
         ) : (
           <div className={styles.empty}>У вас еще нет уведомлений</div>
         )}
       </div>
-      <div className={styles.line}></div>
-      <button className={styles.button}>Отметить все прочитанными</button>
     </div>
   );
 });
