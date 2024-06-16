@@ -32,7 +32,15 @@ const pathObj = {
   '/equipment': 'Маркетплейс/Оборудование',
   '/services': 'Маркетплейс/Заказы',
   '/job': 'Маркетплейс/Услуги',
+  '/orders-history': 'Заказы/История',
 };
+export enum PathEnum {
+  '/my-purchases' = 'Личный кабинет/Мои покупки',
+  '/equipment' = 'Маркетплейс/Оборудование',
+  '/services' = 'Маркетплейс/Заказы',
+  '/job' = 'Маркетплейс/Услуги',
+  '/orders-history' = 'Заказы/История',
+}
 class modalStore {
   isOpen = false;
   isLoading = false;
@@ -53,28 +61,29 @@ class modalStore {
   closeModal = () => {
     this.isOpen = false;
   };
-  openDescription = async (id: number, path: string) => {
+  openDescription = async (id: number, path: PathEnum) => {
     this.detailed = [];
     this.isOpen = true;
     this.currentModal = Modals.loader;
     this.detailedExt.id = id;
     try {
       let response;
-      if (path === '/my-purchases') {
+      if (path === PathEnum['/my-purchases']) {
         response = await myApi.getPurchase(id);
       } else {
         response = await myApi.getAd(id);
       }
 
       this.detailed.push(response.data);
-      if (
-        path === '/my-purchases' ||
-        path === '/equipment' ||
-        path === '/services' ||
-        path === '/job'
-      ) {
-        this.detailedExt.path = pathObj[path];
-      }
+      // if (
+      //   path === '/my-purchases' ||
+      //   path === '/equipment' ||
+      //   path === '/services' ||
+      //   path === '/job'
+      // ) {
+      //   this.detailedExt.path = pathObj[path];
+      // }
+      this.detailedExt.path = path;
       this.detailedExt.activeImg = 0;
       this.detailedExt.activeTab = 'description';
       this.currentModal = Modals.descriptionModal;

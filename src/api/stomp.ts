@@ -1,7 +1,7 @@
 import { Client } from '@stomp/stompjs';
 
 import { notifyStore, userStore } from '../store';
-import { decodeJWT } from '../utils/helpers';
+import { decodeJWT, isTokenExpired } from '../utils/helpers';
 import { IMessageOrg, IMessageUser } from './interfaces-ws';
 
 export const createClient = (token: string) => {
@@ -14,7 +14,7 @@ export const createClient = (token: string) => {
       Authorization: `Bearer ${token}`,
     },
     debug: function (str) {
-      console.log(str);
+      // console.log(str);
     },
     reconnectDelay: 20000,
 
@@ -31,7 +31,12 @@ export const createClient = (token: string) => {
         });
       }
     },
-    onDisconnect: (frame) => {
+    onDisconnect: async (frame) => {
+      if (isTokenExpired(userStore.getToken)) {
+        console.log('oldToken', userStore.getToken);
+        await userStore.refreshTokens();
+        console.log('newToken', userStore.getToken);
+      }
       client.connectHeaders = { Authorization: `Bearer ${userStore.getToken}` };
     },
   });

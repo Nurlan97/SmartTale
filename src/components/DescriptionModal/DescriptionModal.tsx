@@ -120,6 +120,25 @@ const DescriptionModal = observer(() => {
           </div>
         </div>
         <div className={styles.footer}>
+          {'purchasedAt' in card && (
+            <div className={styles.purchase}>
+              {'totalPrice' in card && (
+                <div className={styles.purchaseDescription}>
+                  <p>Общая стоимость: </p>
+                  <p className={styles.totalPrice}>
+                    {card.totalPrice ? `${card.totalPrice} сом` : 'Договорная'}
+                  </p>
+                </div>
+              )}
+              {'quantity' in card && (
+                <div className={styles.purchaseDescription}>
+                  <p>Количество: </p>
+                  <p className={styles.soldOquantityut}> {card.quantity}</p>
+                </div>
+              )}
+            </div>
+          )}
+
           {'canHandle' in card &&
             card.canHandle &&
             // 'canPurchase' in card &&
