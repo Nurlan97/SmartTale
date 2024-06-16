@@ -1,12 +1,13 @@
 import { makeAutoObservable, runInAction } from 'mobx';
 
-import { OrderDashboard } from '../api/data-contracts';
+import { MonitoringOrder, OrderDashboard } from '../api/data-contracts';
 import { myApi } from '../api/V1';
 import { DragEvent, IColumn } from '../components/DragAndDrop/DragAndDrop';
+import { myReposytory } from './repository';
 
 const COLUMNS: IColumn[] = [
   {
-    title: 'Не подтвержденные',
+    title: 'Не подтвержден',
     id: 'PENDING',
     allow: [],
   },
@@ -131,6 +132,11 @@ class kanbanStore {
   columns: IColumn[] = COLUMNS;
   orders: Array<OrderDashboard> = DEFAULT_DATA_STATE;
   prevOrders: Array<OrderDashboard> = DEFAULT_DATA_STATE;
+  currentDescription: number | null = null;
+  descriptionExt: { activeImg: number; activeTab: 'description' | 'size' | 'contacts' } =
+    { activeImg: 0, activeTab: 'description' };
+  timeoutShow: NodeJS.Timeout | null = null;
+  timeoutHide: NodeJS.Timeout | null = null;
   constructor() {
     makeAutoObservable(this);
   }
@@ -171,6 +177,34 @@ class kanbanStore {
       this.orders = this.prevOrders;
       console.log(error);
     }
+  };
+  showDescription = (id: number | null) => {
+    if (id === null) {
+      if (this.timeoutShow) clearTimeout(this.timeoutShow);
+      this.timeoutHide = setTimeout(() => {
+        this.currentDescription = id;
+      }, 2000);
+    } else {
+      if (this.timeoutHide) clearTimeout(this.timeoutHide);
+      this.timeoutShow = setTimeout(async () => {
+        this.currentDescription = id;
+      }, 1000);
+    }
+  };
+  private get queryOrder() {
+    if (!this.currentDescription) return null;
+    return myReposytory.getOrderQuery(this.currentDescription);
+  }
+
+  get description() {
+    if (!this.queryOrder) return null;
+    return this.queryOrder.data;
+  }
+  setImage = (num: number) => () => {
+    this.descriptionExt.activeImg = num;
+  };
+  setActiveTab = (tab: 'description' | 'contacts' | 'size') => () => {
+    this.descriptionExt.activeTab = tab;
   };
 }
 
