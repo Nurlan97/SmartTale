@@ -12,7 +12,6 @@
   color: #202223;
   position: absolute;
   top: 64px;
-  right: 0;
   display: flex;
   flex-direction: column;
   align-items: start;
@@ -30,6 +29,7 @@
 
 .body {
   width: 100%;
+  max-height: 50vh;
 }
 .empty {
   color: #8e8e93;

@@ -49,7 +49,7 @@ class orderHistoryStore {
   };
   setFilter = (type: dateFilters) => {
     this.dateFilter.currentType = type;
-    // this.getOrders();
+    this.getOrders();
   };
 
   setActiveTab = (tab: 'active' | 'history') => async () => {
@@ -84,28 +84,28 @@ class orderHistoryStore {
           ? this.dateFilter.currentType
           : undefined;
       }
-      // const response = await myApi.getOrdersHistory(body);
+      const response = await myApi.getOrdersHistory(body);
       runInAction(() => {
-        // this.data = response.data;
-        if (this.activeTab === 'active') {
-          this.data.content = MOCK_DATA.filter(
-            (order) =>
-              order.status === 'NEW' ||
-              order.status === 'CHECKING' ||
-              order.status === 'IN_PROGRESS' ||
-              order.status === 'PENDING' ||
-              order.status === 'DISPATCHED' ||
-              order.status === 'CANCELED' ||
-              order.status === 'COMPLETED',
-          );
-        } else {
-          this.data.content = MOCK_DATA.filter(
-            (order) =>
-              order.status === 'ARRIVED' ||
-              order.status === 'CANCELED' ||
-              order.status === 'COMPLETED',
-          );
-        }
+        this.data = response.data;
+        // if (this.activeTab === 'active') {
+        //   this.data.content = MOCK_DATA.filter(
+        //     (order) =>
+        //       order.status === 'NEW' ||
+        //       order.status === 'CHECKING' ||
+        //       order.status === 'IN_PROGRESS' ||
+        //       order.status === 'PENDING' ||
+        //       order.status === 'DISPATCHED' ||
+        //       order.status === 'CANCELED' ||
+        //       order.status === 'COMPLETED',
+        //   );
+        // } else {
+        //   this.data.content = MOCK_DATA.filter(
+        //     (order) =>
+        //       order.status === 'ARRIVED' ||
+        //       order.status === 'CANCELED' ||
+        //       order.status === 'COMPLETED',
+        //   );
+        // }
       });
     } catch (error) {
       console.log(error);

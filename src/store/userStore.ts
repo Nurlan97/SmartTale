@@ -8,7 +8,7 @@ import {
 } from '../api/data-contracts';
 import { myApi } from '../api/V1';
 import { getRolesFromMask, Roles } from '../utils/authorizationHelpers';
-import { decodeJWT, removeCookie } from '../utils/helpers';
+import { decodeJWT, isTokenExpired, removeCookie } from '../utils/helpers';
 import { setCookie } from '../utils/helpers';
 import modalStore, { Modals } from './modalStore';
 import notifyStore from './notifyStore';
@@ -240,6 +240,13 @@ class userStore {
     removeCookie('refreshToken');
   };
   get getToken() {
+    if (isTokenExpired(this.accessToken)) {
+      if (isTokenExpired(this.refreshToken)) {
+        this.logout();
+      } else {
+        this.refreshTokens();
+      }
+    }
     return this.accessToken;
   }
   getOrganization = async () => {

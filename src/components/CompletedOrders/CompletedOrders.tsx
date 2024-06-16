@@ -4,10 +4,12 @@ import { useEffect, useRef } from 'react';
 import DatePicker, { registerLocale } from 'react-datepicker';
 import { useNavigate } from 'react-router-dom';
 
+import { modalStore } from '../../store';
+import { PathEnum } from '../../store/modalStore';
 import orderHistoryStore2 from '../../store/orderHistoryStore2';
-import Button from '../../UI/Button/Button';
 import DateRangeCustomInput from '../../UI/DateRangeCustomInput/DateRangeCustomInput';
 import TabSwitch from '../../UI/TabSwitch/TabSwitch';
+import { formatDate } from '../../utils/helpers';
 import AdRow from '../AdRow/AdRow';
 import DropDownFilterDate from '../DropDownFilterDate/DropDownFilterDate';
 import styles from './CompletedOrders.module.scss';
@@ -62,15 +64,19 @@ const CompletedOrders: React.FC = observer(() => {
         {orderHistoryStore2.data.content &&
           orderHistoryStore2.data.content.map((item, ind) => (
             <AdRow key={ind} item={item}>
-              <button
-                className={styles.detailedBtn}
-                onClick={async () => {
-                  const id = 'productId' in item ? item.productId : item.orderId;
-                  navigate(`/my-ads/${id}`);
-                }}
-              >
-                Посмотреть детали
-              </button>
+              <div className={styles.details}>
+                <p>{formatDate(item.completedAt)}</p>
+                <button
+                  className={styles.detailedBtn}
+                  onClick={async () => {
+                    const id = 'productId' in item ? item.productId : item.orderId;
+                    navigate(`/my-ads/${id}`);
+                    modalStore.openDescription(Number(id), PathEnum['/orders-history']);
+                  }}
+                >
+                  Посмотреть детали
+                </button>
+              </div>
             </AdRow>
           ))}
       </div>
