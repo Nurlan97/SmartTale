@@ -10,8 +10,11 @@ import NoAuthRoute from './components/NoAuthRoute/NoAuthRoute';
 import AuthorizationPage from './pages/AuthorizationPage/AuthorizationPage';
 import CurrentOrdersPage from './pages/CurrentOrdersPage/CurrentOrdersPage';
 import DetailedPage from './pages/DetailedPage/DetailedPage';
+import EmployeeDetails from './pages/EmployeeDetails/EmployeeDetails';
+import Employees from './pages/Employees/Employees';
 import EquipmentPage from './pages/EquipmentPage/EquipmentPage';
 import HistoryPage from './pages/HistoryPage/HistoryPage';
+import InviteEmployee from './pages/InviteEmployee/InviteEmployee';
 import JobPage from './pages/JobPage/JobPage';
 import MyAdsPage from './pages/MyAdsPage/MyAdsPage';
 import MyPurchases from './pages/MyPurchases/MyPurchases';
@@ -90,7 +93,9 @@ const App = observer(() => {
             <Route path='/orders-history' element={<OrderHistoryPage />} />
             <Route path='/company' element={<OrganizationPage />} />
             <Route path='/company-information' element={<OrganizationPage />} />
-            <Route path='/employees' element={<OrganizationPage />} />
+            <Route path='/employees' element={<Employees />} />
+            <Route path='/employees/invite' element={<InviteEmployee />} />
+            <Route path='/employees/:id' element={<EmployeeDetails />} />
             <Route path='/roles' element={<OrganizationPage />} />
             <Route path='/company-history' element={<OrganizationPage />} />
             <Route path='/search' element={<SearchPage />} />
