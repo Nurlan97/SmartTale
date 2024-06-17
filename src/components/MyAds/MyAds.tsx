@@ -27,15 +27,27 @@ const MyAds = observer(() => {
           {appStore.myAds.data.content &&
             appStore.myAds.data.content.map((item, ind) => (
               <AdRow key={ind} item={item}>
-                <button
-                  className={styles.detailedBtn}
-                  onClick={async () => {
-                    const id = 'productId' in item ? item.productId : item.orderId;
-                    navigate(`/my-ads/${id}`);
+                <div
+                  style={{
+                    gap: '12px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'end',
                   }}
                 >
-                  Посмотреть детали
-                </button>
+                  {item.isClosed && (
+                    <div className={styles.adHided}>Объявление скрыто</div>
+                  )}
+                  <button
+                    className={styles.detailedBtn}
+                    onClick={async () => {
+                      const id = 'productId' in item ? item.productId : item.orderId;
+                      navigate(`/my-ads/${id}`);
+                    }}
+                  >
+                    Посмотреть детали
+                  </button>
+                </div>
               </AdRow>
             ))}
         </div>

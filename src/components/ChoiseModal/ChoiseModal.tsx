@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 import { appStore, modalStore, userStore } from '../../store';
 import { Modals } from '../../store/modalStore';
@@ -7,6 +7,8 @@ import styles from './choiseModal.module.scss';
 
 const ChoiseModal = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const id = Number(location.pathname.split('/').pop());
   const map = new Map();
   map.set(Modals.deleteAd, {
     emoji: '😔',
@@ -14,8 +16,9 @@ const ChoiseModal = () => {
     description: 'Объявление удалится навсегда!',
     button1: 'Отменить',
     button2: 'Удалить',
-    handler: (id: number) => {
+    handler: () => {
       appStore.deleteAd(id);
+      navigate(-1);
     },
   });
   map.set(Modals.hideAd, {
@@ -24,9 +27,9 @@ const ChoiseModal = () => {
     description: 'Объявление больше не будет доступно для просмотра в маркетплейсе',
     button1: 'Отменить',
     button2: 'Скрыть',
-    handler: (id: number) => {
-      console.log('hide');
+    handler: () => {
       appStore.closeAd(id);
+      navigate(-1);
     },
   });
   map.set(Modals.exit, {

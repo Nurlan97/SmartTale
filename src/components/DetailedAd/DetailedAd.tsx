@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { CreateOrderRequest, CreateProductRequest } from '../../api/data-contracts';
-import { modalStore } from '../../store';
+import { appStore, modalStore } from '../../store';
 import adStore from '../../store/adStore';
 import { Modals } from '../../store/modalStore';
 import Button from '../../UI/Button/Button';
@@ -84,6 +84,8 @@ const DetailedAd = observer(({ store }: IProps) => {
   const navigate = useNavigate();
   return (
     <div>
+      {ad.isClosed && <div className={styles.adHided}>Объявление скрыто!</div>}
+
       <form
         className={styles.form}
         onSubmit={(e) => {
@@ -154,9 +156,16 @@ const DetailedAd = observer(({ store }: IProps) => {
               <Button
                 color='blue'
                 type='button'
-                handler={() => modalStore.openModal(Modals.hideAd)}
+                handler={async () => {
+                  if (ad.isClosed) {
+                    await appStore.restoreAd('orderId' in ad ? ad.orderId : ad.productId);
+                    navigate(-1);
+                  } else {
+                    modalStore.openModal(Modals.hideAd);
+                  }
+                }}
               >
-                Скрыть объявление
+                {ad.isClosed ? 'Вернуть объявление' : 'Скрыть объявление'}
               </Button>
             </>
           )}

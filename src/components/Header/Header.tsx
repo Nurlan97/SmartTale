@@ -52,9 +52,7 @@ const Header = observer(({ path, title }: IHeader) => {
     if (timeoutSearch.current) {
       clearTimeout(timeoutSearch.current);
     }
-    if (!showSearchResult) {
-      setShowSearchResult(true);
-    }
+    setShowSearchResult(true);
   };
   const closeSearchHandler = () => {
     timeoutSearch.current = setTimeout(() => {
@@ -86,7 +84,7 @@ const Header = observer(({ path, title }: IHeader) => {
                 onChange={(e) => {
                   if (showNotify) return;
                   setSearch(e.target.value);
-                  if (e.target.value.length > 0) {
+                  if (e.target.value.length > 2) {
                     debounceSearch(e);
                     openSearchHandler();
                   } else {

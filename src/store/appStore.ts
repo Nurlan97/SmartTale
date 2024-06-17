@@ -128,7 +128,6 @@ class appStore {
     this.myAds.detailed = [];
     try {
       const response = await myApi.getMyAd(id);
-
       this.myAds.detailed.push(response.data);
     } catch (error) {
       console.log(error);
@@ -175,12 +174,27 @@ class appStore {
     return this.myOrganization.group === 'orders';
   }
   deleteAd = async (id: number) => {
-    await myApi.interactWithAd(id, '3');
-    modalStore.closeModal();
+    try {
+      await myApi.interactWithAd1(id, '3');
+      modalStore.closeModal();
+    } catch (error) {
+      console.log(error);
+    }
   };
   closeAd = async (id: number) => {
-    await myApi.interactWithAd(id, '1');
-    modalStore.closeModal();
+    try {
+      await myApi.interactWithAd1(id, '1');
+      modalStore.closeModal();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  restoreAd = async (id: number) => {
+    try {
+      await myApi.interactWithAd1(id, '2');
+    } catch (error) {
+      console.log(error);
+    }
   };
   setMyPurchasesePage = (page: number) => {
     this.getMyBuys(page);
