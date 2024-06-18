@@ -22,7 +22,7 @@ const OrderHistoryPage = observer(() => {
   }, []);
   return (
     <div className={styles.page}>
-      <Header path='Личный кабинет/История заказов' title='История заказов' />
+      <Header path='Организация/История заказов' title='История заказов' />
       <div className={styles.filterGroup}>
         <TabSwitch
           activeTab={orderHistoryStore.activeTab}

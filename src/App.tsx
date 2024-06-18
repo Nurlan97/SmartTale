@@ -8,6 +8,7 @@ import ModalContainer from './components/ModalContainer/ModalContainer';
 import NavBar from './components/NavBar/NavBar';
 import NoAuthRoute from './components/NoAuthRoute/NoAuthRoute';
 import AuthorizationPage from './pages/AuthorizationPage/AuthorizationPage';
+import CreatePosition from './pages/CreatePosition/CreatePosition';
 import CurrentOrdersPage from './pages/CurrentOrdersPage/CurrentOrdersPage';
 import DetailedPage from './pages/DetailedPage/DetailedPage';
 import EmployeeDetails from './pages/EmployeeDetails/EmployeeDetails';
@@ -23,8 +24,10 @@ import OrganizationPage from './pages/OrganizationPage/OrganizationPage';
 import PlaceAdvage from './pages/PlaceAdvPage/PlaceAdvPage';
 import ProfilePage from './pages/ProfilePage/ProfilePage';
 import RegistrationPage from './pages/RegistrationPage/RegistrationPage';
+import Roles from './pages/Roles/Roles';
 import SearchPage from './pages/SearchPage/SearchPage';
 import ServicesPage from './pages/ServicesPage/ServicesPage';
+import UpdatePosition from './pages/UpdatePosition/UpdatePosition';
 import { userStore } from './store';
 import { getCookie, isTokenExpired, removeCookie } from './utils/helpers';
 
@@ -96,7 +99,9 @@ const App = observer(() => {
             <Route path='/employees' element={<Employees />} />
             <Route path='/employees/invite' element={<InviteEmployee />} />
             <Route path='/employees/:id' element={<EmployeeDetails />} />
-            <Route path='/roles' element={<OrganizationPage />} />
+            <Route path='/roles' element={<Roles />} />
+            <Route path='/positions/create' element={<CreatePosition />} />
+            <Route path='/positions/update/:id' element={<UpdatePosition />} />
             <Route path='/company-history' element={<OrganizationPage />} />
             <Route path='/search' element={<SearchPage />} />
           </Route>
