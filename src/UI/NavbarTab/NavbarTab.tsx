@@ -9,7 +9,7 @@ import styles from './navbarTab.module.scss';
 interface INavbarTab {
   title: string;
   SVG: JSX.Element;
-  slag: 'profile' | 'orders' | 'market' | 'organization';
+  slag: 'profile' | 'market' | 'organization';
   currentRef: React.RefObject<HTMLDivElement>;
   collapsed: 'extended' | 'rolled up';
 }
