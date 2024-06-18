@@ -31,5 +31,8 @@ class rolesStore {
       console.log(error);
     }
   };
+  deletePosition = () => {
+    this.position = undefined;
+  };
 }
 export default new rolesStore();

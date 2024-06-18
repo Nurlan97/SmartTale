@@ -96,7 +96,7 @@ const NavBar = observer(({ path }: INavBar) => {
               )}
             </div>
           </div>
-          <div className={styles.horizontalLine}></div>
+          {/* <div className={styles.horizontalLine}></div>
           {!!userStore.orgId && (
             <>
               <div className={styles.navbarGroup}>
@@ -117,7 +117,7 @@ const NavBar = observer(({ path }: INavBar) => {
               </div>
               <div className={styles.horizontalLine}></div>
             </>
-          )}
+          )} */}
         </>
       )}
 
@@ -159,7 +159,9 @@ const NavBar = observer(({ path }: INavBar) => {
               <NavbarLink title='Информация' to='company-information' />
               <NavbarLink title='Сотрудники' to='employees' />
               <NavbarLink title='Должности' to='roles' />
-              <NavbarLink title='История' to='company-history' />
+              <NavbarLink title='Текущие заказы' to='orders-active' />
+              <NavbarLink title='История' to='history' />
+              {/* <NavbarLink title='История' to='company-history' /> */}
             </div>
           </div>
         </>

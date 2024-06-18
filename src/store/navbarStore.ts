@@ -6,16 +6,16 @@ tabsMap.set('my-ads', 'profile');
 tabsMap.set('my-purchases', 'profile');
 tabsMap.set('orders-history', 'profile');
 tabsMap.set('company', 'profile');
-tabsMap.set('orders-active', 'orders');
-tabsMap.set('history', 'orders');
+tabsMap.set('orders-active', 'organization');
+tabsMap.set('history', 'organization');
 tabsMap.set('equipment', 'market');
 tabsMap.set('services', 'market');
 tabsMap.set('place-order', 'market');
 tabsMap.set('company-information', 'organization');
 tabsMap.set('employees', 'organization');
 tabsMap.set('roles', 'organization');
-tabsMap.set('company-history', 'organization');
-export type AllowedStrings = 'profile' | 'orders' | 'market' | 'organization';
+// tabsMap.set('company-history', 'organization');
+export type AllowedStrings = 'profile' | 'market' | 'organization';
 
 class navbarStore {
   activeTab = 'profile';
@@ -24,11 +24,11 @@ class navbarStore {
     [key: string]: 'extended' | 'rolled up';
   } = {
     profile: 'extended',
-    orders: 'extended',
+    // orders: 'extended',
     market: 'extended',
     organization: 'extended',
   };
-  queue: AllowedStrings[] = ['orders', 'profile'];
+  queue: AllowedStrings[] = ['profile'];
   constructor() {
     makeAutoObservable(this);
   }
@@ -36,7 +36,7 @@ class navbarStore {
     this.activeLink = active;
     this.activeTab = tabsMap.get(active);
   };
-  toggleTab = (tab: 'profile' | 'orders' | 'market' | 'organization') => {
+  toggleTab = (tab: 'profile' | 'market' | 'organization') => {
     this.tabs[tab] = this.tabs[tab] === 'extended' ? 'rolled up' : 'extended';
     if (this.queue.indexOf(tab) !== -1) this.queue.splice(this.queue.indexOf(tab), 1);
     this.queue.push(tab);

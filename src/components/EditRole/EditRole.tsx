@@ -114,6 +114,7 @@ const EditRole = observer(({ position }: Props) => {
             type={'button'}
             handler={() => {
               navigate(-1);
+              rolesStore.deletePosition();
             }}
           >
             Назад

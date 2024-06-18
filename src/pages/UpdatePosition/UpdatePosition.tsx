@@ -1,3 +1,4 @@
+import { observer } from 'mobx-react-lite';
 import { useLayoutEffect } from 'react';
 import { useParams } from 'react-router-dom';
 
@@ -7,7 +8,7 @@ import { userStore } from '../../store';
 import rolesStore from '../../store/rolesStore';
 import styles from './updatePosition.module.scss';
 
-const UpdatePosition = () => {
+const UpdatePosition = observer(() => {
   const { id } = useParams();
   useLayoutEffect(() => {
     rolesStore.getPosition(Number(id));
@@ -18,9 +19,9 @@ const UpdatePosition = () => {
         title='Должности'
         path={userStore.organization?.name ? userStore.organization.name : 'SmartTale'}
       />
-      <EditRole position={rolesStore.position} />
+      {rolesStore.position && <EditRole position={rolesStore.position} />}
     </div>
   );
-};
+});
 
 export default UpdatePosition;
