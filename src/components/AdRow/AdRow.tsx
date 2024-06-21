@@ -7,6 +7,7 @@ import {
   Product,
   SearchItem,
 } from '../../api/data-contracts';
+import { defaultImage } from '../../assets';
 import { appStore } from '../../store';
 import { cutText } from '../../utils/helpers';
 import styles from './adRow.module.scss';
@@ -19,7 +20,11 @@ const AdRow = ({ item, children }: IAd) => {
   return (
     <div className={styles.wrapper}>
       <div className={styles.mainBlock}>
-        <img className={styles.img} src={item.imageUrl} alt='' />
+        <img
+          className={styles.img}
+          src={item.imageUrl ? item.imageUrl : defaultImage}
+          alt=''
+        />
         <div className={styles.descriptionBlock}>
           {'productId' in item && <div className={styles.equipment}>Оборудование</div>}
           {'orderId' in item && <div className={styles.service}>Заказ</div>}

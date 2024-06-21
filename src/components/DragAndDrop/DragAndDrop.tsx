@@ -67,7 +67,7 @@ export const DragAndDrop = observer(() => {
   };
   const onDragEnd = async (event: DragEvent) => {
     try {
-      await kanbanStore.updateOrder(event);
+      await kanbanStore.updateOrder(event, activeOrder);
       setActiveOrder(null);
     } catch (error) {
       console.log(error);

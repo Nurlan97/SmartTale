@@ -1,6 +1,8 @@
-import { Client, Message } from '@stomp/stompjs';
+import { Client } from '@stomp/stompjs';
 
-import { decodeJWT } from '../utils/helpers';
+import { notifyStore, userStore } from '../store';
+import { decodeJWT, isTokenExpired } from '../utils/helpers';
+import { IHistoryOrg, IHistoryUser, IMessageOrg, IMessageUser } from './interfaces-ws';
 
 export const createClient = (token: string) => {
   const decodedToken = decodeJWT(token);
@@ -12,23 +14,51 @@ export const createClient = (token: string) => {
       Authorization: `Bearer ${token}`,
     },
     debug: function (str) {
-      console.log(str);
+      // console.log(str);
     },
     reconnectDelay: 20000,
-    heartbeatIncoming: 4000,
-    heartbeatOutgoing: 4000,
+
     onConnect: (frame) => {
       console.log('connected');
       client.subscribe(`/user/${userId}/push`, (message) => {
-        const notification = JSON.parse(message.body);
-        console.log(notification);
+        const notification: IMessageUser | IHistoryUser = JSON.parse(message.body);
+        if ('hasNext' in notification) {
+          notification.content.forEach((notify) => {
+            notifyStore.addNotify(notify);
+          });
+        } else {
+          notifyStore.addNotify(notification);
+        }
       });
       if (orgId !== 0) {
         client.subscribe(`/org/${orgId}/push`, (message) => {
-          const notification = JSON.parse(message.body);
-          console.log(notification);
+          const notification: IMessageOrg | IHistoryOrg = JSON.parse(message.body);
+          if ('hasNext' in notification) {
+            notification.content.forEach((notify) => {
+              notifyStore.addNotify(notify);
+            });
+          } else {
+            notifyStore.addNotify(notification);
+          }
         });
       }
+      client.publish({
+        destination: `/app/notifications/history`,
+        body: JSON.stringify({
+          userId: userStore.userId,
+          organizationId: userStore.orgId ? userStore.orgId : 0,
+          page: 0,
+          size: 8,
+        }),
+      });
+    },
+    onDisconnect: async (frame) => {
+      if (isTokenExpired(userStore.getToken)) {
+        console.log('oldToken', userStore.getToken);
+        await userStore.refreshTokens();
+        console.log('newToken', userStore.getToken);
+      }
+      client.connectHeaders = { Authorization: `Bearer ${userStore.getToken}` };
     },
   });
 

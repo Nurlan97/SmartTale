@@ -4,6 +4,7 @@ import {
   InviteRequest,
   JobCard,
   OrderCard,
+  OrderDashboard,
   PositionSummary,
   ProductCard,
   Purchase,
@@ -24,6 +25,7 @@ export enum Modals {
   descriptionModal = 'descriptionModal',
   changePhotoModal = 'changePhotoModal',
   inviteEmployer = 'inviteEmployer',
+  taskDescription = 'taskDescription',
   loader = 'loader',
 }
 
@@ -53,6 +55,8 @@ class modalStore {
     activeTab: 'description' | 'size' | 'contacts';
   } = { id: 0, activeImg: 0, activeTab: 'description', path: '' };
   detailed: Array<OrderCard | ProductCard | JobCard | Purchase> = [];
+  task: OrderDashboard | undefined = undefined;
+
   currentModal: Modals | null = null;
 
   constructor() {
@@ -120,7 +124,7 @@ class modalStore {
     }
   };
   senInvite = (data: InviteRequest) => {
-    myApi.inviteEmployee(data);
+    myApi.sendInvitation(data);
     this.closeModal();
   };
 }

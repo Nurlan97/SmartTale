@@ -102,7 +102,6 @@ const Header = observer(({ path, title }: IHeader) => {
           <div className={notifyStore.hasUnreaded ? styles.bellHasUnreaded : styles.bell}>
             <Bell onMouseEnter={mouseEnterHandler} onMouseLeave={mouseLeaveHandler} />
           </div>
-
           {showNotify && (
             <Notifications
               onMouseEnter={mouseEnterHandler}

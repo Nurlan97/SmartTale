@@ -1,5 +1,6 @@
 import { useFormik } from 'formik';
 import { observer } from 'mobx-react-lite';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Select from 'react-select';
 import * as yup from 'yup';
@@ -12,11 +13,14 @@ import Input from '../../UI/Input/Input';
 import styles from './editRole.module.scss';
 type Props = { position?: PositionDto };
 
-const schema = yup.object().shape({
-  title: yup.string().required('Обязательное поле для заполнения'),
-});
-
 const EditRole = observer(({ position }: Props) => {
+  const userHierarchy = userStore.hierarchy !== undefined ? userStore.hierarchy : 99999;
+  const positionHierarchy = position?.hierarchy !== undefined ? position.hierarchy : 0;
+  const isEditable =
+    userHierarchy < positionHierarchy &&
+    userStore.authorities.includes('UPDATE_POSITION');
+
+  const [isEdit, setIsEdit] = useState(!position);
   const navigate = useNavigate();
   const availableHierarchy = Array.from(
     { length: 10 },
@@ -28,7 +32,6 @@ const EditRole = observer(({ position }: Props) => {
       roles: position ? position.authorities : [],
       hierarchy: position ? position.hierarchy : availableHierarchy[0],
     },
-    validationSchema: schema,
     onSubmit: (values) => {
       console.log(values);
       if (position) {
@@ -74,6 +77,7 @@ const EditRole = observer(({ position }: Props) => {
           value={formik.values.title}
           id='title'
           label='Название должности'
+          disabled={!isEdit}
         />
         <div className={styles.title}>Уровень иерархии</div>
         <Select
@@ -85,10 +89,11 @@ const EditRole = observer(({ position }: Props) => {
             };
           })}
           onChange={(option: any) => {
-            formik.setFieldValue('hierarchy', option);
+            formik.setFieldValue('hierarchy', option.value);
           }}
           defaultValue={formik.values.hierarchy}
           isSearchable={false}
+          isDisabled={!isEdit}
         />
         <div className={styles.title}>Выдача прав доступа</div>
         {roles.map((role) => (
@@ -101,6 +106,7 @@ const EditRole = observer(({ position }: Props) => {
               value={role.value}
               onChange={formik.handleChange}
               checked={formik.values.roles.includes(role.value)}
+              disabled={!isEdit}
             />
             <label htmlFor={role.value}>{role.title}</label>
           </div>
@@ -119,9 +125,29 @@ const EditRole = observer(({ position }: Props) => {
           >
             Назад
           </Button>
-          <Button color={'blue'} type={'submit'} handler={formik.handleSubmit}>
-            {position ? 'Обновить' : 'Добавить'}
-          </Button>
+
+          {!position ? (
+            <Button
+              color={'blue'}
+              type={'submit'}
+              handler={formik.handleSubmit}
+              disabled={!formik.values.title}
+            >
+              Добавить должность
+            </Button>
+          ) : isEditable ? (
+            isEdit ? (
+              <Button color={'blue'} type={'button'} handler={() => setIsEdit(false)}>
+                Сохранить
+              </Button>
+            ) : (
+              <Button color={'blue'} type={'button'} handler={() => setIsEdit(true)}>
+                Редактировать
+              </Button>
+            )
+          ) : (
+            <>Нет прав на редактирование</>
+          )}
         </div>
       </div>
     </div>

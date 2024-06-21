@@ -3,6 +3,8 @@ import './selectDay.css';
 
 import { ru } from 'date-fns/locale';
 import { FormikProps } from 'formik';
+import { observer } from 'mobx-react-lite';
+import { useEffect, useLayoutEffect, useState } from 'react';
 import DatePicker, { registerLocale } from 'react-datepicker';
 
 import { CreateOrderRequest } from '../../../api/data-contracts';
@@ -12,6 +14,7 @@ import ImageInput from '../../../UI/ImageInput/ImageInput';
 import Input from '../../../UI/Input/Input';
 import TabSwitch from '../../../UI/TabSwitch/TabSwitch';
 import Textarea from '../../../UI/Textarea/Textarea';
+import SizeInput from '../../SizeInput/SizeInput';
 import styles from './orderForm.module.scss';
 type Props = {
   store: typePlaceAdvStore;
@@ -19,7 +22,13 @@ type Props = {
   isEdit?: boolean;
 };
 registerLocale('ru', ru);
-const OrderForm = ({ formik, store, isEdit = true }: Props) => {
+
+const OrderForm = observer(({ formik, store, isEdit = true }: Props) => {
+  const preSelectSize: Set<string> = new Set(formik.values.size?.split(','));
+  const [selectedSize, setSelectedSize] = useState(preSelectSize);
+  useEffect(() => {
+    formik.setFieldValue('size', Array.from(selectedSize).toString());
+  }, [selectedSize]);
   return (
     <div className={styles.wrapper}>
       <div className={styles.title}>{`Информация о заказе`}</div>
@@ -43,15 +52,8 @@ const OrderForm = ({ formik, store, isEdit = true }: Props) => {
         disabled={!isEdit}
       />
       <div className={styles.helper}>максимум 1000 символов, минимум 5</div>
-      <Input
-        onChange={formik.handleChange}
-        value={formik.values.size ? formik.values.size : ''}
-        label='Размеры'
-        width='100%'
-        id='sizes'
-        disabled={!isEdit}
-      />
-      <div className={styles.helper}>максимум 250 символов, минимум 5</div>
+
+      <SizeInput selectedSize={selectedSize} setSelectedSize={setSelectedSize} />
 
       <Input
         onChange={formik.handleChange}
@@ -82,15 +84,12 @@ const OrderForm = ({ formik, store, isEdit = true }: Props) => {
         Выберите какую контактную информацию показывать в объявлении
       </div>
       <div className={styles.contactsWrapper}>
-        {/* <div className={styles.contactsTxt}>
-          Выберите какую контактную информацию показывать в объявлении
-        </div> */}
         <div className={styles.contactsGrp}>
           <span
             className={
               formik.values.contactInfo.includes('PHONE')
                 ? styles.contactsItemActive
-                : styles.contactsItemActive
+                : styles.contactsItem
             }
           >
             {userStore.phone}
@@ -120,6 +119,6 @@ const OrderForm = ({ formik, store, isEdit = true }: Props) => {
       </div>
     </div>
   );
-};
+});
 
 export default OrderForm;

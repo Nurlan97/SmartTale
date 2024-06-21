@@ -1,4 +1,4 @@
-import { makeAutoObservable } from 'mobx';
+import { makeAutoObservable, runInAction } from 'mobx';
 
 import { Position, PositionDto, PositionSummary } from '../api/data-contracts';
 import { myApi } from '../api/V1';
@@ -12,7 +12,9 @@ class rolesStore {
   getPositions = async () => {
     try {
       const response = await myApi.getAllPositions();
-      this.positions = response.data;
+      runInAction(() => {
+        this.positions = response.data;
+      });
     } catch (error) {
       console.log(error);
     }
@@ -26,7 +28,9 @@ class rolesStore {
   getPosition = async (id: number) => {
     try {
       const response = await myApi.getOnePosition(id);
-      this.position = response.data;
+      runInAction(() => {
+        this.position = response.data;
+      });
     } catch (error) {
       console.log(error);
     }

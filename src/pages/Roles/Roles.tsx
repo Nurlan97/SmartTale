@@ -31,6 +31,7 @@ const Roles = observer(() => {
 
       <div className={styles.footer}>
         <div className={styles.horizontalLine}></div>
+
         <Button
           color={'blue'}
           type={'button'}

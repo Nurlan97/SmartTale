@@ -27,6 +27,7 @@ import RegistrationPage from './pages/RegistrationPage/RegistrationPage';
 import Roles from './pages/Roles/Roles';
 import SearchPage from './pages/SearchPage/SearchPage';
 import ServicesPage from './pages/ServicesPage/ServicesPage';
+import TaskDetailedPage from './pages/TaskDetailedPage/TaskDetailedPage';
 import UpdatePosition from './pages/UpdatePosition/UpdatePosition';
 import { userStore } from './store';
 import { getCookie, isTokenExpired, removeCookie } from './utils/helpers';
@@ -103,6 +104,7 @@ const App = observer(() => {
             <Route path='/positions/create' element={<CreatePosition />} />
             <Route path='/positions/update/:id' element={<UpdatePosition />} />
             <Route path='/company-history' element={<OrganizationPage />} />
+            <Route path='/task/:id' element={<TaskDetailedPage />} />
             <Route path='/search' element={<SearchPage />} />
           </Route>
           <Route element={<NoAuthRoute />}>

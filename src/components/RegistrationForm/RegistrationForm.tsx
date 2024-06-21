@@ -1,7 +1,7 @@
 import { useFormik } from 'formik';
 import { observer } from 'mobx-react-lite';
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 
 import { useDebounce } from '../../hooks/useDebounce';
 import { userStore } from '../../store';
@@ -17,6 +17,8 @@ import FormInput from '../FormInput/FormInput';
 import styles from './RegistrationForm.module.scss';
 
 const RegistrationForm = observer(() => {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const code = searchParams.get('code') || undefined;
   const [isSubmitting, setIsSubmitting] = useState(false);
   const handleNextStage = () => {
     if (isContactDataFilled(formik.values)) {
@@ -35,13 +37,16 @@ const RegistrationForm = observer(() => {
   }: ISubmitTypes) => {
     try {
       setTimeout(async () => {
-        await userStore.fetchRegistration({
-          lastName,
-          firstName,
-          middleName,
-          email,
-          phoneNumber,
-        });
+        await userStore.fetchRegistration(
+          {
+            lastName,
+            firstName,
+            middleName,
+            email,
+            phoneNumber,
+          },
+          code,
+        );
       }, 500);
     } catch (error) {
       console.log(error);
@@ -59,6 +64,7 @@ const RegistrationForm = observer(() => {
 
   const debounceEmailSearch = useDebounce((search: string) => {
     if (search === '') return;
+    if (code) return;
     if (formik.errors.email !== 'Неправильный формат email адреса') {
       userStore.fetchAvailableEmail(search).then((response) => {
         if (response?.status === 200 && !response?.data) {
@@ -70,7 +76,7 @@ const RegistrationForm = observer(() => {
 
   const debouncePhoneSearch = useDebounce((search: string) => {
     if (search === '') return;
-
+    if (code) return;
     userStore.fetchAvailablePhone(search).then((data) => {
       if (!data) formik.setFieldError('phoneNumber', 'Указанный вами номер занят');
     });

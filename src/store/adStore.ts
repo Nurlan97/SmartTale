@@ -205,8 +205,9 @@ export default class adStore {
         formData.append('images', image);
       }
     }
+    console.log(formData.get('images'));
     try {
-      const response = await myApi.placeAdvertisement(obj);
+      // const response = await myApi.placeAdvertisement(obj);
       this.resetForm();
     } catch (error) {
       console.log(error);
@@ -258,5 +259,13 @@ export default class adStore {
       }
     }
     const response = await myApi.updateAd(obj);
+  };
+  confirmRequest = async (code: string) => {
+    try {
+      const response = await myApi.confirmOrder({ code: code });
+      if ('acceptanceRequests' in this.ad[0]) this.ad[0].acceptanceRequests = [];
+    } catch (error) {
+      console.log(error);
+    }
   };
 }

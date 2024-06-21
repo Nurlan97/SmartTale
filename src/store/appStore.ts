@@ -1,7 +1,6 @@
 import { makeAutoObservable, runInAction } from 'mobx';
 
 import { MOCK_DATA } from '../../MOCK_DATA';
-import { MOCK_DATA_EMPLOYEES } from '../../MOCK_DATA_EMPLOYEES';
 import { cardsArray } from '../../mockData';
 import {
   CustomPage,

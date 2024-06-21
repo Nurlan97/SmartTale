@@ -22,7 +22,6 @@ interface INavBar {
   path: string;
 }
 const NavBar = observer(({ path }: INavBar) => {
-  console.log(path);
   const navigate = useNavigate();
   const profileRef = useRef<HTMLDivElement>(null);
   const ordersRef = useRef<HTMLDivElement>(null);

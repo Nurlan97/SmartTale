@@ -10,6 +10,7 @@ import DescriptionModal from '../DescriptionModal/DescriptionModal';
 import InviteEmployerModal from '../InviteEmployerModal/InviteEmployerModal';
 import ModalLoader from '../ModalLoader/ModalLoader';
 import SimpleModal from '../SimpleModal/SimpleModal';
+import TaskDescription from '../TaskDescription/TaskDescription';
 import styles from './modalContainer.module.scss';
 
 const ModalContainer = observer(() => {
@@ -27,6 +28,7 @@ const ModalContainer = observer(() => {
   map.set(Modals.descriptionModal, <DescriptionModal />);
   map.set(Modals.changePhotoModal, <ChangePhotoModal />);
   map.set(Modals.inviteEmployer, <InviteEmployerModal />);
+  map.set(Modals.taskDescription, <TaskDescription />);
   map.set(Modals.loader, <ModalLoader />);
 
   if (modalStore.currentModal === Modals.loader) {

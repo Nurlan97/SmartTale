@@ -174,17 +174,16 @@ export interface IMessageOrg {
   recipientId: number;
   recipientType: string;
   data: IConfirm | IStatus | IRolesUpdateOrganization | IRolesAppointOrganization;
-
   timestamp: string;
   read: boolean;
   sent: boolean;
 }
-interface IHistoryUser {
+export interface IHistoryUser {
   content: IMessageUser[];
   hasNext: boolean;
 }
 
-interface IHistoryorg {
+export interface IHistoryOrg {
   content: IMessageOrg[];
   hasNext: boolean;
 }

@@ -14,6 +14,7 @@ export enum dateFilters {
   completed = 'дате завершения',
   empty = '. . .',
 }
+
 function getKeyByValue(object: any, value: any) {
   return Object.keys(object).find((key) => object[key] === value);
 }
@@ -49,7 +50,7 @@ class orderHistoryStore {
   };
   setFilter = (type: dateFilters) => {
     this.dateFilter.currentType = type;
-    this.getOrders();
+    if (this.dateFilter.from && this.dateFilter.to) this.getOrders();
   };
 
   setActiveTab = (tab: 'active' | 'history') => async () => {
@@ -81,7 +82,7 @@ class orderHistoryStore {
           ? this.dateFilter.to.toISOString().slice(0, 10)
           : undefined;
         body.dateType = this.dateFilter.currentType
-          ? this.dateFilter.currentType
+          ? getKeyByValue(dateFilters, this.dateFilter.currentType)
           : undefined;
       }
       const response = await myApi.getOrdersHistory(body);

@@ -1,6 +1,8 @@
 import { makeAutoObservable, runInAction } from 'mobx';
 
 import {
+  CustomPageInvitation,
+  CustomPageInviterInvitation,
   Organization,
   RegistrationRequest,
   UpdateProfileRequest,
@@ -16,7 +18,7 @@ import notifyStore from './notifyStore';
 class userStore {
   userId: number | undefined = undefined;
   orgId: number | undefined = undefined;
-  roles = '';
+
   hierarchy: number | undefined = undefined;
   authorities: Roles[] = [];
   accessToken = '';
@@ -27,6 +29,7 @@ class userStore {
   middleName = '';
   email = '';
   phone = '';
+  contactInfo: 'EMAIL' | 'PHONE' | 'EMAIL_PHONE' = 'EMAIL';
   profilePhoto = '';
   subscribePeriod = '';
   isRemember = false;
@@ -35,6 +38,7 @@ class userStore {
   anyAds = false;
   invalidCode = false;
   organization: Organization | undefined = undefined;
+  invitations: CustomPageInvitation | undefined = undefined;
 
   constructor() {
     makeAutoObservable(this);
@@ -44,9 +48,9 @@ class userStore {
     this.isRemember = !this.isRemember;
   };
 
-  fetchRegistration = async (registrationData: RegistrationRequest) => {
+  fetchRegistration = async (registrationData: RegistrationRequest, code?: string) => {
     try {
-      const result = await myApi.register(registrationData);
+      const result = await myApi.register(registrationData, { code: code });
       runInAction(() => {
         this.email = registrationData.email;
         this.authenticationStage = 3;
@@ -112,9 +116,9 @@ class userStore {
     }
   };
 
-  fetchAuthorization = async (authorizationData: string) => {
+  fetchAuthorization = async (authorizationData: string, code?: string) => {
     try {
-      await myApi.login(authorizationData);
+      await myApi.login(authorizationData, { code: code });
       runInAction(() => {
         this.email = authorizationData;
         this.authenticationStage = 3;
@@ -131,6 +135,7 @@ class userStore {
         this.lastName = response.data.lastName;
         this.middleName = response.data.middleName;
         this.email = response.data.email;
+        this.contactInfo = response.data.contactInfo;
         this.profilePhoto = response.data.avatarUrl;
         this.phone = response.data.phoneNumber;
         if (response.data.subscriptionEndDate) {
@@ -193,7 +198,6 @@ class userStore {
       this.orgId = decodedJWT.orgId;
       this.userId = decodedJWT.userId;
       this.hierarchy = decodedJWT.hierarchy;
-      this.roles = decodedJWT.roles;
       this.authorities = getRolesFromMask(decodedJWT.authorities);
       // console.log(getRolesFromMask(decodeJWT(accessToken).authorities));
       notifyStore.connect();
@@ -218,7 +222,7 @@ class userStore {
   logout = () => {
     this.userId = undefined;
     this.orgId = undefined;
-    this.roles = '';
+
     this.hierarchy = undefined;
     this.authorities = [];
     this.accessToken = '';
@@ -252,7 +256,29 @@ class userStore {
   getOrganization = async () => {
     try {
       const response = await myApi.getOrganization();
-      this.organization = response.data;
+      runInAction(() => {
+        this.organization = response.data;
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  getInvitations = async () => {
+    try {
+      const response = await myApi.getInvitations1();
+      runInAction(() => {
+        this.invitations = response.data;
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  acceptInvitation = async (invitationId: number) => {
+    try {
+      await myApi.acceptInvitation(invitationId);
+      runInAction(() => {
+        this.invitations = undefined;
+      });
     } catch (error) {
       console.log(error);
     }

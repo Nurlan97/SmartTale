@@ -40,7 +40,11 @@ const InviteEmployee = observer(() => {
     initialValues: initialValues,
     onSubmit: (values) => {
       console.log(values);
-      employeeStore.inviteEmployee(values);
+      employeeStore.inviteEmployee({
+        email: values.email,
+        phoneNumber: values.phoneNumber,
+        positionId: values.positionId,
+      });
       formik.resetForm();
     },
     validationSchema: schema,

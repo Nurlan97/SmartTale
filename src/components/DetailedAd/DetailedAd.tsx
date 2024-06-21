@@ -4,10 +4,12 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { CreateOrderRequest, CreateProductRequest } from '../../api/data-contracts';
+import { defaultImage } from '../../assets';
 import { appStore, modalStore } from '../../store';
 import adStore from '../../store/adStore';
 import { Modals } from '../../store/modalStore';
 import Button from '../../UI/Button/Button';
+import { formatDate } from '../../utils/helpers';
 import {
   dateSchema,
   descriptionSchema,
@@ -106,8 +108,51 @@ const DetailedAd = observer(({ store }: IProps) => {
         )}
       </form>
 
+      {'acceptanceRequests' in ad && !!ad.acceptanceRequests.length && (
+        <>
+          <div className={styles.requests}>
+            <div className={styles.title}>Заявки на исполнение</div>
+          </div>
+          {ad.acceptanceRequests.map((request, ind) => {
+            return (
+              <div key={ind} className={styles.request}>
+                <div className={styles.requestDescription}>
+                  <img
+                    className={styles.requestLogo}
+                    src={request.logoUrl ? request.logoUrl : defaultImage}
+                    alt=''
+                  />
+                  <div className={styles.requestOrg}>{request.name}</div>
+                </div>
+                <div className={styles.requestDescription}>
+                  <div
+                    className={styles.requestDate}
+                  >{`Дата заявки ${formatDate(request.requestedAt)}`}</div>{' '}
+                  <Button
+                    color={'white'}
+                    type={'button'}
+                    height='40px'
+                    handler={() => {
+                      store.confirmRequest(request.code);
+                    }}
+                  >
+                    Принять
+                  </Button>
+                </div>
+              </div>
+            );
+          })}
+        </>
+      )}
       <div className={styles.footer}>
-        <Button color='orange' type='button' handler={() => navigate(-1)}>
+        <Button
+          color='orange'
+          type='button'
+          handler={() => {
+            navigate(-1);
+            // store.
+          }}
+        >
           Назад
         </Button>
         <div className={styles.btnGroup}>

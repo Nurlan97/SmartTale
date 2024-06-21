@@ -18,7 +18,7 @@ class employeeStore {
     isEmpty: true,
   };
   employeeDetail: EmployeeTasksResponse | undefined = undefined;
-  employeeDetailExt: { activeTab: 'all' | 'active' } = { activeTab: 'all' };
+  employeeDetailExt: { activeTab: 'history' | 'active' } = { activeTab: 'active' };
   posiitons: PositionSummary[] = [];
   constructor() {
     makeAutoObservable(this);
@@ -37,7 +37,7 @@ class employeeStore {
     });
     this.employeeDetail = response.data;
   };
-  switchDetailsTab = (tab: 'all' | 'active') => async () => {
+  switchDetailsTab = (tab: 'history' | 'active') => async () => {
     this.employeeDetailExt.activeTab = tab;
     this.employeeDetail?.employee.employeeId &&
       this.getEmployeeDetails(this.employeeDetail?.employee.employeeId);
@@ -49,7 +49,7 @@ class employeeStore {
     });
   };
   inviteEmployee = async (values: InviteRequest) => {
-    const response = await myApi.inviteEmployee(values);
+    const response = await myApi.sendInvitation(values);
     return response.data;
   };
   removeEmployeeFromTask = async (taskId: number, id: number) => {
@@ -58,6 +58,10 @@ class employeeStore {
       removedEmployees: [id],
       addedEmployees: [],
     });
+    if (this.employeeDetail && this.employeeDetail.tasks.content)
+      this.employeeDetail.tasks.content = this.employeeDetail.tasks.content.filter(
+        (task) => task.orderId !== taskId,
+      );
   };
 }
 

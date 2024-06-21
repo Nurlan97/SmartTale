@@ -1,6 +1,6 @@
 .wrapper {
   border-radius: 8px;
-  width: 459px;
+  width: 460px;
   box-shadow:
     0 8px 20px -4px rgba(23, 24, 24, 0.12),
     0 3px 6px -3px rgba(23, 24, 24, 0.08);
@@ -12,6 +12,7 @@
   color: #202223;
   position: absolute;
   top: 64px;
+  right: 10px;
   display: flex;
   flex-direction: column;
   align-items: start;
