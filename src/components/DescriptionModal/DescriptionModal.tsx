@@ -25,17 +25,6 @@ const DescriptionModal = observer(() => {
   return (
     <div className={styles.wrapper}>
       <div className={styles.images}>
-        {/* <img
-          className={styles.bigImage}
-          src={
-            'imageUrl' in card
-              ? card.imageUrl
-              : card.imageUrls[modalStore.detailedExt.activeImg]
-                ? card.imageUrls[modalStore.detailedExt.activeImg]
-                : defaultImage
-          }
-          alt=''
-        /> */}
         <ImageMagnifier
           className={styles.bigImage}
           imgUrl={

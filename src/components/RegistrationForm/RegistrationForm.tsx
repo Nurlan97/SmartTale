@@ -6,18 +6,15 @@ import { Link, useSearchParams } from 'react-router-dom';
 import { useDebounce } from '../../hooks/useDebounce';
 import { userStore } from '../../store';
 import Button from '../../UI/Button/Button';
-import {
-  formData,
-  initialValues,
-  ISubmitTypes,
-  RegistrationSchema,
-} from '../../utils/registrationHelpers';
+import { formData, initialValues, ISubmitTypes } from '../../utils/registrationHelpers';
 import { errorNotify } from '../../utils/toaster';
+import { emailSchema, fullNameSchema, phoneNumberSchema } from '../../utils/yupShemas';
 import Checkbox from '../Checkbox/Checkbox';
 import FormInput from '../FormInput/FormInput';
 import styles from './RegistrationForm.module.scss';
 
 const RegistrationForm = observer(() => {
+  const schema = fullNameSchema.concat(emailSchema).concat(phoneNumberSchema);
   const [searchParams, setSearchParams] = useSearchParams();
   const code = searchParams.get('code') || undefined;
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -60,7 +57,7 @@ const RegistrationForm = observer(() => {
   const formik = useFormik({
     initialValues,
     onSubmit,
-    validationSchema: RegistrationSchema,
+    validationSchema: schema,
     validateOnBlur: false,
   });
 

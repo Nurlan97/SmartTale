@@ -10,7 +10,7 @@ import {
 } from '../../api/data-contracts';
 import { defaultImage } from '../../assets';
 import { appStore } from '../../store';
-import { cutText } from '../../utils/helpers';
+import { addImageSize, cutText } from '../../utils/helpers';
 import styles from './adRow.module.scss';
 interface IAd {
   item: Product | OrderAccepted | SearchItem | OrderSummaryPersonal | JobSummary;
@@ -22,7 +22,11 @@ const AdRow = ({ item, children }: IAd) => {
   return (
     <div className={styles.wrapper}>
       <div className={styles.mainBlock}>
-        <img className={styles.img} src={image ? image : defaultImage} alt='' />
+        <img
+          className={styles.img}
+          src={image ? addImageSize(image, 75, 75) : defaultImage}
+          alt=''
+        />
         <div className={styles.descriptionBlock}>
           {'productId' in item && <div className={styles.equipment}>Оборудование</div>}
           {'orderId' in item && <div className={styles.service}>Заказ</div>}

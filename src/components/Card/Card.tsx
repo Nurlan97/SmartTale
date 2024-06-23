@@ -6,7 +6,7 @@ import { defaultImage, defaultPhoto } from '../../assets';
 import { modalStore, navbarStore } from '../../store';
 import { PathEnum } from '../../store/modalStore';
 import Button from '../../UI/Button/Button';
-import { cutText } from '../../utils/helpers';
+import { addImageSize, cutText } from '../../utils/helpers';
 import styles from './card.module.scss';
 interface IProps {
   card: PurchaseSummary | ICard;
@@ -22,7 +22,7 @@ const Card = observer(({ card }: IProps) => {
     <div className={styles.cardWrapper}>
       <img
         className={styles.cardImage}
-        src={card.imageUrl ? card.imageUrl : defaultImage}
+        src={card.imageUrl ? addImageSize(card.imageUrl, 269, 182) : defaultImage}
         alt=''
       />
       <div className={styles.descriptionWrapper}>

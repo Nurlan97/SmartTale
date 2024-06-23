@@ -121,3 +121,18 @@ export const redirectToAuth = (config: InternalAxiosRequestConfig<any>) => {
   userStore.logout();
   window.location.assign(`${window.location.origin}/#/authorization`);
 };
+
+export const addImageSize = (url: string, width: number, height: number): string => {
+  // Проверяем, что URL начинается с базовой части Cloudinary
+  if (url.startsWith('https://res.cloudinary.com/')) {
+    // Разделяем URL на основную часть и путь к изображению
+    const [baseURL, imagePath] = url.split('/v');
+
+    // Формируем новую часть URL с указанием размеров
+    const newURL = `${baseURL}/w_${width},h_${height}/v${imagePath}`;
+    return newURL;
+  } else {
+    // Если URL не начинается с ожидаемой базовой части, возвращаем исходный URL
+    return url;
+  }
+};

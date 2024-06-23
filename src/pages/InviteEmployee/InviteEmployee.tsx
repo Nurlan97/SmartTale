@@ -12,20 +12,12 @@ import { userStore } from '../../store';
 import employeeStore from '../../store/employeeStore';
 import Button from '../../UI/Button/Button';
 import Input from '../../UI/Input/Input';
-import { RegistrationSchema } from '../../utils/registrationHelpers';
 import { createStyles } from '../../utils/selectHelpers';
+import { emailSchema, phoneNumberSchema, positionSchema } from '../../utils/yupShemas';
 import styles from './inviteEmployee.module.scss';
 
 const InviteEmployee = observer(() => {
-  const schema = RegistrationSchema.concat(
-    Yup.object().shape({
-      positionId: Yup.number().test(
-        'not-zero',
-        'Поле не должно быть равно 0',
-        (value) => value !== 0,
-      ),
-    }),
-  );
+  const schema = emailSchema.concat(phoneNumberSchema).concat(positionSchema);
   const initialValues: InviteRequest = {
     firstName: '',
     lastName: '',

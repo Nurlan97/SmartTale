@@ -11,12 +11,7 @@ import { AdType } from '../../store/adStore';
 import { Modals } from '../../store/modalStore';
 import Button from '../../UI/Button/Button';
 import TabSwitch from '../../UI/TabSwitch/TabSwitch';
-import {
-  dateSchema,
-  descriptionSchema,
-  sizesSchema,
-  titleSchema,
-} from '../../utils/placeOrderHelpers';
+import { dateSchema, descriptionSchema, titleSchema } from '../../utils/yupShemas';
 import JobForm from './JobForm/JobForm';
 import OrderForm from './OrderForm/OrderForm';
 import styles from './placeAdvForm.module.scss';
@@ -61,9 +56,7 @@ const initialObj = {
 };
 const PlaceAdvForm = observer(({ store }: Props) => {
   const schema = titleSchema.concat(descriptionSchema);
-  if (store.type === 'Order') {
-    schema.concat(sizesSchema).concat(dateSchema);
-  }
+
   const typesArr: { tab: AdType; title: string }[] = [
     { tab: 'Product', title: 'Оборудование' },
     { tab: 'Order', title: 'Заказ' },
@@ -94,7 +87,6 @@ const PlaceAdvForm = observer(({ store }: Props) => {
   return (
     <>
       <div className={styles.wrapper}>
-        {/* <div className={styles.title}>Тип объявления</div> */}
         <TabSwitch
           activeTab={store.type}
           tabs={typesArr}

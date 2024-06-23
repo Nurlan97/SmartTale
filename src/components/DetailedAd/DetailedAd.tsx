@@ -11,19 +11,15 @@ import {
   UpdateOrderRequest,
   UpdateProductRequest,
 } from '../../api/data-contracts';
-import { defaultImage } from '../../assets';
+import { defaultImage, defaultPhoto } from '../../assets';
 import { appStore, modalStore, userStore } from '../../store';
 import adStore from '../../store/adStore';
+import employeeStore from '../../store/employeeStore';
 import { Modals } from '../../store/modalStore';
 import vacancyStore from '../../store/vacancyStore';
 import Button from '../../UI/Button/Button';
 import { formatDate } from '../../utils/helpers';
-import {
-  dateSchema,
-  descriptionSchema,
-  sizesSchema,
-  titleSchema,
-} from '../../utils/placeOrderHelpers';
+import { dateSchema, descriptionSchema, titleSchema } from '../../utils/yupShemas';
 import JobForm from '../PlaceAdvForm/JobForm/JobForm';
 import OrderForm from '../PlaceAdvForm/OrderForm/OrderForm';
 import ProductForm from '../PlaceAdvForm/ProductForm/ProductForm';
@@ -38,7 +34,7 @@ const DetailedAd = observer(({ store }: IProps) => {
   const schema = titleSchema.concat(descriptionSchema);
   const ad = store.ad[0];
   if ('orderId' in ad) {
-    schema.concat(sizesSchema).concat(dateSchema);
+    schema.concat(dateSchema);
   }
 
   const initialProduct: UpdateProductRequest | CreateProductRequest = {
@@ -152,6 +148,47 @@ const DetailedAd = observer(({ store }: IProps) => {
                     height='40px'
                     handler={() => {
                       store.confirmRequest(request.code);
+                    }}
+                  >
+                    Принять
+                  </Button>
+                </div>
+              </div>
+            );
+          })}
+        </>
+      )}
+      {'jobApplications' in ad && !!ad.jobApplications.length && (
+        <>
+          <div className={styles.requests}>
+            <div className={styles.title}>Заявки на исполнение</div>
+          </div>
+          {ad.jobApplications.map((request, ind) => {
+            return (
+              <div key={ind} className={styles.request}>
+                <div className={styles.requestDescription}>
+                  <img
+                    className={styles.requestLogo}
+                    src={request.avatarUrl ? request.avatarUrl : defaultPhoto}
+                    alt=''
+                  />
+                  <div className={styles.requestOrg}>{request.applicantName}</div>
+                </div>
+                <div className={styles.requestDescription}>
+                  <div
+                    className={styles.requestDate}
+                  >{`Дата заявки ${formatDate(request.applicationDate)}`}</div>{' '}
+                  <Button
+                    color={'white'}
+                    type={'button'}
+                    height='40px'
+                    handler={() => {
+                      // store.confirmRequest(request.applicantId);
+                      employeeStore.inviteEmployee({
+                        email: request.email,
+                        phoneNumber: request.phoneNumber,
+                        positionId: ad.positionId,
+                      });
                     }}
                   >
                     Принять

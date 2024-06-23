@@ -1,5 +1,5 @@
 import { makeAutoObservable, runInAction } from 'mobx';
-import uniqid from 'uniqid';
+import { v4 as uuidv4 } from 'uuid';
 
 import {
   CreateJobRequest,
@@ -79,7 +79,7 @@ export default class adStore {
       this.currentImages =
         'imageUrls' in this.ad[0] ? this.ad[0].imageUrls : this.ad[0].images;
       this.currentImages.forEach((val, ind) => {
-        this.#viewedImages.push({ index: ind, type: 'currentImages', id: uniqid() });
+        this.#viewedImages.push({ index: ind, type: 'currentImages', id: uuidv4() });
       });
       this.#oldImages = [...this.#viewedImages];
       this.updateViewed();
@@ -153,7 +153,7 @@ export default class adStore {
     const ind = this.additionalImages.length;
     this.additionalFiles.push(file);
     this.additionalImages.push(URL.createObjectURL(file));
-    this.#viewedImages.push({ index: ind, type: 'additionalImages', id: uniqid() });
+    this.#viewedImages.push({ index: ind, type: 'additionalImages', id: uuidv4() });
     this.updateViewed();
   };
   deleteImage = (ind: number) => {
@@ -180,7 +180,7 @@ export default class adStore {
       this.#viewedImages.splice(ind, 1, {
         index: imageToChange.index,
         type: 'additionalImages',
-        id: uniqid(),
+        id: uuidv4(),
       });
     } else {
       this.additionalFiles.push(file);
@@ -188,7 +188,7 @@ export default class adStore {
       this.#viewedImages.splice(ind, 1, {
         index: additionalInd,
         type: 'additionalImages',
-        id: uniqid(),
+        id: uuidv4(),
       });
     }
 
