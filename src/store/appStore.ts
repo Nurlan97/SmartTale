@@ -1,7 +1,5 @@
 import { makeAutoObservable, runInAction } from 'mobx';
 
-import { MOCK_DATA } from '../../MOCK_DATA';
-import { cardsArray } from '../../mockData';
 import {
   CustomPage,
   CustomPageEmployee,
@@ -12,6 +10,7 @@ import {
   ProductFull,
 } from '../api/data-contracts';
 import { myApi } from '../api/V1';
+import { errorNotify, successNotify } from '../utils/toaster';
 import modalStore from './modalStore';
 
 interface IMyAd {
@@ -100,8 +99,6 @@ class appStore {
     this.getMyAds();
   };
   getMyAds = async () => {
-    // this.myAds.data.content = cardsArray;
-
     try {
       const response = await myApi.getMyAds({
         q: this.myAds.group !== 'all' ? this.myAds.group : undefined,
@@ -111,6 +108,7 @@ class appStore {
       this.myAds.data = response.data;
     } catch (error) {
       console.log(error);
+      errorNotify('Произошла ошибка при загрузке, повторите попытку');
     }
   };
   myOrganizationSetGroup = (tab: 'orders' | 'employees') => async () => {
@@ -130,6 +128,7 @@ class appStore {
       this.myAds.detailed.push(response.data);
     } catch (error) {
       console.log(error);
+      errorNotify('Произошла ошибка при загрузке, повторите попытку');
     }
   };
   getMyBuys = async (page: number = 0, limit: number = 8) => {
@@ -166,6 +165,7 @@ class appStore {
       });
     } catch (error) {
       console.log(error);
+      errorNotify('Произошла ошибка при загрузке сотрудников, повторите попытку');
     }
     // this.myOrganization.employees.content = MOCK_DATA_EMPLOYEES;
   };
@@ -176,23 +176,29 @@ class appStore {
     try {
       await myApi.interactWithAd1(id, '3');
       modalStore.closeModal();
+      successNotify('Объявлени успешно удалено');
     } catch (error) {
       console.log(error);
+      errorNotify('Произошла ошибка при удалении, повторите попытку');
     }
   };
   closeAd = async (id: number) => {
     try {
       await myApi.interactWithAd1(id, '1');
       modalStore.closeModal();
+      successNotify('Объявлени успешно скрыто');
     } catch (error) {
       console.log(error);
+      errorNotify('Произошла ошибка при скрытии, повторите попытку');
     }
   };
   restoreAd = async (id: number) => {
     try {
       await myApi.interactWithAd1(id, '2');
+      successNotify('Объявлени успешно восставнолено');
     } catch (error) {
       console.log(error);
+      errorNotify('Произошла ошибка при восстановлении, повторите попытку');
     }
   };
   setMyPurchasesePage = (page: number) => {
@@ -208,6 +214,7 @@ class appStore {
       });
     } catch (error) {
       console.log(error);
+      errorNotify('Произошла ошибка при загрузке, повторите попытку');
     }
   };
 }

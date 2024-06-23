@@ -64,3 +64,10 @@ export const createClient = (token: string) => {
 
   return client;
 };
+
+export const sendMessage = (client: Client, message: string, destination: string) => {
+  client.publish({
+    destination,
+    body: JSON.stringify(message),
+  });
+};

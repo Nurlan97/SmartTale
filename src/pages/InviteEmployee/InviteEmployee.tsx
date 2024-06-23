@@ -13,6 +13,7 @@ import employeeStore from '../../store/employeeStore';
 import Button from '../../UI/Button/Button';
 import Input from '../../UI/Input/Input';
 import { RegistrationSchema } from '../../utils/registrationHelpers';
+import { createStyles } from '../../utils/selectHelpers';
 import styles from './inviteEmployee.module.scss';
 
 const InviteEmployee = observer(() => {
@@ -49,6 +50,11 @@ const InviteEmployee = observer(() => {
     },
     validationSchema: schema,
   });
+  type OptionType = {
+    value: string;
+    label: string;
+  };
+  const customStyles = createStyles<OptionType>(!!formik.errors.positionId);
   return (
     <div className={styles.page}>
       <Header
@@ -118,18 +124,11 @@ const InviteEmployee = observer(() => {
             };
           })}
           onChange={(option: any) => {
-            console.log(option);
             formik.setFieldValue('positionId', option.value);
           }}
-          className={formik.errors.positionId ? styles.select : ''}
+          styles={customStyles}
         />
-        {/* <div>
-          {Object.values(formik.errors).map((error, ind) => {
-            return <p key={ind}>{error}</p>;
-          })}
-          {JSON.stringify(formik.errors)}
-          {JSON.stringify(formik.values)}
-        </div> */}
+
         <div className={styles.footer}>
           <div className={styles.horizontalLine}></div>
           <Button color='blue' type='submit' width='fit-content'>

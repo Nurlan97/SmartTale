@@ -6,6 +6,7 @@ import ImageInput from '../../../UI/ImageInput/ImageInput';
 import Input from '../../../UI/Input/Input';
 import TabSwitch from '../../../UI/TabSwitch/TabSwitch';
 import Textarea from '../../../UI/Textarea/Textarea';
+import ImageModal from '../../ImageModal/ImageModal';
 import styles from './productForm.module.scss';
 
 type Props = {

@@ -7,6 +7,7 @@ import {
   PositionSummary,
 } from '../api/data-contracts';
 import { myApi } from '../api/V1';
+import { errorNotify, successNotify } from '../utils/toaster';
 
 class employeeStore {
   employeeList: CustomPageEmployee = {
@@ -49,19 +50,31 @@ class employeeStore {
     });
   };
   inviteEmployee = async (values: InviteRequest) => {
-    const response = await myApi.sendInvitation(values);
-    return response.data;
+    try {
+      const response = await myApi.sendInvitation(values);
+      successNotify('Приглашение успешно отправлено');
+      return response.data;
+    } catch (error) {
+      console.log(error);
+      errorNotify('Произошла ошибка при отправке пришлашения');
+    }
   };
   removeEmployeeFromTask = async (taskId: number, id: number) => {
-    await myApi.updateTask({
-      taskId: taskId,
-      removedEmployees: [id],
-      addedEmployees: [],
-    });
-    if (this.employeeDetail && this.employeeDetail.tasks.content)
-      this.employeeDetail.tasks.content = this.employeeDetail.tasks.content.filter(
-        (task) => task.orderId !== taskId,
-      );
+    try {
+      await myApi.updateTask({
+        taskId: taskId,
+        removedEmployees: [id],
+        addedEmployees: [],
+      });
+      if (this.employeeDetail && this.employeeDetail.tasks.content)
+        this.employeeDetail.tasks.content = this.employeeDetail.tasks.content.filter(
+          (task) => task.orderId !== taskId,
+        );
+      successNotify('Сотрудник успешно снят с заказа');
+    } catch (error) {
+      console.log(error);
+      errorNotify('Произошла ошибка при отстранении сотрудника');
+    }
   };
 }
 

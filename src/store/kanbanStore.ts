@@ -8,6 +8,7 @@ import {
 } from '../api/data-contracts';
 import { myApi } from '../api/V1';
 import { DragEvent, IColumn } from '../components/DragAndDrop/DragAndDrop';
+import { errorNotify } from '../utils/toaster';
 import modalStore, { Modals } from './modalStore';
 import { myReposytory } from './repository';
 
@@ -154,6 +155,7 @@ class kanbanStore {
       this.prevOrders = response.data;
     } catch (error) {
       console.log(error);
+      errorNotify('Произошла ошибка при загрузке, повторите попытку');
     }
   };
 
@@ -171,6 +173,7 @@ class kanbanStore {
         }
       } catch (error) {
         console.log(error);
+        errorNotify('Произошла ошибка при смене статуса, обновите страницу');
       }
     });
   };
@@ -185,6 +188,7 @@ class kanbanStore {
     } catch (error) {
       this.orders = this.prevOrders;
       console.log(error);
+      errorNotify('Произошла ошибка при смене статуса, обновите страницу');
     }
   };
   showDescription = (id: number | null) => {

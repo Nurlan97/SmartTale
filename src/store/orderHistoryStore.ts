@@ -1,10 +1,10 @@
 import { makeAutoObservable, runInAction, toJS } from 'mobx';
 import { CSSProperties } from 'react';
 
-import { tableData } from '../../mockData';
 import { CustomPageSmallOrder } from '../api/data-contracts';
 import { myApi } from '../api/V1';
 import { formatDate } from '../utils/helpers';
+import { errorNotify } from '../utils/toaster';
 
 interface IStyle {
   [key: string]: (prop: string) => CSSProperties;
@@ -183,17 +183,15 @@ class orderHistoryStore {
     this.dateFilter.currentType = type;
   };
   setSorting = (column: string) => {
-    console.log(column);
     if (this.table.sorting[column] === 'asc') this.table.sorting[column] = 'desc';
     else if (this.table.sorting[column] === 'desc') this.table.sorting[column] = 'noSort';
     else this.table.sorting[column] = 'asc';
-    console.log(this.table.sorting[column]);
   };
   setActiveTab = (tab: 'active' | 'history') => async () => {
     try {
       this.activeTab = tab;
       const response = await myApi.getOrders1({ q: tab });
-      this.getOrders(tab);
+
       runInAction(() => {
         this.data = response.data;
         this.table.headers.pop();
@@ -205,35 +203,7 @@ class orderHistoryStore {
       });
     } catch (error) {
       console.log(error);
-    }
-  };
-  getOrders = async (status: 'active' | 'history') => {
-    try {
-      const response = await myApi.getOrders1({ q: status });
-      runInAction(() => {
-        this.data = response.data;
-        // if (status === 'active')
-        //   this.data.content = tableData.filter(
-        //     (order) =>
-        //       order.status === 'NEW' ||
-        //       order.status === 'CHECKING' ||
-        //       order.status === 'IN_PROGRESS' ||
-        //       order.status === 'PENDING' ||
-        //       order.status === 'DISPATCHED' ||
-        //       order.status === 'CANCELED' ||
-        //       order.status === 'COMPLETED',
-        //   );
-        // else {
-        //   this.data.content = tableData.filter(
-        //     (order) =>
-        //       order.status === 'ARRIVED' ||
-        //       order.status === 'CANCELED' ||
-        //       order.status === 'COMPLETED',
-        //   );
-        // }
-      });
-    } catch (error) {
-      console.log(error);
+      errorNotify('Произошла ошибка при загрузке, повторите попытку');
     }
   };
 }

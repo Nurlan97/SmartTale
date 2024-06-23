@@ -24,6 +24,8 @@ const ModalContainer = observer(() => {
   map.set(Modals.successSubscribe, <SimpleModal />);
   map.set(Modals.deleteAd, <ChoiseModal />);
   map.set(Modals.hideAd, <ChoiseModal />);
+  map.set(Modals.deleteJob, <ChoiseModal />);
+  map.set(Modals.hideJob, <ChoiseModal />);
   map.set(Modals.exit, <ChoiseModal />);
   map.set(Modals.descriptionModal, <DescriptionModal />);
   map.set(Modals.changePhotoModal, <ChangePhotoModal />);

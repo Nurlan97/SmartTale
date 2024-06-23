@@ -1,0 +1,70 @@
+.page {
+  padding: 32px;
+  width: 100%;
+  height: 100%;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+}
+.adHided {
+  font-family: 'SF Pro', sans-serif;
+  font-weight: 500;
+  font-size: 18px;
+  color: #ff7300;
+}
+
+
+
+
+.title {
+  font-family: 'SF Pro', sans-serif;
+  font-weight: 400;
+  font-size: 16px;
+  color: #000;
+  margin: 20px 0;
+}
+.footer {
+  margin-top: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.btnGroup {
+  display: flex;
+  gap: 12px;
+}
+.requests {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  gap: 12px;
+}
+.request{
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: white;
+  border-radius: 12px;
+  padding: 9px;
+}
+.requestDescription{
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.requestLogo{
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+}
+.requestOrg{
+
+}
+.requestDate{
+  font-family: 'SF Pro', sans-serif;
+  font-weight: 400;
+  font-size: 14px;
+  color: #8e8e93;
+}

@@ -14,7 +14,8 @@ tabsMap.set('place-order', 'market');
 tabsMap.set('company-information', 'organization');
 tabsMap.set('employees', 'organization');
 tabsMap.set('roles', 'organization');
-// tabsMap.set('company-history', 'organization');
+tabsMap.set('vacancy', 'organization');
+
 export type AllowedStrings = 'profile' | 'market' | 'organization';
 
 class navbarStore {

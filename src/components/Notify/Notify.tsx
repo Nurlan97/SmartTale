@@ -1,10 +1,13 @@
+import { observer } from 'mobx-react-lite';
+
 import { IMessageOrg, IMessageUser, Messages } from '../../api/interfaces-ws';
+import { myApi } from '../../api/V1';
 import { NavbarMarket, NavbarOrders, NavbarProfile } from '../../assets';
 import { notifyStore } from '../../store';
 import styles from './notify.module.scss';
 
 type Props = { notify: IMessageUser | IMessageOrg };
-const Notify = ({ notify }: Props) => {
+const Notify = observer(({ notify }: Props) => {
   const notifyObj: {
     text: string;
     defaultLogo: React.VFC<React.SVGProps<SVGSVGElement>>;
@@ -96,12 +99,12 @@ const Notify = ({ notify }: Props) => {
     <button
       type='button'
       className={styles.wrapper}
-      // onClick={() => clickHandler(notify.id)}
+      onClick={() => notifyStore.markAsRead(notify.notificationId)}
     >
       <div className={notify.read ? styles.readed : styles.unreaded}></div>
       <div className={notifyObj.style}>
         {notifyObj.logo ? (
-          <img src={notifyObj.logo} alt={notify.data.sub} />
+          <img src={notifyObj.logo} alt={notify.data.sub} className={styles.logo} />
         ) : (
           <notifyObj.defaultLogo />
         )}
@@ -112,10 +115,24 @@ const Notify = ({ notify }: Props) => {
           <div className={styles.title}>{notify.data.sub}</div>
           <div className={styles.text}>{notifyObj.text}</div>
         </div>
-        <div className={styles.date}>{formatDate(new Date(notify.timestamp))}</div>
+        <div className={styles.date}>
+          {notifyObj.handlerCode ? (
+            <button
+              type='button'
+              onClick={() => {
+                if (notifyObj.handlerCode)
+                  myApi.confirmOrder({ code: notifyObj.handlerCode });
+              }}
+            >
+              Принять заказ
+            </button>
+          ) : (
+            <>{formatDate(new Date(notify.timestamp))}</>
+          )}
+        </div>
       </div>
     </button>
   );
-};
+});
 
 export default Notify;

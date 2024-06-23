@@ -353,7 +353,7 @@ class MyApi<SecurityDataType = unknown> extends HttpClient<SecurityDataType> {
       path: `/v1/organization/advertisements`,
       method: 'PUT',
       body: data,
-      type: ContentType.Json,
+      type: ContentType.FormData,
       ...params,
     });
   /**
@@ -546,14 +546,14 @@ class MyApi<SecurityDataType = unknown> extends HttpClient<SecurityDataType> {
    * @response `404` `void` User or Ad not found
    */
   updateAd = (
-    data: { dto: UpdateProductRequest | UpdateOrderRequest },
+    data: { dto: UpdateProductRequest | UpdateOrderRequest; images: File[] },
     params: RequestParams = {},
   ) =>
     this.request<string, void>({
       path: `/v1/account/advertisements`,
       method: 'PUT',
       body: data,
-      type: ContentType.Json,
+      type: ContentType.FormData,
       ...params,
     });
   /**

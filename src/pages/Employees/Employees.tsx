@@ -34,7 +34,15 @@ const headers = [
 ];
 const transform = {
   orderList: (prop: OrderAccepted[]) =>
-    prop.map((item) => <div key={item.orderId}>{item.title}</div>),
+    prop.map((item) => (
+      <Link
+        key={item.orderId}
+        to={`/task/${item.orderId}`}
+        style={{ textDecoration: 'underline' }}
+      >
+        {`${item.key} / ${item.title}`}
+      </Link>
+    )),
   name: (prop: string) => (
     <Link
       to={`/employees/${employeeStore.employeeList.content.find((row) => row.name === prop)?.employeeId}`}

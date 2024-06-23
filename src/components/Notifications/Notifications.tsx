@@ -25,18 +25,29 @@ const Notifications = observer(({ onMouseEnter, onMouseLeave }: Props) => {
               {notifyStore.notifications.map((notify, ind) => {
                 return <Notify notify={notify} key={ind} />;
               })}
-              <div className={styles.line}></div>
-              {notifyStore.hasUnreaded ? (
-                <button className={styles.button}>Отметить все прочитанными</button>
-              ) : (
-                <div>У вас нет непрочитанных уведомлений</div>
-              )}
             </>
           ) : (
             <div className={styles.empty}>У вас еще нет уведомлений</div>
           )}
         </div>
       </ScrollableWrapper>
+      <div className={styles.line}></div>
+      {notifyStore.notifications.length > 0 && (
+        <div className={styles.footer}>
+          {notifyStore.hasUnreaded ? (
+            <button
+              className={styles.button}
+              onClick={() => {
+                notifyStore.markAllReaded();
+              }}
+            >
+              Отметить все прочитанными
+            </button>
+          ) : (
+            <div>У вас нет непрочитанных уведомлений</div>
+          )}
+        </div>
+      )}
     </div>
   );
 });

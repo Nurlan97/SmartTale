@@ -12,6 +12,7 @@ import {
   ISubmitTypes,
   RegistrationSchema,
 } from '../../utils/registrationHelpers';
+import { errorNotify } from '../../utils/toaster';
 import Checkbox from '../Checkbox/Checkbox';
 import FormInput from '../FormInput/FormInput';
 import styles from './RegistrationForm.module.scss';
@@ -50,6 +51,7 @@ const RegistrationForm = observer(() => {
       }, 500);
     } catch (error) {
       console.log(error);
+      errorNotify('Произошла какая-то ошибка, повторите регистрацию');
     }
 
     setIsSubmitting(true);

@@ -10,6 +10,7 @@ import { userStore } from '../../store';
 import rolesStore from '../../store/rolesStore';
 import Button from '../../UI/Button/Button';
 import Input from '../../UI/Input/Input';
+import { createStyles } from '../../utils/selectHelpers';
 import styles from './editRole.module.scss';
 type Props = { position?: PositionDto };
 
@@ -27,6 +28,7 @@ const EditRole = observer(({ position }: Props) => {
     (v, i) => Number(userStore.hierarchy) + 1 + i,
   );
   const formik = useFormik({
+    enableReinitialize: true,
     initialValues: {
       title: position ? position.title : '',
       roles: position ? position.authorities : [],
@@ -68,6 +70,11 @@ const EditRole = observer(({ position }: Props) => {
     { title: 'Удаление работника', value: 'DELETE_EMPLOYEE' },
     { title: 'Удаление роли', value: 'DELETE_POSITION' },
   ];
+  type OptionType = {
+    value: string;
+    label: string;
+  };
+  const customStyles = createStyles<OptionType>(false);
 
   return (
     <div className={styles.wrapper}>
@@ -91,9 +98,10 @@ const EditRole = observer(({ position }: Props) => {
           onChange={(option: any) => {
             formik.setFieldValue('hierarchy', option.value);
           }}
-          defaultValue={formik.values.hierarchy}
+          defaultValue={{ value: positionHierarchy, label: positionHierarchy }}
           isSearchable={false}
           isDisabled={!isEdit}
+          styles={customStyles}
         />
         <div className={styles.title}>Выдача прав доступа</div>
         {roles.map((role) => (
@@ -120,7 +128,7 @@ const EditRole = observer(({ position }: Props) => {
             type={'button'}
             handler={() => {
               navigate(-1);
-              rolesStore.deletePosition();
+              rolesStore.clearPosition();
             }}
           >
             Назад

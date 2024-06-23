@@ -6,6 +6,7 @@ import { modalStore, userStore } from '../../store';
 import { Modals } from '../../store/modalStore';
 import Button from '../../UI/Button/Button';
 import { formatDate } from '../../utils/helpers';
+import ImageMagnifier from '../ImageMagnifier/ImageMagnifier';
 import styles from './descriptionModal.module.scss';
 
 const DescriptionModal = observer(() => {
@@ -24,7 +25,7 @@ const DescriptionModal = observer(() => {
   return (
     <div className={styles.wrapper}>
       <div className={styles.images}>
-        <img
+        {/* <img
           className={styles.bigImage}
           src={
             'imageUrl' in card
@@ -34,6 +35,16 @@ const DescriptionModal = observer(() => {
                 : defaultImage
           }
           alt=''
+        /> */}
+        <ImageMagnifier
+          className={styles.bigImage}
+          imgUrl={
+            'imageUrl' in card
+              ? card.imageUrl
+              : card.imageUrls[modalStore.detailedExt.activeImg]
+                ? card.imageUrls[modalStore.detailedExt.activeImg]
+                : defaultImage
+          }
         />
         {'imageUrl' in card ? (
           <img src={card.imageUrl} alt='' className={styles.smallImage} />

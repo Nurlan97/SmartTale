@@ -12,6 +12,7 @@ import { myApi } from '../api/V1';
 import { getRolesFromMask, Roles } from '../utils/authorizationHelpers';
 import { decodeJWT, isTokenExpired, removeCookie } from '../utils/helpers';
 import { setCookie } from '../utils/helpers';
+import { errorNotify, successNotify } from '../utils/toaster';
 import modalStore, { Modals } from './modalStore';
 import notifyStore from './notifyStore';
 
@@ -65,6 +66,7 @@ class userStore {
       return result;
     } catch (error) {
       console.log(error);
+      errorNotify('Произошла ошибка при проверке почты');
     }
   };
   fetchAvailablePhone = async (phoneValue: string) => {
@@ -73,6 +75,7 @@ class userStore {
       return result.data;
     } catch (error) {
       console.log(error);
+      errorNotify('Произошла ошибка при проверке телефона');
     }
   };
   sendVerificationCode = async (
@@ -144,6 +147,7 @@ class userStore {
       });
     } catch (error) {
       console.log(error);
+      errorNotify('Произошла ошибка при загрузке данных пользователя');
     }
   };
 
@@ -157,6 +161,7 @@ class userStore {
       this.profilePhoto = URL.createObjectURL(file);
     } catch (error) {
       console.log(error);
+      errorNotify('Произошла ошибка при смене аватарки');
     }
     modalStore.closeModal();
   };
@@ -177,6 +182,7 @@ class userStore {
       });
     } catch (error) {
       console.log(error);
+      errorNotify('Произошла ошибка при обновлении профиля');
     }
     modalStore.closeModal();
   };
@@ -187,6 +193,7 @@ class userStore {
       modalStore.openModal(Modals.successSubscribe);
     } catch (error) {
       console.log(error);
+      errorNotify('Произошла ошибка при отправке запроса о подписке');
     }
   };
   setTokens = (accessToken: string, refreshToken: string, isRemember?: boolean) => {
@@ -217,6 +224,7 @@ class userStore {
       });
     } catch (error) {
       console.log(error);
+      errorNotify('Произошла ошибка при проверке авторизации');
     }
   };
   logout = () => {
@@ -261,6 +269,7 @@ class userStore {
       });
     } catch (error) {
       console.log(error);
+      errorNotify('Произошла ошибка при загрузке данных компании');
     }
   };
   getInvitations = async () => {
@@ -271,6 +280,7 @@ class userStore {
       });
     } catch (error) {
       console.log(error);
+      errorNotify('Произошла ошибка при загрузке приглашений в организации');
     }
   };
   acceptInvitation = async (invitationId: number) => {
@@ -279,8 +289,10 @@ class userStore {
       runInAction(() => {
         this.invitations = undefined;
       });
+      successNotify('Вы успешно приняли пришлашение');
     } catch (error) {
       console.log(error);
+      errorNotify('Произошла ошибка при отклике на вакансию');
     }
   };
 }

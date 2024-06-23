@@ -2,6 +2,7 @@ import { makeAutoObservable, runInAction } from 'mobx';
 
 import { Position, PositionDto, PositionSummary } from '../api/data-contracts';
 import { myApi } from '../api/V1';
+import { errorNotify, successNotify } from '../utils/toaster';
 
 class rolesStore {
   position: PositionDto | undefined = undefined;
@@ -17,13 +18,26 @@ class rolesStore {
       });
     } catch (error) {
       console.log(error);
+      errorNotify('Произошла ошибка при загрузке, повторите попытку');
     }
   };
   createPosition = (data: Position) => {
-    myApi.createPosition(data);
+    try {
+      myApi.createPosition(data);
+      successNotify('Позиция успешно создана');
+    } catch (error) {
+      console.log(error);
+      errorNotify('Произошла ошибка при создании позиции');
+    }
   };
   updatePostiion = (data: Position) => {
-    myApi.updatePosition(data);
+    try {
+      myApi.updatePosition(data);
+      successNotify('Позиция успешно обновлена');
+    } catch (error) {
+      console.log(error);
+      errorNotify('Произошла ошибка при обновлении позиции');
+    }
   };
   getPosition = async (id: number) => {
     try {
@@ -33,9 +47,10 @@ class rolesStore {
       });
     } catch (error) {
       console.log(error);
+      errorNotify('Произошла ошибка при загрузке, повторите попытку');
     }
   };
-  deletePosition = () => {
+  clearPosition = () => {
     this.position = undefined;
   };
 }

@@ -2,8 +2,9 @@ import styles from './sizeInput.module.scss';
 type Props = {
   selectedSize: Set<string>;
   setSelectedSize: React.Dispatch<React.SetStateAction<Set<string>>>;
+  disabled?: boolean;
 };
-const SizeInput = ({ selectedSize, setSelectedSize }: Props) => {
+const SizeInput = ({ selectedSize, setSelectedSize, disabled = false }: Props) => {
   const sizes = [
     'XXS',
     'XS',
@@ -33,6 +34,7 @@ const SizeInput = ({ selectedSize, setSelectedSize }: Props) => {
         {sizes.map((size) => {
           return (
             <button
+              disabled={disabled}
               type='button'
               key={size}
               className={selectedSize.has(size) ? styles.sizeSelected : styles.size}

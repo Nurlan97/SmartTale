@@ -10,6 +10,7 @@ import {
   Purchase,
 } from '../api/data-contracts';
 import { myApi } from '../api/V1';
+import { errorNotify } from '../utils/toaster';
 
 export enum Modals {
   closeOrder = 'closeOrder',
@@ -21,6 +22,8 @@ export enum Modals {
   successSubscribe = 'successSubscribe',
   deleteAd = 'deleteAd',
   hideAd = 'hideAd',
+  deleteJob = 'deleteJob',
+  hideJob = 'hideJob',
   exit = 'exit',
   descriptionModal = 'descriptionModal',
   changePhotoModal = 'changePhotoModal',
@@ -79,20 +82,13 @@ class modalStore {
       }
 
       this.detailed.push(response.data);
-      // if (
-      //   path === '/my-purchases' ||
-      //   path === '/equipment' ||
-      //   path === '/services' ||
-      //   path === '/job'
-      // ) {
-      //   this.detailedExt.path = pathObj[path];
-      // }
       this.detailedExt.path = path;
       this.detailedExt.activeImg = 0;
       this.detailedExt.activeTab = 'description';
       this.currentModal = Modals.descriptionModal;
     } catch (error) {
       console.log(error);
+      errorNotify('Произошла ошибка при загрузке, повторите попытку');
       this.isOpen = false;
     }
   };
@@ -113,6 +109,7 @@ class modalStore {
       this.openModal(Modals.successPurchase);
     } catch (error) {
       console.log(error);
+      errorNotify('Произошла ошибка при отправке запроса, повторите попытку');
     }
   };
   getPositions = async () => {
@@ -121,6 +118,7 @@ class modalStore {
       this.dropDownPositions = response.data;
     } catch (error) {
       console.log(error);
+      errorNotify('Произошла ошибка при загрузке, повторите попытку');
     }
   };
   senInvite = (data: InviteRequest) => {

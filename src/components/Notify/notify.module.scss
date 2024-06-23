@@ -72,3 +72,9 @@
   @include read;
   background-color: #ffcc00;
 }
+.logo {
+  width: 32px;
+  height: 32px;
+  border-radius: 16px;
+  object-fit: cover;
+}

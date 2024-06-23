@@ -7,7 +7,7 @@ import { observer } from 'mobx-react-lite';
 import { useEffect, useLayoutEffect, useState } from 'react';
 import DatePicker, { registerLocale } from 'react-datepicker';
 
-import { CreateOrderRequest } from '../../../api/data-contracts';
+import { CreateOrderRequest, UpdateOrderRequest } from '../../../api/data-contracts';
 import { typePlaceAdvStore, userStore } from '../../../store';
 import DateCustomInput from '../../../UI/DateCustomInput/DateCustomInput';
 import ImageInput from '../../../UI/ImageInput/ImageInput';
@@ -18,7 +18,7 @@ import SizeInput from '../../SizeInput/SizeInput';
 import styles from './orderForm.module.scss';
 type Props = {
   store: typePlaceAdvStore;
-  formik: FormikProps<CreateOrderRequest>;
+  formik: FormikProps<CreateOrderRequest | UpdateOrderRequest>;
   isEdit?: boolean;
 };
 registerLocale('ru', ru);
@@ -53,7 +53,11 @@ const OrderForm = observer(({ formik, store, isEdit = true }: Props) => {
       />
       <div className={styles.helper}>максимум 1000 символов, минимум 5</div>
 
-      <SizeInput selectedSize={selectedSize} setSelectedSize={setSelectedSize} />
+      <SizeInput
+        selectedSize={selectedSize}
+        setSelectedSize={setSelectedSize}
+        disabled={!isEdit}
+      />
 
       <Input
         onChange={formik.handleChange}
@@ -66,7 +70,12 @@ const OrderForm = observer(({ formik, store, isEdit = true }: Props) => {
       <div className={styles.title}>Крайняя дата выполнения</div>
       <DatePicker
         withPortal
-        selected={(formik.values.deadline && new Date(formik.values.deadline)) || null}
+        selected={
+          ('deadlineAt' in formik.values &&
+            formik.values.deadlineAt &&
+            new Date(formik.values.deadlineAt)) ||
+          null
+        }
         onChange={(date: Date) =>
           formik.setFieldValue('deadline', date.toISOString().slice(0, 10))
         }

@@ -6,6 +6,7 @@ import {
   UpdateTaskRequest,
 } from '../api/data-contracts';
 import { myApi } from '../api/V1';
+import { errorNotify, successNotify } from '../utils/toaster';
 
 export default class taskStore {
   task: MonitoringOrder | undefined = undefined;
@@ -27,6 +28,7 @@ export default class taskStore {
       });
     } catch (error) {
       console.log(error);
+      errorNotify('Произошла ошибка при загрузке, повторите попытку');
     }
   };
   setImage = (num: number) => () => {
@@ -38,14 +40,17 @@ export default class taskStore {
       this.employeesDD = response.data;
     } catch (error) {
       console.log(error);
+      errorNotify('Произошла ошибка при загрузке, повторите попытку');
     }
   };
   updateTask = async (task: UpdateTaskRequest) => {
     try {
       await myApi.updateTask(task);
       this.getTask(this.detailedExt.id);
+      successNotify('Задача успешно обновлена');
     } catch (error) {
       console.log(error);
+      errorNotify('Произошла ошибка при обновлении, повторите попытку');
     }
   };
   removeTask = () => {

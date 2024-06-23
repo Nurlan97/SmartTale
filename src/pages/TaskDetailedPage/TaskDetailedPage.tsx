@@ -1,5 +1,3 @@
-import { injectStores } from '@mobx-devtools/tools';
-import { toJS } from 'mobx';
 import { observer } from 'mobx-react-lite';
 import { useLayoutEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -12,6 +10,7 @@ import { userStore } from '../../store';
 import taskStore from '../../store/taskStore';
 import Button from '../../UI/Button/Button';
 import { formatDate, toCamelCase } from '../../utils/helpers';
+import { createStyles } from '../../utils/selectHelpers';
 import styles from './taskDetailedPage.module.scss';
 
 const store = new taskStore();
@@ -25,6 +24,11 @@ enum Statuses {
   COMPLETED = 'Завершен',
   CANCELED = 'Отменен',
 }
+type OptionType = {
+  value: number;
+  label: string;
+  data: EmployeeSummary;
+};
 const TaskDetailedPage = observer(() => {
   const navigate = useNavigate();
   const { id } = useParams();
@@ -37,7 +41,7 @@ const TaskDetailedPage = observer(() => {
   const [isEdit, setIsEdit] = useState(false);
   const [addedEmployees, setAddedEmployees] = useState<EmployeeSummary[]>([]);
   const [removedEmployees, setRemovedEmployees] = useState<number[]>([]);
-
+  const customStyles = createStyles<OptionType>(false);
   const options = store.employeesDD
     .filter((option) => {
       if (removedEmployees.some((id) => id === option.employeeId)) return true;
@@ -213,6 +217,7 @@ const TaskDetailedPage = observer(() => {
                     }}
                     isSearchable={options.length !== 0}
                     noOptionsMessage={() => 'Нет сотрудников для назначения'}
+                    styles={customStyles}
                   />
                 </div>
               ) : (

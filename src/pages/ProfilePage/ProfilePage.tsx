@@ -1,6 +1,6 @@
 import { useFormik } from 'formik';
 import { observer } from 'mobx-react-lite';
-import { useEffect } from 'react';
+import { useEffect, useLayoutEffect } from 'react';
 
 import { defaultPhoto, logo, NavbarProfile } from '../../assets';
 import Header from '../../components/Header/Header';
@@ -15,7 +15,13 @@ import { formatDate } from '../../utils/helpers';
 import styles from './profilePage.module.scss';
 
 const ProfilePage = observer(() => {
+  useLayoutEffect(() => {
+    userStore.getUser();
+    userStore.getOrganization();
+    userStore.getInvitations();
+  }, []);
   const formik = useFormik({
+    enableReinitialize: true,
     initialValues: {
       firstName: userStore.firstName,
       middleName: userStore.middleName,
@@ -24,6 +30,7 @@ const ProfilePage = observer(() => {
       email: userStore.email,
       contactInfo: userStore.contactInfo,
     },
+
     onSubmit: (values) => {
       const data = {
         firstName: values.firstName,
@@ -37,11 +44,6 @@ const ProfilePage = observer(() => {
       userStore.updateProfile(data);
     },
   });
-  useEffect(() => {
-    userStore.getUser();
-    userStore.getOrganization();
-    userStore.getInvitations();
-  }, []);
 
   return (
     <div className={styles.page}>

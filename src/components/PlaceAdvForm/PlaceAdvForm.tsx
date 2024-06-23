@@ -69,7 +69,7 @@ const PlaceAdvForm = observer(({ store }: Props) => {
     { tab: 'Order', title: 'Заказ' },
   ];
   if (userStore.authorities.includes('INVITE_EMPLOYEE')) {
-    typesArr.push({ tab: 'Job', title: 'Услуга' });
+    typesArr.push({ tab: 'Job', title: 'Работа' });
   }
 
   const formik = useFormik({

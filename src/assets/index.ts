@@ -1,5 +1,6 @@
+import notFound from './404.png';
 import Asc from './ascend.svg';
-import authBackground from './authBackground.png';
+import authBackground from './authBackground.jpg';
 import Bell from './bell.svg';
 import Calendar from './calendar.svg';
 import CheckMark from './check mark.svg';
@@ -57,5 +58,6 @@ export {
   NavbarOrganization,
   NavbarProfile,
   NoSort,
+  notFound,
   Search,
 };

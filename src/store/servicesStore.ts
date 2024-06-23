@@ -1,8 +1,8 @@
 import { makeAutoObservable, runInAction } from 'mobx';
 
-import { cardsArray } from '../../mockData';
 import { CustomPageCard } from '../api/data-contracts';
 import { myApi } from '../api/V1';
+import { errorNotify } from '../utils/toaster';
 import modalStore, { Modals } from './modalStore';
 
 class servicesStore {
@@ -44,6 +44,7 @@ class servicesStore {
       });
     } catch (error) {
       console.log(error);
+      errorNotify('Произошла ошибка при загрузке, повторите попытку');
     } finally {
       this.isLoading = false;
       modalStore.closeModal();

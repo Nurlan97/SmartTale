@@ -100,11 +100,6 @@ export class HttpClient<SecurityDataType = unknown> {
       async (error) => {
         const originalRequest = error.config;
 
-        // /v1/market/{advertisementId} accep order
-        // /v1/organization
-        // /v1/monitoring
-        // Add refreshToken after 403 status code
-
         if (!userStore.isAuth) {
           return Promise.reject(error);
         }
