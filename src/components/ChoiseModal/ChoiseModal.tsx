@@ -2,6 +2,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 
 import { appStore, modalStore, userStore } from '../../store';
 import { Modals } from '../../store/modalStore';
+import vacancyStore from '../../store/vacancyStore';
 import Button from '../../UI/Button/Button';
 import styles from './choiseModal.module.scss';
 
@@ -29,6 +30,28 @@ const ChoiseModal = () => {
     button2: 'Скрыть',
     handler: () => {
       appStore.closeAd(id);
+      navigate(-1);
+    },
+  });
+  map.set(Modals.deleteJob, {
+    emoji: '😔',
+    title: 'Удалить объявление?',
+    description: 'Объявление удалится навсегда!',
+    button1: 'Отменить',
+    button2: 'Удалить',
+    handler: () => {
+      vacancyStore.deleteAd(id);
+      navigate(-1);
+    },
+  });
+  map.set(Modals.hideJob, {
+    emoji: '🙃',
+    title: 'Скрыть объявление?',
+    description: 'Объявление больше не будет доступно для просмотра в маркетплейсе',
+    button1: 'Отменить',
+    button2: 'Скрыть',
+    handler: () => {
+      vacancyStore.closeAd(id);
       navigate(-1);
     },
   });

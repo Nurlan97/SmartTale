@@ -22,6 +22,8 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+  position: relative;
+  // overflow: hidden;
 }
 
 .smallImage {
@@ -147,17 +149,17 @@
   color: #8e8e93;
   margin: 16px 0;
 }
-.footer{
+.footer {
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
-.quantityGroup{
+.quantityGroup {
   display: flex;
   flex-direction: column;
-   color: #717175;
+  color: #717175;
 }
-.quantitySelector{
+.quantitySelector {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -180,15 +182,15 @@
   flex-direction: column;
   justify-content: space-between;
 }
-.purchase{
+.purchase {
   display: flex;
   flex-direction: column;
 }
-.purchaseDescription{
+.purchaseDescription {
   display: flex;
   text-wrap: nowrap;
   gap: 12px;
 }
-.totalPrice{
+.totalPrice {
   color: #ff9500;
 }

@@ -1,5 +1,6 @@
 import { useFormik } from 'formik';
 import { observer } from 'mobx-react-lite';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Select from 'react-select';
 import * as yup from 'yup';
@@ -9,26 +10,30 @@ import { userStore } from '../../store';
 import rolesStore from '../../store/rolesStore';
 import Button from '../../UI/Button/Button';
 import Input from '../../UI/Input/Input';
+import { createStyles } from '../../utils/selectHelpers';
 import styles from './editRole.module.scss';
 type Props = { position?: PositionDto };
 
-const schema = yup.object().shape({
-  title: yup.string().required('Обязательное поле для заполнения'),
-});
-
 const EditRole = observer(({ position }: Props) => {
+  const userHierarchy = userStore.hierarchy !== undefined ? userStore.hierarchy : 99999;
+  const positionHierarchy = position?.hierarchy !== undefined ? position.hierarchy : 0;
+  const isEditable =
+    userHierarchy < positionHierarchy &&
+    userStore.authorities.includes('UPDATE_POSITION');
+
+  const [isEdit, setIsEdit] = useState(!position);
   const navigate = useNavigate();
   const availableHierarchy = Array.from(
     { length: 10 },
     (v, i) => Number(userStore.hierarchy) + 1 + i,
   );
   const formik = useFormik({
+    enableReinitialize: true,
     initialValues: {
       title: position ? position.title : '',
       roles: position ? position.authorities : [],
       hierarchy: position ? position.hierarchy : availableHierarchy[0],
     },
-    validationSchema: schema,
     onSubmit: (values) => {
       console.log(values);
       if (position) {
@@ -65,6 +70,11 @@ const EditRole = observer(({ position }: Props) => {
     { title: 'Удаление работника', value: 'DELETE_EMPLOYEE' },
     { title: 'Удаление роли', value: 'DELETE_POSITION' },
   ];
+  type OptionType = {
+    value: string;
+    label: string;
+  };
+  const customStyles = createStyles<OptionType>(false);
 
   return (
     <div className={styles.wrapper}>
@@ -74,6 +84,7 @@ const EditRole = observer(({ position }: Props) => {
           value={formik.values.title}
           id='title'
           label='Название должности'
+          disabled={!isEdit}
         />
         <div className={styles.title}>Уровень иерархии</div>
         <Select
@@ -85,10 +96,12 @@ const EditRole = observer(({ position }: Props) => {
             };
           })}
           onChange={(option: any) => {
-            formik.setFieldValue('hierarchy', option);
+            formik.setFieldValue('hierarchy', option.value);
           }}
-          defaultValue={formik.values.hierarchy}
+          defaultValue={{ value: positionHierarchy, label: positionHierarchy }}
           isSearchable={false}
+          isDisabled={!isEdit}
+          styles={customStyles}
         />
         <div className={styles.title}>Выдача прав доступа</div>
         {roles.map((role) => (
@@ -101,6 +114,7 @@ const EditRole = observer(({ position }: Props) => {
               value={role.value}
               onChange={formik.handleChange}
               checked={formik.values.roles.includes(role.value)}
+              disabled={!isEdit}
             />
             <label htmlFor={role.value}>{role.title}</label>
           </div>
@@ -114,14 +128,34 @@ const EditRole = observer(({ position }: Props) => {
             type={'button'}
             handler={() => {
               navigate(-1);
-              rolesStore.deletePosition();
+              rolesStore.clearPosition();
             }}
           >
             Назад
           </Button>
-          <Button color={'blue'} type={'submit'} handler={formik.handleSubmit}>
-            {position ? 'Обновить' : 'Добавить'}
-          </Button>
+
+          {!position ? (
+            <Button
+              color={'blue'}
+              type={'submit'}
+              handler={formik.handleSubmit}
+              disabled={!formik.values.title}
+            >
+              Добавить должность
+            </Button>
+          ) : isEditable ? (
+            isEdit ? (
+              <Button color={'blue'} type={'button'} handler={() => setIsEdit(false)}>
+                Сохранить
+              </Button>
+            ) : (
+              <Button color={'blue'} type={'button'} handler={() => setIsEdit(true)}>
+                Редактировать
+              </Button>
+            )
+          ) : (
+            <>Нет прав на редактирование</>
+          )}
         </div>
       </div>
     </div>

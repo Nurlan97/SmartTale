@@ -25,10 +25,12 @@ import {
   CustomPagePurchaseSummary,
   CustomPageSearchItem,
   CustomPageSmallOrder,
+  CustomPageUserSummary,
+  EmployeeSummary,
   EmployeeTasksResponse,
   InviteRequest,
+  InviteUserRequest,
   Job,
-  JobCard,
   LoginResponse,
   MonitoringOrder,
   OrderCard,
@@ -52,6 +54,7 @@ import {
   UpdateProductRequest,
   UpdateProfileRequest,
   UpdateTaskRequest,
+  UserDto,
   VerificationRequest,
 } from './data-contracts';
 import { ContentType, HttpClient, RequestParams } from './http-client';
@@ -203,6 +206,27 @@ class MyApi<SecurityDataType = unknown> extends HttpClient<SecurityDataType> {
       ...params,
     });
   /**
+   * @description If user did not change anything except position title, then send patch request
+   *
+   * @tags patch, Organization, organization, position
+   * @name RenamePosition
+   * @summary Rename position
+   * @request PATCH:/v1/organization/positions
+   * @response `200` `string` Success
+   * @response `400` `string` Bad request
+   * @response `401` `string` Unauthorized
+   * @response `403` `string` No permission
+   * @response `404` `string` User, org or position not found
+   */
+  renamePosition = (data: Position, params: RequestParams = {}) =>
+    this.request<string, string>({
+      path: `/v1/organization/positions`,
+      method: 'PATCH',
+      body: data,
+      type: ContentType.Json,
+      ...params,
+    });
+  /**
    * @description Get all employees and invitees of organization
    *
    * @tags Organization, organization, get, employee, user, account
@@ -261,8 +285,8 @@ class MyApi<SecurityDataType = unknown> extends HttpClient<SecurityDataType> {
    * @description Sends email to invited person's address
    *
    * @tags Organization, post, organization, employee, user, account
-   * @name InviteEmployee
-   * @summary Invite employee
+   * @name SendInvitation
+   * @summary Send invitation
    * @request POST:/v1/organization/employees
    * @response `201` `string` Invite successful
    * @response `400` `string` Bad request. Email is validated
@@ -270,7 +294,7 @@ class MyApi<SecurityDataType = unknown> extends HttpClient<SecurityDataType> {
    * @response `403` `string` Forbidden
    * @response `404` `string` User, org or position not found
    */
-  inviteEmployee = (data: InviteRequest, params: RequestParams = {}) =>
+  sendInvitation = (data: InviteRequest, params: RequestParams = {}) =>
     this.request<string, string>({
       path: `/v1/organization/employees`,
       method: 'POST',
@@ -329,7 +353,7 @@ class MyApi<SecurityDataType = unknown> extends HttpClient<SecurityDataType> {
       path: `/v1/organization/advertisements`,
       method: 'PUT',
       body: data,
-      type: ContentType.Json,
+      type: ContentType.FormData,
       ...params,
     });
   /**
@@ -465,6 +489,22 @@ class MyApi<SecurityDataType = unknown> extends HttpClient<SecurityDataType> {
       ...params,
     });
   /**
+   * No description
+   *
+   * @tags Account
+   * @name DeleteAccount
+   * @request DELETE:/v1/account/profile
+   * @response `200` `string` OK
+   */
+  deleteAccount = (data: string, params: RequestParams = {}) =>
+    this.request<string, any>({
+      path: `/v1/account/profile`,
+      method: 'DELETE',
+      body: data,
+      type: ContentType.Text,
+      ...params,
+    });
+  /**
    * @description Returns orders and products that belong to user, distinguish by "orderId" and "productId" field of objects
    *
    * @tags get, advertisement, My Advertisements, user, account
@@ -487,7 +527,7 @@ class MyApi<SecurityDataType = unknown> extends HttpClient<SecurityDataType> {
     },
     params: RequestParams = {},
   ) =>
-    this.request<CustomPage, void>({
+    this.request<OrderSummaryPersonal & Product & CustomPage, void>({
       path: `/v1/account/advertisements`,
       method: 'GET',
       query: query,
@@ -506,7 +546,7 @@ class MyApi<SecurityDataType = unknown> extends HttpClient<SecurityDataType> {
    * @response `404` `void` User or Ad not found
    */
   updateAd = (
-    data: { dto: UpdateProductRequest | UpdateOrderRequest },
+    data: { dto: UpdateProductRequest | UpdateOrderRequest; images: File[] },
     params: RequestParams = {},
   ) =>
     this.request<string, void>({
@@ -514,6 +554,26 @@ class MyApi<SecurityDataType = unknown> extends HttpClient<SecurityDataType> {
       method: 'PUT',
       body: data,
       type: ContentType.FormData,
+      ...params,
+    });
+  /**
+   * No description
+   *
+   * @tags user, post
+   * @name InviteEmployee
+   * @summary Invite a user
+   * @request POST:/v1/users/invite
+   * @response `201` `string` Success
+   * @response `401` `void` Unauthorized
+   * @response `403` `void` No permission or role
+   * @response `404` `void` User not found
+   */
+  inviteEmployee = (data: InviteUserRequest, params: RequestParams = {}) =>
+    this.request<string, void>({
+      path: `/v1/users/invite`,
+      method: 'POST',
+      body: data,
+      type: ContentType.Json,
       ...params,
     });
   /**
@@ -578,7 +638,7 @@ class MyApi<SecurityDataType = unknown> extends HttpClient<SecurityDataType> {
    * @response `404` `void` Ad not found
    */
   getAd = (advertisementId: number, params: RequestParams = {}) =>
-    this.request<ProductCard | OrderCard | JobCard, void>({
+    this.request<ProductCard | OrderCard, void>({
       path: `/v1/market/${advertisementId}`,
       method: 'GET',
       ...params,
@@ -911,6 +971,54 @@ class MyApi<SecurityDataType = unknown> extends HttpClient<SecurityDataType> {
       ...params,
     });
   /**
+   * No description
+   *
+   * @tags user, get
+   * @name GetUsers
+   * @summary Get all users
+   * @request GET:/v1/users
+   * @response `200` `CustomPageUserSummary` Success
+   * @response `401` `void` Unauthorized
+   */
+  getUsers = (
+    query?: {
+      /**
+       * Page number
+       * @example 1
+       */
+      page?: any;
+      /**
+       * Page size
+       * @example 1
+       */
+      size?: any;
+    },
+    params: RequestParams = {},
+  ) =>
+    this.request<CustomPageUserSummary, void>({
+      path: `/v1/users`,
+      method: 'GET',
+      query: query,
+      ...params,
+    });
+  /**
+   * No description
+   *
+   * @tags user, get
+   * @name GetOneUser
+   * @summary Get one user
+   * @request GET:/v1/users/{userId}
+   * @response `200` `UserDto` Success
+   * @response `401` `void` Unauthorized
+   * @response `404` `void` User not found
+   */
+  getOneUser = (userId: number, params: RequestParams = {}) =>
+    this.request<UserDto, void>({
+      path: `/v1/users/${userId}`,
+      method: 'GET',
+      ...params,
+    });
+  /**
    * @description Search by query and context aka filter. iDD stands for dropdown field
    *
    * @tags search, Search API, get
@@ -1213,6 +1321,23 @@ class MyApi<SecurityDataType = unknown> extends HttpClient<SecurityDataType> {
       ...params,
     });
   /**
+   * @description Retrieve employees list whose hierarchy is lower
+   *
+   * @tags get, employee, monitoring, Monitoring
+   * @name GetEmployeesBeforeAssign
+   * @summary Get employees to assign
+   * @request GET:/v1/monitoring/employees
+   * @response `200` `(EmployeeSummary)[]` Success
+   * @response `401` `(EmployeeSummary)[]` Unauthorized
+   * @response `403` `(EmployeeSummary)[]` No permission to assign employees
+   */
+  getEmployeesBeforeAssign = (params: RequestParams = {}) =>
+    this.request<EmployeeSummary[], EmployeeSummary[]>({
+      path: `/v1/monitoring/employees`,
+      method: 'GET',
+      ...params,
+    });
+  /**
    * @description Returns purchases with product in it
    *
    * @tags product, get, purchase, Purchases, user, account
@@ -1320,28 +1445,6 @@ class MyApi<SecurityDataType = unknown> extends HttpClient<SecurityDataType> {
       ...params,
     });
   /**
-   * @description EP for close(1)/disclose(2)/delete(3) an ad
-   *
-   * @tags Organization, organization, advertisement, job, delete
-   * @name InteractWithAd
-   * @summary Interact with org ad
-   * @request DELETE:/v1/organization/{advertisementId}/{actionId}
-   * @response `200` `string` Success
-   * @response `401` `void` Unauthorized
-   * @response `403` `void` No permission
-   * @response `404` `void` User or Ad not found
-   */
-  interactWithAd = (
-    advertisementId: number,
-    actionId: string,
-    params: RequestParams = {},
-  ) =>
-    this.request<string, void>({
-      path: `/v1/organization/${advertisementId}/${actionId}`,
-      method: 'DELETE',
-      ...params,
-    });
-  /**
    * @description Deletes sent invitation. Requires DELETE_EMPLOYEE permission
    *
    * @tags Organization, invitation, organization, delete
@@ -1356,6 +1459,28 @@ class MyApi<SecurityDataType = unknown> extends HttpClient<SecurityDataType> {
   deleteInvitation = (invId: number, params: RequestParams = {}) =>
     this.request<string, string>({
       path: `/v1/organization/invitations/${invId}`,
+      method: 'DELETE',
+      ...params,
+    });
+  /**
+   * @description EP for close(1)/disclose(2)/delete(3) an ad
+   *
+   * @tags Organization, organization, advertisement, job, delete
+   * @name InteractWithAd
+   * @summary Interact with org ad
+   * @request DELETE:/v1/organization/advertisements/{advertisementId}/{actionId}
+   * @response `200` `string` Success
+   * @response `401` `void` Unauthorized
+   * @response `403` `void` No permission
+   * @response `404` `void` User or Ad not found
+   */
+  interactWithAd = (
+    advertisementId: number,
+    actionId: string,
+    params: RequestParams = {},
+  ) =>
+    this.request<string, void>({
+      path: `/v1/organization/advertisements/${advertisementId}/${actionId}`,
       method: 'DELETE',
       ...params,
     });
@@ -1398,5 +1523,4 @@ class MyApi<SecurityDataType = unknown> extends HttpClient<SecurityDataType> {
       ...params,
     });
 }
-
 export const myApi = new MyApi();

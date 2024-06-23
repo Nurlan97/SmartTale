@@ -22,7 +22,6 @@ interface INavBar {
   path: string;
 }
 const NavBar = observer(({ path }: INavBar) => {
-  console.log(path);
   const navigate = useNavigate();
   const profileRef = useRef<HTMLDivElement>(null);
   const ordersRef = useRef<HTMLDivElement>(null);
@@ -133,7 +132,7 @@ const NavBar = observer(({ path }: INavBar) => {
         <div ref={marketRef} className={extendedLinkGroup(navbarStore.tabs.market)}>
           <NavbarLink title='Оборудование' to='equipment' />
           <NavbarLink title='Заказы' to='services' />
-          <NavbarLink title='Услуги' to='job' />
+          <NavbarLink title='Вакансии' to='job' />
           {userStore.isAuth && (
             <NavbarLink title='Разместить объявление' to='place-adv' />
           )}
@@ -158,6 +157,7 @@ const NavBar = observer(({ path }: INavBar) => {
             >
               <NavbarLink title='Информация' to='company-information' />
               <NavbarLink title='Сотрудники' to='employees' />
+              <NavbarLink title='Вакансии' to='vacancy' />
               <NavbarLink title='Должности' to='roles' />
               <NavbarLink title='Текущие заказы' to='orders-active' />
               <NavbarLink title='История' to='history' />

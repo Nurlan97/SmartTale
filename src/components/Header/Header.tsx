@@ -33,7 +33,7 @@ const Header = observer(({ path, title }: IHeader) => {
   const pathURL = location.pathname.slice(1);
   const context = contexts[pathURL as keyof typeof contexts];
   const [search, setSearch] = useState('');
-  const thin = window.innerWidth < 990;
+
   const timeout = useRef<NodeJS.Timeout | null>(null);
   const [showNotify, setShowNotify] = useState(false);
   const mouseEnterHandler = () => {
@@ -62,15 +62,12 @@ const Header = observer(({ path, title }: IHeader) => {
   const navigate = useNavigate();
   return (
     <div className={styles.wrapper}>
-      <div className={styles.path}>{path}</div>
-      <div
-        className={styles.main}
-        style={{
-          flexDirection: thin ? 'column' : 'row',
-          alignItems: thin ? 'start' : 'center',
-        }}
-      >
-        <span className={styles.title}>{title}</span>
+      <div className={styles.main}>
+        <div className={styles.pathGroup}>
+          <div className={styles.path}>{path}</div>{' '}
+          <span className={styles.title}>{title}</span>
+        </div>
+
         <div className={styles.searchGroup}>
           {context && (
             <form
@@ -102,7 +99,6 @@ const Header = observer(({ path, title }: IHeader) => {
           <div className={notifyStore.hasUnreaded ? styles.bellHasUnreaded : styles.bell}>
             <Bell onMouseEnter={mouseEnterHandler} onMouseLeave={mouseLeaveHandler} />
           </div>
-
           {showNotify && (
             <Notifications
               onMouseEnter={mouseEnterHandler}

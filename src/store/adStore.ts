@@ -5,11 +5,16 @@ import {
   CreateJobRequest,
   CreateOrderRequest,
   CreateProductRequest,
+  Job,
   OrderFull,
   PositionSummary,
   ProductFull,
+  UpdateJobRequest,
+  UpdateOrderRequest,
+  UpdateProductRequest,
 } from '../api/data-contracts';
 import { myApi } from '../api/V1';
+import { errorNotify, successNotify } from '../utils/toaster';
 import modalStore, { Modals } from './modalStore';
 
 interface IImage {
@@ -44,7 +49,7 @@ interface REPLACE {
 }
 export type AdType = 'Order' | 'Product' | 'Job';
 export default class adStore {
-  ad: Array<OrderFull | ProductFull> = [];
+  ad: Array<OrderFull | ProductFull | Job> = [];
   isLoading = false;
   showForm = true;
   type: AdType = 'Product';
@@ -57,16 +62,22 @@ export default class adStore {
   imageActions: IAction[] = [];
   posiitons: PositionSummary[] = [];
 
-  constructor(id?: number) {
+  constructor(id?: number, type?: AdType) {
     if (id) {
-      this.createStore(id);
+      this.createStore(id, type);
     }
     makeAutoObservable(this);
   }
-  createStore = async (id: number) => {
-    await this.fetchAd(id);
+  createStore = async (id: number, type?: AdType) => {
+    if (type === 'Job') {
+      this.type = 'Job';
+      await this.fetchJob(id);
+    } else {
+      await this.fetchAd(id);
+    }
     runInAction(() => {
-      this.currentImages = this.ad[0].imageUrls;
+      this.currentImages =
+        'imageUrls' in this.ad[0] ? this.ad[0].imageUrls : this.ad[0].images;
       this.currentImages.forEach((val, ind) => {
         this.#viewedImages.push({ index: ind, type: 'currentImages', id: uniqid() });
       });
@@ -96,7 +107,6 @@ export default class adStore {
             filePointer += 1;
             currentView.splice(i, 1, newView[i]);
           } else {
-            // console.log('testing', currentView.length, newView.length);
             action = {
               action: 'ADD',
               targetPosition: i,
@@ -104,9 +114,7 @@ export default class adStore {
             };
             currentView = [...currentView, newView[i]];
           }
-          // currentView.push(newView[i]);
         } else {
-          // console.log('action remove');
           action = {
             action: 'REMOVE',
             arrayPosition: i,
@@ -196,20 +204,14 @@ export default class adStore {
     images: File[] = [],
   ) => {
     modalStore.openModal(Modals.loader);
-    // const obj = { dto: dto, images: images };
-    const obj = { dto: dto };
-    const formData = new FormData();
-    formData.append('dto', new Blob([JSON.stringify(dto)], { type: 'application/json' }));
-    if (images) {
-      for (const image of images) {
-        formData.append('images', image);
-      }
-    }
+    const obj = { dto: dto, images: images };
     try {
       const response = await myApi.placeAdvertisement(obj);
       this.resetForm();
+      successNotify('Объявление успешно добавлено');
     } catch (error) {
       console.log(error);
+      errorNotify('Произошла ошибка, повторите попытку');
     }
     modalStore.closeModal();
   };
@@ -232,31 +234,75 @@ export default class adStore {
       this.ad.push(response.data);
     } catch (error) {
       console.log(error);
+      errorNotify('Произошла ошибка при загрузке, повторите попытку');
+    }
+  };
+  fetchJob = async (id: number) => {
+    try {
+      const response = await myApi.getAdvertisement(id);
+      this.ad = [];
+      this.ad.push(response.data);
+    } catch (error) {
+      console.log(error);
+      errorNotify('Произошла ошибка при загрузке, повторите попытку');
     }
   };
   getDropdownPositions = async () => {
-    const response = await myApi.getPositionsDropdown();
-    runInAction(() => {
-      this.posiitons = response.data;
-    });
+    try {
+      const response = await myApi.getPositionsDropdown();
+      runInAction(() => {
+        this.posiitons = response.data;
+      });
+    } catch (error) {
+      console.log(error);
+      errorNotify('Произошла ошибка при загрузке доступных позиций, повторите попытку');
+    }
   };
   updateAd = async (
-    dto: CreateProductRequest | CreateOrderRequest | CreateJobRequest,
-
-    id: number,
+    dto:
+      | UpdateProductRequest
+      | UpdateOrderRequest
+      | UpdateJobRequest
+      | CreateProductRequest
+      | CreateOrderRequest,
   ) => {
     const imageActions = this.calcActions();
-    const obj = {
-      dto: { ...dto, advertisementId: id, imageActions: imageActions },
-    };
 
-    const formData = new FormData();
-    formData.append('dto', new Blob([JSON.stringify(dto)], { type: 'application/json' }));
-    if (this.additionalFiles) {
-      for (const image of this.additionalFiles) {
-        formData.append('images', image);
+    if ('jobId' in dto) {
+      const obj = {
+        dto: { ...dto, imageOperations: imageActions },
+        images: this.additionalFiles,
+      };
+      try {
+        const response = await myApi.updateAdvertisement(obj);
+        successNotify('Объявление успешно обновлено');
+      } catch (error) {
+        console.log(error);
+        errorNotify('Произошла ошибка при обновлении объявления');
       }
     }
-    const response = await myApi.updateAd(obj);
+    if ('advertisementId' in dto) {
+      const obj = {
+        dto: { ...dto, imageOperations: imageActions },
+        images: this.additionalFiles,
+      };
+      try {
+        const response = await myApi.updateAd(obj);
+        successNotify('Объявление успешно обновлено');
+      } catch (error) {
+        console.log(error);
+        errorNotify('Произошла ошибка при обновлении объявления');
+      }
+    }
+  };
+  confirmRequest = async (code: string) => {
+    try {
+      const response = await myApi.confirmOrder({ code: code });
+      if ('acceptanceRequests' in this.ad[0]) this.ad[0].acceptanceRequests = [];
+      successNotify('Пришлашение успешно принято');
+    } catch (error) {
+      console.log(error);
+      errorNotify('Произошла ошибка при подтверждении заказа, повторите попытку');
+    }
   };
 }

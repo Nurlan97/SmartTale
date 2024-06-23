@@ -1,6 +1,8 @@
 import { makeAutoObservable, runInAction } from 'mobx';
 
 import {
+  CustomPageInvitation,
+  CustomPageInviterInvitation,
   Organization,
   RegistrationRequest,
   UpdateProfileRequest,
@@ -10,13 +12,14 @@ import { myApi } from '../api/V1';
 import { getRolesFromMask, Roles } from '../utils/authorizationHelpers';
 import { decodeJWT, isTokenExpired, removeCookie } from '../utils/helpers';
 import { setCookie } from '../utils/helpers';
+import { errorNotify, successNotify } from '../utils/toaster';
 import modalStore, { Modals } from './modalStore';
 import notifyStore from './notifyStore';
 
 class userStore {
   userId: number | undefined = undefined;
   orgId: number | undefined = undefined;
-  roles = '';
+
   hierarchy: number | undefined = undefined;
   authorities: Roles[] = [];
   accessToken = '';
@@ -27,6 +30,7 @@ class userStore {
   middleName = '';
   email = '';
   phone = '';
+  contactInfo: 'EMAIL' | 'PHONE' | 'EMAIL_PHONE' = 'EMAIL';
   profilePhoto = '';
   subscribePeriod = '';
   isRemember = false;
@@ -35,6 +39,7 @@ class userStore {
   anyAds = false;
   invalidCode = false;
   organization: Organization | undefined = undefined;
+  invitations: CustomPageInvitation | undefined = undefined;
 
   constructor() {
     makeAutoObservable(this);
@@ -44,9 +49,9 @@ class userStore {
     this.isRemember = !this.isRemember;
   };
 
-  fetchRegistration = async (registrationData: RegistrationRequest) => {
+  fetchRegistration = async (registrationData: RegistrationRequest, code?: string) => {
     try {
-      const result = await myApi.register(registrationData);
+      const result = await myApi.register(registrationData, { code: code });
       runInAction(() => {
         this.email = registrationData.email;
         this.authenticationStage = 3;
@@ -61,6 +66,7 @@ class userStore {
       return result;
     } catch (error) {
       console.log(error);
+      errorNotify('Произошла ошибка при проверке почты');
     }
   };
   fetchAvailablePhone = async (phoneValue: string) => {
@@ -69,6 +75,7 @@ class userStore {
       return result.data;
     } catch (error) {
       console.log(error);
+      errorNotify('Произошла ошибка при проверке телефона');
     }
   };
   sendVerificationCode = async (
@@ -112,9 +119,9 @@ class userStore {
     }
   };
 
-  fetchAuthorization = async (authorizationData: string) => {
+  fetchAuthorization = async (authorizationData: string, code?: string) => {
     try {
-      await myApi.login(authorizationData);
+      await myApi.login(authorizationData, { code: code });
       runInAction(() => {
         this.email = authorizationData;
         this.authenticationStage = 3;
@@ -131,6 +138,7 @@ class userStore {
         this.lastName = response.data.lastName;
         this.middleName = response.data.middleName;
         this.email = response.data.email;
+        this.contactInfo = response.data.contactInfo;
         this.profilePhoto = response.data.avatarUrl;
         this.phone = response.data.phoneNumber;
         if (response.data.subscriptionEndDate) {
@@ -139,6 +147,7 @@ class userStore {
       });
     } catch (error) {
       console.log(error);
+      errorNotify('Произошла ошибка при загрузке данных пользователя');
     }
   };
 
@@ -152,6 +161,7 @@ class userStore {
       this.profilePhoto = URL.createObjectURL(file);
     } catch (error) {
       console.log(error);
+      errorNotify('Произошла ошибка при смене аватарки');
     }
     modalStore.closeModal();
   };
@@ -172,6 +182,7 @@ class userStore {
       });
     } catch (error) {
       console.log(error);
+      errorNotify('Произошла ошибка при обновлении профиля');
     }
     modalStore.closeModal();
   };
@@ -182,6 +193,7 @@ class userStore {
       modalStore.openModal(Modals.successSubscribe);
     } catch (error) {
       console.log(error);
+      errorNotify('Произошла ошибка при отправке запроса о подписке');
     }
   };
   setTokens = (accessToken: string, refreshToken: string, isRemember?: boolean) => {
@@ -193,7 +205,6 @@ class userStore {
       this.orgId = decodedJWT.orgId;
       this.userId = decodedJWT.userId;
       this.hierarchy = decodedJWT.hierarchy;
-      this.roles = decodedJWT.roles;
       this.authorities = getRolesFromMask(decodedJWT.authorities);
       // console.log(getRolesFromMask(decodeJWT(accessToken).authorities));
       notifyStore.connect();
@@ -213,12 +224,13 @@ class userStore {
       });
     } catch (error) {
       console.log(error);
+      errorNotify('Произошла ошибка при проверке авторизации');
     }
   };
   logout = () => {
     this.userId = undefined;
     this.orgId = undefined;
-    this.roles = '';
+
     this.hierarchy = undefined;
     this.authorities = [];
     this.accessToken = '';
@@ -252,9 +264,35 @@ class userStore {
   getOrganization = async () => {
     try {
       const response = await myApi.getOrganization();
-      this.organization = response.data;
+      runInAction(() => {
+        this.organization = response.data;
+      });
     } catch (error) {
       console.log(error);
+      errorNotify('Произошла ошибка при загрузке данных компании');
+    }
+  };
+  getInvitations = async () => {
+    try {
+      const response = await myApi.getInvitations1();
+      runInAction(() => {
+        this.invitations = response.data;
+      });
+    } catch (error) {
+      console.log(error);
+      errorNotify('Произошла ошибка при загрузке приглашений в организации');
+    }
+  };
+  acceptInvitation = async (invitationId: number) => {
+    try {
+      await myApi.acceptInvitation(invitationId);
+      runInAction(() => {
+        this.invitations = undefined;
+      });
+      successNotify('Вы успешно приняли пришлашение');
+    } catch (error) {
+      console.log(error);
+      errorNotify('Произошла ошибка при отклике на вакансию');
     }
   };
 }

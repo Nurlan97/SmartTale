@@ -34,7 +34,8 @@
   display: flex;
   flex-direction: column;
   align-items: end;
-  justify-content: space-between;
+  justify-content: center;
+  gap: 8px;
 }
 .detailedBtn {
   font-family: 'SF Pro', sans-serif;

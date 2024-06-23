@@ -2,6 +2,7 @@ import { makeAutoObservable } from 'mobx';
 
 import { CustomPageSearchItem, SearchItem } from '../api/data-contracts';
 import { myApi } from '../api/V1';
+import { errorNotify } from '../utils/toaster';
 
 class searchStore {
   context: SearchItem['type'] = 'ADVERTISEMENT';
@@ -37,6 +38,7 @@ class searchStore {
       this.results = response.data;
     } catch (error) {
       console.log(error);
+      errorNotify('Произошла ошибка во время поиска, повторите попытку');
     }
   };
 }

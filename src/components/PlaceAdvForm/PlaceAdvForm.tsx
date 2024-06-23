@@ -69,7 +69,7 @@ const PlaceAdvForm = observer(({ store }: Props) => {
     { tab: 'Order', title: 'Заказ' },
   ];
   if (userStore.authorities.includes('INVITE_EMPLOYEE')) {
-    typesArr.push({ tab: 'Job', title: 'Услуга' });
+    typesArr.push({ tab: 'Job', title: 'Работа' });
   }
 
   const formik = useFormik({
@@ -84,6 +84,7 @@ const PlaceAdvForm = observer(({ store }: Props) => {
           formik.resetForm();
         })
         .catch((e) => {
+          console.log(formik.errors);
           console.log(e);
           modalStore.openModal(Modals.errorValidation);
         });
@@ -116,7 +117,9 @@ const PlaceAdvForm = observer(({ store }: Props) => {
               setFieldValue={formik.setFieldValue}
             />
           )}
-          {store.type === 'Order' && <OrderForm formik={formik} store={store} />}
+          {store.type === 'Order' && 'size' in formik.values && (
+            <OrderForm formik={formik} store={store} />
+          )}
           {store.type === 'Job' && 'jobType' in formik.values && (
             <JobForm
               values={formik.values}

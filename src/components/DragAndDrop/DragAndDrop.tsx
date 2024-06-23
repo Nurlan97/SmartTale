@@ -18,6 +18,7 @@ import { createPortal } from 'react-dom';
 import { OrderDashboard } from '../../api/data-contracts';
 import { kanbanStore } from '../../store';
 import ScrollableWrapper from '../../UI/ScrollableWrapper/ScrollableWrapper';
+import { errorNotify } from '../../utils/toaster';
 import { Column } from './comps/Column';
 import OrderCard from './comps/OrderCard';
 import styles from './DragAndDrop.module.scss';
@@ -67,10 +68,11 @@ export const DragAndDrop = observer(() => {
   };
   const onDragEnd = async (event: DragEvent) => {
     try {
-      await kanbanStore.updateOrder(event);
+      await kanbanStore.updateOrder(event, activeOrder);
       setActiveOrder(null);
     } catch (error) {
       console.log(error);
+      errorNotify('Произошла ошибка, обновите страницу');
     }
   };
   useEffect(() => {

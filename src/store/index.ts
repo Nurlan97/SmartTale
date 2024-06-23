@@ -1,6 +1,6 @@
 import { injectStores } from '@mobx-devtools/tools';
 
-import PlaceAdvStore from './adStore';
+import PlaceAdvStore, { AdType } from './adStore';
 import appStore from './appStore';
 import equipmentStore from './equipmentStore';
 import jobStore from './jobStore';
@@ -12,11 +12,8 @@ import searchStore from './searchStore';
 import servicesStore from './servicesStore';
 import userStore from './userStore';
 
-const createPlaceAdvStore = (id?: number) => {
-  const placeAdvStoreInstance = new PlaceAdvStore(id);
-  // injectStores({
-  //   placeAdvStoreInstance,
-  // });
+const createPlaceAdvStore = (id?: number, type?: AdType) => {
+  const placeAdvStoreInstance = new PlaceAdvStore(id, type);
   return placeAdvStoreInstance;
 };
 const emptyPlaceAdvStore = new PlaceAdvStore();

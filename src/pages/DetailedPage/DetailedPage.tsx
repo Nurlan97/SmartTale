@@ -1,5 +1,5 @@
 import { observer } from 'mobx-react-lite';
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { useLayoutEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 import DetailedAd from '../../components/DetailedAd/DetailedAd';

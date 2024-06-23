@@ -7,6 +7,7 @@ import {
   PositionSummary,
 } from '../api/data-contracts';
 import { myApi } from '../api/V1';
+import { errorNotify, successNotify } from '../utils/toaster';
 
 class employeeStore {
   employeeList: CustomPageEmployee = {
@@ -18,7 +19,7 @@ class employeeStore {
     isEmpty: true,
   };
   employeeDetail: EmployeeTasksResponse | undefined = undefined;
-  employeeDetailExt: { activeTab: 'all' | 'active' } = { activeTab: 'all' };
+  employeeDetailExt: { activeTab: 'history' | 'active' } = { activeTab: 'active' };
   posiitons: PositionSummary[] = [];
   constructor() {
     makeAutoObservable(this);
@@ -37,7 +38,7 @@ class employeeStore {
     });
     this.employeeDetail = response.data;
   };
-  switchDetailsTab = (tab: 'all' | 'active') => async () => {
+  switchDetailsTab = (tab: 'history' | 'active') => async () => {
     this.employeeDetailExt.activeTab = tab;
     this.employeeDetail?.employee.employeeId &&
       this.getEmployeeDetails(this.employeeDetail?.employee.employeeId);
@@ -49,15 +50,31 @@ class employeeStore {
     });
   };
   inviteEmployee = async (values: InviteRequest) => {
-    const response = await myApi.inviteEmployee(values);
-    return response.data;
+    try {
+      const response = await myApi.sendInvitation(values);
+      successNotify('Приглашение успешно отправлено');
+      return response.data;
+    } catch (error) {
+      console.log(error);
+      errorNotify('Произошла ошибка при отправке пришлашения');
+    }
   };
   removeEmployeeFromTask = async (taskId: number, id: number) => {
-    await myApi.updateTask({
-      taskId: taskId,
-      removedEmployees: [id],
-      addedEmployees: [],
-    });
+    try {
+      await myApi.updateTask({
+        taskId: taskId,
+        removedEmployees: [id],
+        addedEmployees: [],
+      });
+      if (this.employeeDetail && this.employeeDetail.tasks.content)
+        this.employeeDetail.tasks.content = this.employeeDetail.tasks.content.filter(
+          (task) => task.orderId !== taskId,
+        );
+      successNotify('Сотрудник успешно снят с заказа');
+    } catch (error) {
+      console.log(error);
+      errorNotify('Произошла ошибка при отстранении сотрудника');
+    }
   };
 }
 

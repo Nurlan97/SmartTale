@@ -2,6 +2,7 @@ import { flow, makeAutoObservable, runInAction } from 'mobx';
 
 import { CustomPageCard } from '../api/data-contracts';
 import { myApi } from '../api/V1';
+import { errorNotify } from '../utils/toaster';
 import modalStore, { Modals } from './modalStore';
 
 class mainStore {
@@ -43,6 +44,7 @@ class mainStore {
       });
     } catch (error) {
       console.log(error);
+      errorNotify('Произошла ошибка при загрузке, повторите попытку');
     } finally {
       this.isLoading = false;
       modalStore.closeModal();

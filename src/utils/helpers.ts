@@ -103,6 +103,7 @@ export const decodeJWT = (token: string) => {
     tokenType: string;
     userId: number;
   } = JSON.parse(atob(token.split('.')[1]));
+
   return obj;
 };
 

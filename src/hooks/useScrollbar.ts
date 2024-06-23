@@ -11,10 +11,6 @@ const useScrollbar = (root: React.RefObject<HTMLDivElement>, hasScroll: boolean)
           visibility: 'auto',
           autoHide: 'never',
         },
-        // overflow: {
-        //   y: 'visible',
-        //   x: 'visible',
-        // },
       });
     }
     return () => {

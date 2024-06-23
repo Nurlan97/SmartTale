@@ -1,8 +1,15 @@
 import { makeAutoObservable, runInAction } from 'mobx';
 
-import { MonitoringOrder, OrderDashboard } from '../api/data-contracts';
+import {
+  EmployeeSummary,
+  MonitoringOrder,
+  OrderDashboard,
+  UpdateTaskRequest,
+} from '../api/data-contracts';
 import { myApi } from '../api/V1';
 import { DragEvent, IColumn } from '../components/DragAndDrop/DragAndDrop';
+import { errorNotify } from '../utils/toaster';
+import modalStore, { Modals } from './modalStore';
 import { myReposytory } from './repository';
 
 const COLUMNS: IColumn[] = [
@@ -14,7 +21,7 @@ const COLUMNS: IColumn[] = [
   {
     title: 'В ожидании',
     id: 'NEW',
-    allow: ['NEW', 'IN_PROGRESS'],
+    allow: ['NEW', 'CHECKING'],
   },
   {
     title: 'В работе',
@@ -133,10 +140,11 @@ class kanbanStore {
   orders: Array<OrderDashboard> = DEFAULT_DATA_STATE;
   prevOrders: Array<OrderDashboard> = DEFAULT_DATA_STATE;
   currentDescription: number | null = null;
-  descriptionExt: { activeImg: number; activeTab: 'description' | 'size' | 'contacts' } =
-    { activeImg: 0, activeTab: 'description' };
-  timeoutShow: NodeJS.Timeout | null = null;
-  timeoutHide: NodeJS.Timeout | null = null;
+  descriptionExt: {
+    activeImg: number;
+    activeTab: 'description' | 'size' | 'contacts' | 'employees';
+  } = { activeImg: 0, activeTab: 'description' };
+
   constructor() {
     makeAutoObservable(this);
   }
@@ -147,6 +155,7 @@ class kanbanStore {
       this.prevOrders = response.data;
     } catch (error) {
       console.log(error);
+      errorNotify('Произошла ошибка при загрузке, повторите попытку');
     }
   };
 
@@ -164,32 +173,27 @@ class kanbanStore {
         }
       } catch (error) {
         console.log(error);
+        errorNotify('Произошла ошибка при смене статуса, обновите страницу');
       }
     });
   };
-  updateOrder = async (event: DragEvent) => {
+  updateOrder = async (event: DragEvent, activeOrder: OrderDashboard | null) => {
+    const { active, over } = event;
+    if (!over) return;
     try {
-      if (event.over?.id) {
-        await myApi.changeStatus(event.active.id, event.over?.id);
+      if (activeOrder && over.data.current.column.allow.includes(activeOrder?.status)) {
+        await myApi.changeStatus(active.id, over?.id);
         this.prevOrders = this.orders;
       }
     } catch (error) {
       this.orders = this.prevOrders;
       console.log(error);
+      errorNotify('Произошла ошибка при смене статуса, обновите страницу');
     }
   };
   showDescription = (id: number | null) => {
-    if (id === null) {
-      if (this.timeoutShow) clearTimeout(this.timeoutShow);
-      this.timeoutHide = setTimeout(() => {
-        this.currentDescription = id;
-      }, 2000);
-    } else {
-      if (this.timeoutHide) clearTimeout(this.timeoutHide);
-      this.timeoutShow = setTimeout(async () => {
-        this.currentDescription = id;
-      }, 1000);
-    }
+    this.currentDescription = id;
+    modalStore.openModal(Modals.taskDescription);
   };
   private get queryOrder() {
     if (!this.currentDescription) return null;
@@ -203,7 +207,7 @@ class kanbanStore {
   setImage = (num: number) => () => {
     this.descriptionExt.activeImg = num;
   };
-  setActiveTab = (tab: 'description' | 'contacts' | 'size') => () => {
+  setActiveTab = (tab: 'description' | 'contacts' | 'size' | 'employees') => () => {
     this.descriptionExt.activeTab = tab;
   };
 }

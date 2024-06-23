@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 
 import { PositionSummary } from '../../api/data-contracts';
+import { userStore } from '../../store';
 import Button from '../../UI/Button/Button';
 import styles from './positionList.module.scss';
 
@@ -15,6 +16,7 @@ const PositionsList = ({ positions }: Props) => {
         return (
           <div key={position.positionId} className={styles.position}>
             <p>{position.title}</p>
+
             <Button
               color={'white'}
               height='36px'
@@ -23,7 +25,7 @@ const PositionsList = ({ positions }: Props) => {
                 navigate(`/positions/update/${position.positionId}`);
               }}
             >
-              Редактировать
+              Просмотреть
             </Button>
           </div>
         );

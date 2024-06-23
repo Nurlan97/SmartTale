@@ -1,7 +1,7 @@
 import { useFormik } from 'formik';
 import { observer } from 'mobx-react-lite';
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 
 import userStore from '../../store/userStore';
 import Button from '../../UI/Button/Button';
@@ -16,14 +16,15 @@ import FormInput from '../FormInput/FormInput';
 import styles from './AuthorizationForm.module.scss';
 
 const AuthorizationForm = observer(() => {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const code = searchParams.get('code') || undefined;
   const [submit, setSubmit] = useState(false);
   const onSubmit = async ({ email }: ISubmitTypes) => {
     try {
-      await userStore.fetchAuthorization(email);
+      await userStore.fetchAuthorization(email, code);
     } catch (error) {
       console.error(error);
     }
-
     setSubmit(true);
   };
 

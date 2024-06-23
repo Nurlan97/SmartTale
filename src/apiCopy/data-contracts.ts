@@ -36,41 +36,6 @@ export interface UpdateEmployeeRequest {
   positionId: number;
 }
 
-export interface UpdateTaskRequest {
-  /** @format int64 */
-  taskId: number;
-  addedEmployees: number[];
-  removedEmployees: number[];
-  comment?: string;
-}
-
-export interface UpdateProfileRequest {
-  /** @pattern ^[\p{IsLatin}&&[^\p{IsCyrillic}]]+$|^[\p{IsCyrillic}&&[^\p{IsLatin}]]+$ */
-  firstName: string;
-  /** @pattern ^[\p{IsLatin}&&[^\p{IsCyrillic}]]+$|^[\p{IsCyrillic}&&[^\p{IsLatin}]]+$ */
-  lastName: string;
-  /** @pattern ^[\p{IsLatin}&&[^\p{IsCyrillic}]]+$|^[\p{IsCyrillic}&&[^\p{IsLatin}]]+$ */
-  middleName?: string;
-  email: string;
-  phoneNumber: string;
-  valid?: boolean;
-}
-
-export interface Profile {
-  firstName: string;
-  lastName: string;
-  middleName: string;
-  email: string;
-  phoneNumber: string;
-  avatarUrl: string;
-  /** @format int64 */
-  organizationId: number;
-  organizationName: string;
-  organizationLogoUrl: string;
-  /** @format date */
-  subscriptionEndDate?: string;
-}
-
 export interface ImageOperation {
   /**
    * @format int32
@@ -93,7 +58,75 @@ export interface ImageOperation {
   filePosition?: number;
 }
 
-export interface UpdateAdRequest {
+export interface UpdateJobRequest {
+  /** @format int64 */
+  jobId: number;
+  title: string;
+  description: string;
+  imageOperations?: ImageOperation[];
+  contactInfo: 'EMAIL' | 'PHONE' | 'EMAIL_PHONE';
+  /** @format int64 */
+  positionId: number;
+  jobType: 'FULL_TIME' | 'PART_TIME' | 'CONTRACT' | 'INTERN' | 'TEMPORARY';
+  location: string;
+  salary?: number;
+  /** @format date */
+  applicationDeadline?: string;
+}
+
+export interface UpdateTaskRequest {
+  /** @format int64 */
+  taskId: number;
+  addedEmployees: number[];
+  removedEmployees: number[];
+  comment?: string;
+}
+
+export interface UpdateProfileRequest {
+  /** @pattern ^[\p{IsLatin}&&[^\p{IsCyrillic}]]+$|^[\p{IsCyrillic}&&[^\p{IsLatin}]]+$ */
+  firstName: string;
+  /** @pattern ^[\p{IsLatin}&&[^\p{IsCyrillic}]]+$|^[\p{IsCyrillic}&&[^\p{IsLatin}]]+$ */
+  lastName: string;
+  /** @pattern ^[\p{IsLatin}&&[^\p{IsCyrillic}]]+$|^[\p{IsCyrillic}&&[^\p{IsLatin}]]+$ */
+  middleName?: string;
+  email: string;
+  phoneNumber: string;
+  visibleContacts: 'EMAIL' | 'PHONE' | 'EMAIL_PHONE';
+  valid?: boolean;
+}
+
+export interface Profile {
+  firstName: string;
+  lastName: string;
+  middleName: string;
+  email: string;
+  phoneNumber: string;
+  avatarUrl: string;
+  /** @format int64 */
+  organizationId: number;
+  organizationName: string;
+  organizationLogoUrl: string;
+  position: string;
+  contactInfo: 'EMAIL' | 'PHONE' | 'EMAIL_PHONE';
+  /** @format date */
+  registeredAt: string;
+  /** @format date */
+  subscriptionEndDate?: string;
+}
+
+export interface UpdateProductRequest {
+  /** @format int64 */
+  advertisementId: number;
+  title: string;
+  description: string;
+  /** @format int32 */
+  quantity: number;
+  price: number;
+  imageOperations?: ImageOperation[];
+  contactInfo: 'EMAIL' | 'PHONE' | 'EMAIL_PHONE';
+}
+
+export interface UpdateOrderRequest {
   /** @format int64 */
   advertisementId: number;
   title: string;
@@ -103,7 +136,14 @@ export interface UpdateAdRequest {
   /** @format date */
   deadlineAt?: string;
   imageOperations?: ImageOperation[];
-  contactInfo?: 'EMAIL' | 'PHONE' | 'EMAIL_PHONE';
+  contactInfo: 'EMAIL' | 'PHONE' | 'EMAIL_PHONE';
+}
+
+export interface InviteUserRequest {
+  /** @format int64 */
+  inviteeId: number;
+  /** @format int64 */
+  positionId: number;
 }
 
 export interface InviteRequest {
@@ -120,6 +160,8 @@ export interface InviteRequest {
 export interface CreateProductRequest {
   title: string;
   description: string;
+  /** @format int32 */
+  quantity: number;
   price: number;
   contactInfo: 'EMAIL' | 'PHONE' | 'EMAIL_PHONE';
 }
@@ -135,6 +177,8 @@ export interface CreateOrderRequest {
 }
 
 export interface CreateJobRequest {
+  /** @format int64 */
+  positionId: number;
   title: string;
   description: string;
   salary?: number;
@@ -153,13 +197,6 @@ export interface VerificationRequest {
 export interface LoginResponse {
   accessToken: string;
   refreshToken: string;
-  /** @format int64 */
-  userId: number;
-  /** @format int64 */
-  organizationId: number;
-  /** @format int32 */
-  hierarchy: number;
-  authorities: string[];
 }
 
 export interface RegistrationRequest {
@@ -172,6 +209,49 @@ export interface RegistrationRequest {
   email: string;
   phoneNumber: string;
   valid?: boolean;
+}
+
+export interface CustomPageUserSummary {
+  content: UserSummary[];
+  /** @format int32 */
+  totalPages: number;
+  /** @format int64 */
+  totalElements: number;
+  /** @format int32 */
+  number: number;
+  /** @format int32 */
+  size: number;
+  isEmpty: boolean;
+}
+
+export interface UserSummary {
+  /** @format int64 */
+  userId: number;
+  name: string;
+  avatarUrl: string;
+  /** @format int64 */
+  organizationId: number;
+  organizationName: string;
+  organizationLogoUrl: string;
+  isSubscribed: boolean;
+}
+
+export interface UserDto {
+  /** @format int64 */
+  userId: number;
+  name: string;
+  avatarUrl: string;
+  /** @format int64 */
+  organizationId: number;
+  organizationName: string;
+  organizationLogoUrl: string;
+  position: string;
+  email: string;
+  phoneNumber: string;
+  /** @format date */
+  registeredAt: string;
+  isSubscribed: boolean;
+  canInvite: boolean;
 }
 
 export interface CustomPageSearchItem {
@@ -255,8 +335,8 @@ export interface PositionDto {
   authorities: string[];
 }
 
-export interface CustomPageOrderSummary {
-  content: OrderSummary[];
+export interface CustomPageOrderAccepted {
+  content: OrderAccepted[];
   /** @format int32 */
   totalPages: number;
   /** @format int64 */
@@ -268,7 +348,7 @@ export interface CustomPageOrderSummary {
   isEmpty: boolean;
 }
 
-export interface OrderSummary {
+export interface OrderAccepted {
   /** @format int64 */
   orderId: number;
   key: string;
@@ -293,6 +373,35 @@ export interface OrderSummary {
   completedAt?: string;
 }
 
+export interface CustomPageInviterInvitation {
+  content: InviterInvitation[];
+  /** @format int32 */
+  totalPages: number;
+  /** @format int64 */
+  totalElements: number;
+  /** @format int32 */
+  number: number;
+  /** @format int32 */
+  size: number;
+  isEmpty: boolean;
+}
+
+export interface InviterInvitation {
+  /** @format int64 */
+  invitationId: number;
+  /** @format int64 */
+  inviteeId: number;
+  inviteeName: string;
+  inviteeEmail: string;
+  /** @format int64 */
+  positionId: number;
+  position: string;
+  /** @format date-time */
+  invitedAt: string;
+  /** @format date-time */
+  expiresAt: string;
+}
+
 export interface CustomPageEmployee {
   content: Employee[];
   /** @format int32 */
@@ -311,8 +420,10 @@ export interface Employee {
   employeeId: number;
   name: string;
   email: string;
-  orderList: OrderSummary[];
+  orderList: OrderAccepted[];
   position: string;
+  /** @format int32 */
+  hierarchy: number;
   status: string;
 }
 
@@ -322,6 +433,8 @@ export interface AssignedEmployee {
   name: string;
   avatarUrl: string;
   reward: number;
+  /** @format int32 */
+  hierarchy: number;
 }
 
 export interface EmployeeDto {
@@ -332,6 +445,8 @@ export interface EmployeeDto {
   email: string;
   phoneNumber: string;
   position: string;
+  /** @format int32 */
+  hierarchy: number;
 }
 
 export interface EmployeeTasksResponse {
@@ -403,7 +518,76 @@ export interface Task {
   publisherPhoneNumber: string;
 }
 
-export interface DashboardOrder {
+export interface CustomPageJobSummary {
+  content: JobSummary[];
+  /** @format int32 */
+  totalPages: number;
+  /** @format int64 */
+  totalElements: number;
+  /** @format int32 */
+  number: number;
+  /** @format int32 */
+  size: number;
+  isEmpty: boolean;
+}
+
+export interface JobSummary {
+  /** @format int64 */
+  jobId?: number;
+  /** @format date-time */
+  publishedAt?: string;
+  title?: string;
+  description?: string;
+  jobType?: 'FULL_TIME' | 'PART_TIME' | 'CONTRACT' | 'INTERN' | 'TEMPORARY';
+  salary?: number;
+  image?: string;
+  /** @format int32 */
+  applicantsCount?: number;
+  isClosed?: boolean;
+}
+
+export interface Job {
+  /** @format int64 */
+  jobId: number;
+  /** @format date-time */
+  publishedAt: string;
+  /** @format int64 */
+  publishedBy: number;
+  publisherName: string;
+  publisherAvatarUrl: string;
+  title: string;
+  /** @format int64 */
+  positionId: number;
+  position: string;
+  jobType: 'FULL_TIME' | 'PART_TIME' | 'CONTRACT' | 'INTERN' | 'TEMPORARY';
+  location: string;
+  salary: number;
+  description: string;
+  images: string[];
+  jobApplications: JobApplication[];
+  /** @format date */
+  applicationDeadline?: string;
+  /** @format int64 */
+  views: number;
+  isDeleted: boolean;
+  isClosed: boolean;
+  canModify: boolean;
+}
+
+export interface JobApplication {
+  /** @format int64 */
+  applicationId: number;
+  /** @format date-time */
+  applicationDate: string;
+  /** @format int64 */
+  applicantId: number;
+  applicantName: string;
+  avatarUrl: string;
+  email: string;
+  phoneNumber: string;
+}
+
+export interface OrderDashboard {
   /** @format int64 */
   id: number;
   status:
@@ -455,6 +639,13 @@ export interface MonitoringOrder {
   views: number;
 }
 
+export interface EmployeeSummary {
+  /** @format int64 */
+  employeeId: number;
+  employeeName: string;
+  position: string;
+}
+
 export interface Card {
   /** @format int64 */
   advertisementId: number;
@@ -484,7 +675,7 @@ export interface CustomPageCard {
   isEmpty: boolean;
 }
 
-export interface FullProductCard {
+export interface ProductCard {
   /** @format int64 */
   productId: number;
   /** @format date-time */
@@ -492,6 +683,8 @@ export interface FullProductCard {
   title: string;
   description: string;
   price: number;
+  /** @format int32 */
+  quantity: number;
   imageUrls: string[];
   /** @format date-time */
   purchasedAt: string;
@@ -506,7 +699,7 @@ export interface FullProductCard {
   canPurchase: boolean;
 }
 
-export interface FullOrderCard {
+export interface OrderCard {
   /** @format int64 */
   orderId: number;
   /** @format date-time */
@@ -527,6 +720,29 @@ export interface FullOrderCard {
   /** @format int64 */
   views: number;
   canAccept: boolean;
+}
+
+export interface JobCard {
+  jobId: number;
+  publishedAt: string;
+  title: string;
+  description: string;
+  salary: number;
+  imageUrls: string[];
+  publishedBy: number;
+  publisherName: string;
+  publisherAvatarUrl: string;
+  publisherPhoneNumber: string;
+  publisherEmail: string;
+  organizationId: number;
+  organizationName: string;
+  organizationLogoUrl: string;
+  jobType: string;
+  applicantsCount: 0;
+  location: string;
+  applicationDeadline: string;
+  views: number;
+  canApply: boolean;
 }
 
 export interface CustomPagePurchaseSummary {
@@ -552,7 +768,7 @@ export interface PurchaseSummary {
   productId: number;
   title: string;
   description: string;
-  price: number;
+  totalPrice: number;
   imageUrl: string;
   /** @format int64 */
   publishedBy: number;
@@ -576,13 +792,14 @@ export interface Purchase {
   /** @format int32 */
   quantity: number;
   price: number;
+  totalPrice: number;
   imageUrl: string;
   /** @format int64 */
   publishedBy: number;
   publisherName: string;
   publisherAvatarUrl: string;
-  phoneNumber: string;
-  email: string;
+  publisherPhoneNumber: string;
+  publisherEmail: string;
   canRepeatPurchase: boolean;
 }
 
@@ -675,7 +892,7 @@ export interface OrderDto {
   imageUrls: string[];
 }
 
-export interface Order {
+export interface OrderSummaryPersonal {
   /** @format int64 */
   orderId: number;
   title: string;
@@ -695,6 +912,8 @@ export interface Product {
   title: string;
   description: string;
   price: number;
+  /** @format int32 */
+  quantity: number;
   imageUrl: string;
   /** @format date-time */
   publishedAt: string;
@@ -702,7 +921,7 @@ export interface Product {
 }
 
 export interface CustomPage {
-  content: object[];
+  content: Array<OrderSummaryPersonal | Product>;
   /** @format int32 */
   totalPages: number;
   /** @format int64 */
@@ -714,15 +933,17 @@ export interface CustomPage {
   isEmpty: boolean;
 }
 
-export interface AcceptanceRequestDto {
+export interface AcceptanceRequest {
   /** @format int64 */
   organizationId: number;
   name: string;
   logoUrl: string;
   code: string;
+  /** @format date */
+  requestedAt: string;
 }
 
-export interface FullOrder {
+export interface OrderFull {
   /** @format int64 */
   orderId: number;
   /** @format date-time */
@@ -731,7 +952,7 @@ export interface FullOrder {
   acceptedAt?: string;
   /** @format int64 */
   acceptedBy: number;
-  acceptanceRequests: AcceptanceRequestDto[];
+  acceptanceRequests: AcceptanceRequest[];
   organizationName: string;
   organizationLogoUrl: string;
   title: string;
@@ -747,7 +968,7 @@ export interface FullOrder {
   isClosed: boolean;
 }
 
-export interface FullProduct {
+export interface ProductFull {
   /** @format int64 */
   productId: number;
   /** @format date-time */
@@ -755,6 +976,8 @@ export interface FullProduct {
   title: string;
   description: string;
   price: number;
+  /** @format int32 */
+  quantity: number;
   imageUrls: string[];
   /** @format int64 */
   views: number;

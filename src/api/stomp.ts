@@ -2,7 +2,7 @@ import { Client } from '@stomp/stompjs';
 
 import { notifyStore, userStore } from '../store';
 import { decodeJWT, isTokenExpired } from '../utils/helpers';
-import { IMessageOrg, IMessageUser } from './interfaces-ws';
+import { IHistoryOrg, IHistoryUser, IMessageOrg, IMessageUser } from './interfaces-ws';
 
 export const createClient = (token: string) => {
   const decodedToken = decodeJWT(token);
@@ -21,15 +21,36 @@ export const createClient = (token: string) => {
     onConnect: (frame) => {
       console.log('connected');
       client.subscribe(`/user/${userId}/push`, (message) => {
-        const notification: IMessageUser = JSON.parse(message.body);
-        notifyStore.addNotify(notification);
+        const notification: IMessageUser | IHistoryUser = JSON.parse(message.body);
+        if ('hasNext' in notification) {
+          notification.content.forEach((notify) => {
+            notifyStore.addNotify(notify);
+          });
+        } else {
+          notifyStore.addNotify(notification);
+        }
       });
       if (orgId !== 0) {
         client.subscribe(`/org/${orgId}/push`, (message) => {
-          const notification: IMessageOrg = JSON.parse(message.body);
-          notifyStore.addNotify(notification);
+          const notification: IMessageOrg | IHistoryOrg = JSON.parse(message.body);
+          if ('hasNext' in notification) {
+            notification.content.forEach((notify) => {
+              notifyStore.addNotify(notify);
+            });
+          } else {
+            notifyStore.addNotify(notification);
+          }
         });
       }
+      client.publish({
+        destination: `/app/notifications/history`,
+        body: JSON.stringify({
+          userId: userStore.userId,
+          organizationId: userStore.orgId ? userStore.orgId : 0,
+          page: 0,
+          size: 8,
+        }),
+      });
     },
     onDisconnect: async (frame) => {
       if (isTokenExpired(userStore.getToken)) {
@@ -42,4 +63,11 @@ export const createClient = (token: string) => {
   });
 
   return client;
+};
+
+export const sendMessage = (client: Client, message: string, destination: string) => {
+  client.publish({
+    destination,
+    body: JSON.stringify(message),
+  });
 };

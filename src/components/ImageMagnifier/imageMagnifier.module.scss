@@ -1,0 +1,23 @@
+.magnifierImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.wrapper {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  position: relative;
+  border-radius: 12px;
+}
+.magnifierPan {
+  width: 200px;
+  height: 200px;
+  background-color: rgba($color: #000000, $alpha: 0.3);
+  border: 2px solid #cfcfcf;
+}
+
+.magnifierImage {
+  border-radius: 12px;
+  overflow: hidden;
+}

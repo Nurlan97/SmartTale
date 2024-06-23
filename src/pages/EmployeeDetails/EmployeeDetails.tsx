@@ -16,9 +16,9 @@ const EmployeeDetails = observer(() => {
     employeeStore.getEmployeeDetails(Number(id));
   }, []);
 
-  const buttons: { tab: 'active' | 'all'; title: string }[] = [
+  const buttons: { tab: 'active' | 'history'; title: string }[] = [
     { tab: 'active', title: 'Текущие заказы' },
-    { tab: 'all', title: 'Все заказы сотрудника' },
+    { tab: 'history', title: 'Выполненные' },
   ];
   return (
     <div className={styles.page}>
@@ -56,7 +56,7 @@ const EmployeeDetails = observer(() => {
         <TabSwitch
           tabs={buttons}
           activeTab={employeeStore.employeeDetailExt.activeTab}
-          switchFunc={(tab: 'all' | 'active') => employeeStore.switchDetailsTab(tab)}
+          switchFunc={(tab: 'history' | 'active') => employeeStore.switchDetailsTab(tab)}
         />
         {employeeStore.employeeDetail?.tasks.content?.map((task) => {
           return <OrganizationTask task={task} key={task.orderId} id={Number(id)} />;
