@@ -6,7 +6,7 @@ import { SearchItem } from '../../api/data-contracts';
 import Header from '../../components/Header/Header';
 import SearchResultUnit from '../../components/SearchResultUnit/SearchResultUnit';
 import { useDebounce } from '../../hooks/useDebounce';
-import { searchStore } from '../../store';
+import { searchStore, userStore } from '../../store';
 import ScrollableWrapper from '../../UI/ScrollableWrapper/ScrollableWrapper';
 import SearchInput from '../../UI/SearchInput/SearchInput';
 import styles from './searchPage.module.scss';
@@ -15,17 +15,27 @@ const SearchPage = observer(() => {
 
   const contexts: { context: SearchItem['type']; title: string }[] = [
     { context: 'ADVERTISEMENT', title: 'Все объявления' },
-    { context: 'MY_ADVERTISEMENT', title: 'Мои объявления' },
+
     { context: 'PRODUCT', title: 'Оборудование' },
-    { context: 'MY_PRODUCT', title: 'Мое оборудование' },
+
     { context: 'ORDER', title: 'Заказы' },
-    { context: 'MY_ORDER', title: 'Мои заказы' },
-    { context: 'ORG_ORDER', title: 'Заказы организации' },
-    { context: 'ORGANIZATION', title: 'Организации' },
-    { context: 'USER', title: 'Пользователи' },
-    { context: 'EMPLOYEE', title: 'Работники' },
-    { context: 'PURCHASE', title: 'Покупки' },
   ];
+  if (userStore.isAuth) {
+    contexts.push(
+      { context: 'MY_ADVERTISEMENT', title: 'Мои объявления' },
+      { context: 'MY_PRODUCT', title: 'Мое оборудование' },
+      { context: 'MY_ORDER', title: 'Мои заказы' },
+      { context: 'USER', title: 'Пользователи' },
+      { context: 'PURCHASE', title: 'Покупки' },
+    );
+  }
+  if (userStore.orgId !== undefined) {
+    contexts.push(
+      { context: 'ORG_ORDER', title: 'Заказы организации' },
+      { context: 'ORGANIZATION', title: 'Организации' },
+      { context: 'EMPLOYEE', title: 'Работники' },
+    );
+  }
   const [search, setSearch] = useState('');
   useEffect(() => {
     const searchQuery = searchParams.get('query');
