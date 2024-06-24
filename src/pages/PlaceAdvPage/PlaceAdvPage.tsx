@@ -7,14 +7,12 @@ import { createPlaceAdvStore } from '../../store';
 import ScrollableWrapper from '../../UI/ScrollableWrapper/ScrollableWrapper';
 import styles from './placeAdvPage.module.scss';
 
-const store = createPlaceAdvStore();
-
 const PlaceAdvPage = observer(() => {
   return (
     <div className={styles.page}>
       <Header path='Маркетплейс/Разместить заказ' title='Разместить заказ' />
       <ScrollableWrapper>
-        {store.showForm ? <PlaceAdvForm store={store} /> : <PlaceAdvDummy />}
+        <PlaceAdvForm />
       </ScrollableWrapper>
     </div>
   );

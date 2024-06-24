@@ -80,6 +80,7 @@ const App = observer(() => {
       <div className={showNavbar ? styles.page : ''}>
         <Routes>
           <Route path='/equipment' element={<EquipmentPage />} />
+
           <Route path='/' element={<EquipmentPage />} />
           <Route path='/services' element={<ServicesPage />} />
           <Route path='/job' element={<JobPage />} />

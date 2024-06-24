@@ -1,4 +1,5 @@
-import { makeAutoObservable, runInAction } from 'mobx';
+import { arrayMove } from '@dnd-kit/sortable';
+import { makeAutoObservable, runInAction, toJS } from 'mobx';
 import { v4 as uuidv4 } from 'uuid';
 
 import {
@@ -48,6 +49,11 @@ interface REPLACE {
   filePosiiton: number;
 }
 export type AdType = 'Order' | 'Product' | 'Job';
+export type ImageExt = {
+  id: string;
+  url: string;
+  file: File | undefined;
+};
 export default class adStore {
   ad: Array<OrderFull | ProductFull | Job> = [];
   isLoading = false;
@@ -59,7 +65,11 @@ export default class adStore {
   additionalImages: Array<string> = [];
   additionalFiles: File[] = [];
   viewedImages: Array<string> = [];
+  prevImages: ImageExt[] = [];
+  currImages: ImageExt[] = [];
+  addFiles: File[] = [];
   imageActions: IAction[] = [];
+  imageOperations: IAction[] = [];
   posiitons: PositionSummary[] = [];
 
   constructor(id?: number, type?: AdType) {
@@ -76,13 +86,21 @@ export default class adStore {
       await this.fetchAd(id);
     }
     runInAction(() => {
-      this.currentImages =
+      const imagesArr =
         'imageUrls' in this.ad[0] ? this.ad[0].imageUrls : this.ad[0].images;
-      this.currentImages.forEach((val, ind) => {
-        this.#viewedImages.push({ index: ind, type: 'currentImages', id: uuidv4() });
+      this.prevImages = imagesArr.map((url) => {
+        return {
+          id: uuidv4(),
+          url: url,
+          file: undefined,
+        };
       });
-      this.#oldImages = [...this.#viewedImages];
-      this.updateViewed();
+      this.currImages = [...this.prevImages];
+      // this.currentImages.forEach((val, ind) => {
+      //   this.#viewedImages.push({ index: ind, type: 'currentImages', id: uuidv4() });
+      // });
+      // this.#oldImages = [...this.#viewedImages];
+      // this.updateViewed();
     });
   };
   setType = (type: AdType) => () => {
@@ -199,12 +217,99 @@ export default class adStore {
     });
     this.updateViewed();
   };
+
+  updateImg = (imageFile: File, id: string) => {
+    this.currImages = this.currImages.map((img) => {
+      if (img.id === id) {
+        return {
+          file: imageFile,
+          url: URL.createObjectURL(imageFile),
+          id: uuidv4(),
+        };
+      } else {
+        return img;
+      }
+    });
+  };
+  deleteImg = (id: string) => {
+    this.currImages = this.currImages.filter((img) => img.id !== id);
+  };
+  addImg = (image: ImageExt) => {
+    this.currImages.push(image);
+    console.log(toJS(this.currImages), toJS(this.prevImages));
+  };
+  replaceImg = (activeId: string, overId: string) => {
+    const getImgPos = (id: string) => this.currImages.findIndex((img) => img.id == id);
+    const activeIndex = getImgPos(activeId);
+    const overIndex = getImgPos(overId);
+    this.currImages = arrayMove(this.currImages, activeIndex, overIndex);
+  };
+  calcOperations = async () => {
+    const currArray = toJS(this.currImages);
+    const prevArray = toJS(this.prevImages);
+    console.log(currArray, prevArray);
+    currArray.forEach(async (image, ind) => {
+      // console.log(image);
+      if (prevArray.length > ind + 1 && image.id === prevArray[ind].id) {
+        console.log('нет изменений');
+        return;
+      }
+      const prevIndex = prevArray.findIndex((findImage) => findImage.id === image.id);
+      if (!image.file) {
+        this.imageOperations.push({
+          action: 'MOVE',
+          arrayPosition: prevIndex,
+          targetPosition: ind,
+        });
+        console.log('перемещаем', prevIndex, ind);
+        return;
+      }
+      if (prevArray.length > ind + 1) {
+        this.imageOperations.push({
+          action: 'REPLACE',
+          arrayPosition: ind,
+          filePosiiton: this.addFiles.length,
+        });
+        this.addFiles.push(image.file);
+        console.log('меняем', ind, this.addFiles.length);
+        return;
+      }
+      this.imageOperations.push({
+        action: 'ADD',
+        targetPosition: ind,
+        filePosiiton: this.addFiles.length,
+      });
+      this.addFiles.push(image.file);
+      console.log('добавляем', ind, this.addFiles.length);
+    });
+    if (prevArray.length > this.currImages.length) {
+      for (let i = prevArray.length - 1; i >= this.currImages.length; i--) {
+        this.imageOperations.push({
+          action: 'REMOVE',
+          arrayPosition: i,
+        });
+        console.log('удаляем лишнее', i);
+      }
+    }
+  };
+  fillAddFiles = () => {
+    // const currArray = toJS(this.currImages);
+    this.currImages.forEach(async (image, ind) => {
+      if (image.file) this.addFiles.push(image.file);
+    });
+  };
+  resetImgs = () => {
+    this.currImages = [...this.prevImages];
+  };
   placeAd = async (
     dto: CreateProductRequest | CreateOrderRequest | CreateJobRequest,
-    images: File[] = [],
+    // images: File[] = [],
   ) => {
     modalStore.openModal(Modals.loader);
-    const obj = { dto: dto, images: images };
+
+    this.fillAddFiles();
+    const obj = { dto: dto, images: toJS(this.addFiles) };
+
     try {
       const response = await myApi.placeAdvertisement(obj);
       this.resetForm();
@@ -212,8 +317,10 @@ export default class adStore {
     } catch (error) {
       console.log(error);
       errorNotify('Произошла ошибка, повторите попытку');
+    } finally {
+      this.resetForm();
+      modalStore.closeModal();
     }
-    modalStore.closeModal();
   };
   resetForm = () => {
     this.isLoading = false;
@@ -226,6 +333,9 @@ export default class adStore {
     this.additionalFiles = [];
     this.viewedImages = [];
     this.imageActions = [];
+    this.addFiles = [];
+    this.currImages = [];
+    this.prevImages = [];
   };
   fetchAd = async (id: number) => {
     try {
@@ -266,12 +376,12 @@ export default class adStore {
       | CreateProductRequest
       | CreateOrderRequest,
   ) => {
-    const imageActions = this.calcActions();
+    await this.calcOperations();
 
     if ('jobId' in dto) {
       const obj = {
-        dto: { ...dto, imageOperations: imageActions },
-        images: this.additionalFiles,
+        dto: { ...dto, imageOperations: this.imageOperations },
+        images: this.addFiles,
       };
       try {
         const response = await myApi.updateAdvertisement(obj);
@@ -283,8 +393,8 @@ export default class adStore {
     }
     if ('advertisementId' in dto) {
       const obj = {
-        dto: { ...dto, imageOperations: imageActions },
-        images: this.additionalFiles,
+        dto: { ...dto, imageOperations: this.imageOperations },
+        images: this.addFiles,
       };
       try {
         const response = await myApi.updateAd(obj);

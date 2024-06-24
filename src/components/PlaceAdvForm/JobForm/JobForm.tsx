@@ -5,23 +5,23 @@ import { ru } from 'date-fns/locale';
 import { FormikErrors } from 'formik';
 import { toJS } from 'mobx';
 import { observer } from 'mobx-react-lite';
-import { useEffect, useLayoutEffect } from 'react';
+import { useLayoutEffect } from 'react';
 import DatePicker, { registerLocale } from 'react-datepicker';
 import Select from 'react-select';
 
 import { CreateJobRequest } from '../../../api/data-contracts';
-import { userStore } from '../../../store';
-import adStore from '../../../store/adStore';
+import { typePlaceAdvStore, userStore } from '../../../store';
 import DateCustomInput from '../../../UI/DateCustomInput/DateCustomInput';
 import ImageInput from '../../../UI/ImageInput/ImageInput';
 import Input from '../../../UI/Input/Input';
+import SortableImageInput from '../../../UI/SortableImageInput/SortableImageInput';
 import TabSwitch from '../../../UI/TabSwitch/TabSwitch';
 import Textarea from '../../../UI/Textarea/Textarea';
 import { createStyles } from '../../../utils/selectHelpers';
 import styles from './jobForm.module.scss';
 
 type Props = {
-  store: adStore;
+  store: typePlaceAdvStore;
   values: CreateJobRequest;
   handleChange: (e: React.ChangeEvent<any>) => void;
   setFieldValue: (
@@ -84,8 +84,13 @@ const JobForm = observer(
         <div className={styles.helper}>максимум 1000 символов, минимум 5</div>
 
         <Input
-          onChange={handleChange}
-          value={String(values.salary)}
+          onChange={(e) => {
+            const regex = new RegExp(/^\+?[0-9]*$/);
+            if (!regex.test(e.target.value)) return;
+            handleChange(e);
+          }}
+          value={String(values.salary ? values.salary : '')}
+          placeholder='Не указан'
           label='Размер оплаты'
           width='100%'
           id='salary'
@@ -97,7 +102,9 @@ const JobForm = observer(
           selected={
             (values.applicationDeadline && new Date(values.applicationDeadline)) || null
           }
-          onChange={(date: Date) => setFieldValue('applicationDeadline', date)}
+          onChange={(date: Date) =>
+            setFieldValue('applicationDeadline', date.toISOString().slice(0, 10))
+          }
           customInput={<DateCustomInput />}
           dateFormat='dd.MMM.yyyy'
           calendarStartDay={1}
@@ -147,7 +154,8 @@ const JobForm = observer(
           disabled={!isEdit}
         />
         <div className={styles.title}>Галерея фотографий</div>
-        <ImageInput store={store} disabled={!isEdit} />
+        {/* <ImageInput store={store} disabled={!isEdit} /> */}
+        <SortableImageInput store={store} disabled={!isEdit} />
         <div className={styles.title}>
           Выберите какую контактную информацию показывать в объявлении
         </div>
