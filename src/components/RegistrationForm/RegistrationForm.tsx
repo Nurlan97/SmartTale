@@ -70,17 +70,11 @@ const RegistrationForm = observer(() => {
 
   const debouncePhoneSearch = useDebounce((search: string) => {
     if (search === '') return;
-    // if (
-    //   !formik.errors.phoneNumber ||
-    //   formik.errors.phoneNumber === 'Указанный вами номер занят'
-    // ) {
     userStore.fetchAvailablePhone(search).then((data) => {
       if (!data) formik.setFieldError('phoneNumber', 'Указанный вами номер занят');
     });
-    // }
   });
 
-  // const isFormEmpty = Object.keys(formik.touched).length === 0;
   const hasErrors = Object.keys(formik.errors).length !== 0;
   const isContactDataFilled = (values: typeof initialValues) => {
     return values.email !== '' && values.phoneNumber !== '';
@@ -110,24 +104,14 @@ const RegistrationForm = observer(() => {
         type: 'submit',
         width: '100%',
         disabled: hasErrors,
-        // children: isFormEmpty
-        //   ? 'Зарегистрироваться'
-        //   : hasErrors
-        //     ? 'Зарегистрироваться'
-        //     : 'Зарегистрироваться',
         children: 'Зарегистрироваться',
       };
 
   useEffect(() => {
     debounceEmailSearch(formik.values.email);
-    // if (formik.values.phoneNumber) debouncePhoneSearch(formik.values.phoneNumber);
-    // if (formik.values.email) console.log('Email request');
-    // if (formik.values.phoneNumber) console.log('Phone request');
   }, [formik.values.email]);
   useEffect(() => {
     debouncePhoneSearch(formik.values.phoneNumber);
-    // if (formik.values.phoneNumber) debouncePhoneSearch(formik.values.phoneNumber);
-    // if (formik.values.phoneNumber) console.log('Phone request');
   }, [formik.values.phoneNumber]);
 
   return (
@@ -150,27 +134,6 @@ const RegistrationForm = observer(() => {
         {userStore.authenticationStage === 2 && (
           <Checkbox checked={userStore.isRemember} onClick={userStore.toggleRemember} />
         )}
-        {/* {!isSubmitting &&
-          (Object.keys(formik.touched).length === 0 ? (
-            <Button color='blue' type='submit' width='100%'>
-              Зарегистрироваться
-            </Button>
-          ) : Object.keys(formik.errors).length !== 0 ? (
-            <Button color='white' type='submit' disabled={true}>
-              Заполните все поля
-            </Button>
-          ) : (
-            <Button color='blue' type='submit' width='100%'>
-              Зарегистрироваться
-            </Button>
-          ))}
-        {isSubmitting && (
-          <Button color='blue' type='submit' width='100%' disabled={isSubmitting}>
-            <div className={styles.loaderWrapper}>
-              <div className={styles.loader}>Ожидаем...</div>
-            </div>
-          </Button>
-        )} */}
 
         {userStore.authenticationStage === 1 && (
           <Button color='blue' type='button' width='100%' handler={handleNextStage}>

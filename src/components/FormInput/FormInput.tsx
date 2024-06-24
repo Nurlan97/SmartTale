@@ -1,6 +1,4 @@
 import { FormikProps } from 'formik';
-import { observer } from 'mobx-react-lite';
-import { useEffect, useState } from 'react';
 
 import Input from '../../UI/Input/Input';
 import styles from './FormInput.module.scss';

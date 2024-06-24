@@ -121,7 +121,7 @@ const transform: ITransfrom = {
 };
 export type TDate = [Date | null, Date | null];
 export enum dateFilters {
-  accept = 'дате принятия',
+  accepted = 'дате принятия',
   deadline = 'дедлайну',
   completed = 'дате завершения',
   empty = '. . .',

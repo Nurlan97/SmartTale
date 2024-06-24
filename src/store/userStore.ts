@@ -45,6 +45,7 @@ class userStore {
   isAuth = false;
   anyAds = false;
   invalidCode = false;
+  orgId: number | undefined = 3;
 
   constructor() {
     makeAutoObservable(this);

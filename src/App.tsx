@@ -7,6 +7,7 @@ import AuthRoute from './components/AuthRoute/AuthRoute';
 import ModalContainer from './components/ModalContainer/ModalContainer';
 import NavBar from './components/NavBar/NavBar';
 import NoAuthRoute from './components/NoAuthRoute/NoAuthRoute';
+import AdminOrganizationPage from './pages/AdminOrganizationPage/AdminOrganizationPage';
 import AuthorizationPage from './pages/AuthorizationPage/AuthorizationPage';
 import CurrentOrdersPage from './pages/CurrentOrdersPage/CurrentOrdersPage';
 import DetailedPage from './pages/DetailedPage/DetailedPage';
@@ -22,6 +23,7 @@ import RegistrationPage from './pages/RegistrationPage/RegistrationPage';
 import ServicesPage from './pages/ServicesPage/ServicesPage';
 import { notifyStore, userStore } from './store';
 import { getCookie, isTokenExpired, removeCookie } from './utils/helpers';
+import AdminJobPositionsPage from './pages/AdminJobPositionsPage/AdminJobPositionsPage';
 
 const App = observer(() => {
   const navigate = useNavigate();
@@ -77,9 +79,10 @@ const App = observer(() => {
             <Route path='/my-purchases' element={<MyPurchases />} />
             <Route path='/orders-history' element={<OrderHistoryPage />} />
             <Route path='/company' element={<OrganizationPage />} />
-            <Route path='/company-information' element={<OrganizationPage />} />
+            {/* <Route path='/company-information' element={<OrganizationPage />} /> */}
+            <Route path='/company-information' element={<AdminOrganizationPage />} />
             <Route path='/employees' element={<OrganizationPage />} />
-            <Route path='/roles' element={<OrganizationPage />} />
+            <Route path='/roles' element={<AdminJobPositionsPage />} />
             <Route path='/company-history' element={<OrganizationPage />} />
           </Route>
           <Route element={<NoAuthRoute />}>
@@ -87,6 +90,9 @@ const App = observer(() => {
             <Route path='/authorization' element={<AuthorizationPage />}></Route>
           </Route>
         </Routes>
+        {/* <Routes>
+          <Route path='/company-information' element={<AdminOrganizationPage />} />
+        </Routes> */}
       </div>
       <ModalContainer />
     </div>

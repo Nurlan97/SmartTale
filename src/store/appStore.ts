@@ -43,7 +43,7 @@ interface IOrders {
 }
 
 interface IMyOrganization {
-  group: 'orders' | 'employees';
+  group: 'orders' | 'employees' | 'completedOrders';
   orders: Omit<PageOrderSummary, 'pageable'>;
   employees: Omit<PageEmployee, 'pageable'>;
   description: string;
@@ -170,7 +170,7 @@ class appStore {
       console.log(error);
     }
   };
-  myOrganizationSetGroup = (group: 'orders' | 'employees') => {
+  myOrganizationSetGroup = (group: 'orders' | 'employees' | 'completedOrders') => {
     this.myOrganization.group = group;
     if (group === 'orders') {
       this.getMyOrganizationOrders();
@@ -223,6 +223,11 @@ class appStore {
   get isActiveOrders() {
     return this.myOrganization.group === 'orders';
   }
+
+  get isEmployees() {
+    return this.myOrganization.group === 'employees';
+  }
+
   deleteAd = async (id: number) => {
     await api.interactWithAd(id, '3');
     modalStore.closeModal();
