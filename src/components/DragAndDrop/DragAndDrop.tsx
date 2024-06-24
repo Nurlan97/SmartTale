@@ -1,40 +1,34 @@
 import 'overlayscrollbars/overlayscrollbars.css';
 
 import {
-  Active,
   Collision,
-  DataRef,
   DndContext,
-  DragEndEvent,
-  DragOverEvent,
   DragOverlay,
   DragStartEvent,
   PointerSensor,
   Translate,
-  UniqueIdentifier,
   useSensor,
   useSensors,
 } from '@dnd-kit/core';
-import { arrayMove, SortableContext } from '@dnd-kit/sortable';
 import { observer } from 'mobx-react-lite';
-import { OverlayScrollbarsComponent } from 'overlayscrollbars-react';
 import * as _ from 'radash';
-import { MutableRefObject, useCallback, useEffect, useRef, useState } from 'react';
+import { MutableRefObject, useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 
-import { DashboardOrder } from '../../api/data-contracts';
-import { useScrollbar } from '../../hooks/useScrollbar';
+import { OrderDashboard } from '../../api/data-contracts';
 import { kanbanStore } from '../../store';
+import ScrollableWrapper from '../../UI/ScrollableWrapper/ScrollableWrapper';
+import { errorNotify } from '../../utils/toaster';
 import { Column } from './comps/Column';
 import OrderCard from './comps/OrderCard';
 import styles from './DragAndDrop.module.scss';
 export interface IColumn {
-  id: DashboardOrder['status'];
+  id: OrderDashboard['status'];
   title: string;
-  allow: Array<DashboardOrder['status']>;
+  allow: Array<OrderDashboard['status']>;
 }
 interface Over {
-  id: DashboardOrder['status'];
+  id: OrderDashboard['status'];
   rect: ClientRect;
   disabled: boolean;
   data: { current: { type: string; column: IColumn } };
@@ -43,7 +37,7 @@ export interface DragEvent {
   activatorEvent: Event;
   active: {
     id: number;
-    data: { current: { order: DashboardOrder } };
+    data: { current: { order: OrderDashboard } };
     rect: MutableRefObject<{
       initial: ClientRect | null;
       translated: ClientRect | null;
@@ -56,9 +50,7 @@ export interface DragEvent {
 
 export const DragAndDrop = observer(() => {
   // const [data, setData] = useState<Array<DashboardOrder>>(DEFAULT_DATA_STATE);
-  const [activeOrder, setActiveOrder] = useState<DashboardOrder | null>(null);
-
-  const kanbanWrapper = useRef(null);
+  const [activeOrder, setActiveOrder] = useState<OrderDashboard | null>(null);
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -76,18 +68,19 @@ export const DragAndDrop = observer(() => {
   };
   const onDragEnd = async (event: DragEvent) => {
     try {
-      await kanbanStore.updateOrder(event);
+      await kanbanStore.updateOrder(event, activeOrder);
       setActiveOrder(null);
     } catch (error) {
       console.log(error);
+      errorNotify('Произошла ошибка, обновите страницу');
     }
   };
   useEffect(() => {
     kanbanStore.getOrders();
   }, []);
-  useScrollbar(kanbanWrapper, true);
+
   return (
-    <div ref={kanbanWrapper}>
+    <ScrollableWrapper>
       <DndContext
         sensors={sensors}
         onDragStart={onDragStart}
@@ -108,6 +101,6 @@ export const DragAndDrop = observer(() => {
           document.body,
         )}
       </DndContext>
-    </div>
+    </ScrollableWrapper>
   );
 });

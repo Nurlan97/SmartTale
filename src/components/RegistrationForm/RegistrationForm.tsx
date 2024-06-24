@@ -1,22 +1,22 @@
 import { useFormik } from 'formik';
 import { observer } from 'mobx-react-lite';
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 
 import { useDebounce } from '../../hooks/useDebounce';
 import { userStore } from '../../store';
 import Button from '../../UI/Button/Button';
-import {
-  formData,
-  initialValues,
-  ISubmitTypes,
-  RegistrationSchema,
-} from '../../utils/registrationHelpers';
+import { formData, initialValues, ISubmitTypes } from '../../utils/registrationHelpers';
+import { errorNotify } from '../../utils/toaster';
+import { emailSchema, fullNameSchema, phoneNumberSchema } from '../../utils/yupShemas';
 import Checkbox from '../Checkbox/Checkbox';
 import FormInput from '../FormInput/FormInput';
 import styles from './RegistrationForm.module.scss';
 
 const RegistrationForm = observer(() => {
+  const schema = fullNameSchema.concat(emailSchema).concat(phoneNumberSchema);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const code = searchParams.get('code') || undefined;
   const [isSubmitting, setIsSubmitting] = useState(false);
   const handleNextStage = () => {
     if (isContactDataFilled(formik.values)) {
@@ -35,16 +35,20 @@ const RegistrationForm = observer(() => {
   }: ISubmitTypes) => {
     try {
       setTimeout(async () => {
-        await userStore.fetchRegistration({
-          lastName,
-          firstName,
-          middleName,
-          email,
-          phoneNumber,
-        });
+        await userStore.fetchRegistration(
+          {
+            lastName,
+            firstName,
+            middleName,
+            email,
+            phoneNumber,
+          },
+          code,
+        );
       }, 500);
     } catch (error) {
       console.log(error);
+      errorNotify('Произошла какая-то ошибка, повторите регистрацию');
     }
 
     setIsSubmitting(true);
@@ -53,23 +57,25 @@ const RegistrationForm = observer(() => {
   const formik = useFormik({
     initialValues,
     onSubmit,
-    validationSchema: RegistrationSchema,
+    validationSchema: schema,
+    validateOnBlur: false,
   });
 
-  console.log(formik.touched);
-  console.log(formik.errors);
   const debounceEmailSearch = useDebounce((search: string) => {
     if (search === '') return;
-
+    if (code) return;
     if (formik.errors.email !== 'Неправильный формат email адреса') {
-      userStore.fetchAvailableEmail(search).then((data) => {
-        if (!data) formik.setFieldError('email', 'Данный email занят');
+      userStore.fetchAvailableEmail(search).then((response) => {
+        if (response?.status === 200 && !response?.data) {
+          formik.setFieldError('email', 'Данный email занят');
+        }
       });
     }
   });
 
   const debouncePhoneSearch = useDebounce((search: string) => {
     if (search === '') return;
+    if (code) return;
     userStore.fetchAvailablePhone(search).then((data) => {
       if (!data) formik.setFieldError('phoneNumber', 'Указанный вами номер занят');
     });
@@ -108,6 +114,8 @@ const RegistrationForm = observer(() => {
       };
 
   useEffect(() => {
+    formik.validateField('email');
+    if (formik.values.email !== '') formik.setFieldTouched('email', true);
     debounceEmailSearch(formik.values.email);
   }, [formik.values.email]);
   useEffect(() => {
@@ -141,14 +149,17 @@ const RegistrationForm = observer(() => {
           </Button>
         )}
         {userStore.authenticationStage === 2 && (
-          <Button
-            color={buttonProps.color}
-            type={buttonProps.type}
-            width={buttonProps.width}
-            disabled={isSubmitting}
-          >
-            Зарегистрироваться
-          </Button>
+          <>
+            <Checkbox checked={userStore.isRemember} onClick={userStore.toggleRemember} />
+            <Button
+              color={buttonProps.color}
+              type={buttonProps.type}
+              width={buttonProps.width}
+              disabled={isSubmitting}
+            >
+              Зарегистрироваться
+            </Button>
+          </>
         )}
       </form>
       <div className={styles.loginLinkBlock}>

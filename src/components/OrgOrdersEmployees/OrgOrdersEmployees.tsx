@@ -1,10 +1,13 @@
 import { observer } from 'mobx-react-lite';
 import { useEffect, useState } from 'react';
 
-import { OrderSummary } from '../../api/data-contracts';
+import { OrderAccepted } from '../../api/data-contracts';
 import { appStore, modalStore } from '../../store';
 import { Modals } from '../../store/modalStore';
+import orderHistoryStore2 from '../../store/orderHistoryStore2';
 import Button from '../../UI/Button/Button';
+import ScrollableWrapper from '../../UI/ScrollableWrapper/ScrollableWrapper';
+import TabSwitch from '../../UI/TabSwitch/TabSwitch';
 import AdRow from '../AdRow/AdRow';
 import TableCustom from '../TableCustom/TableCustom';
 import styles from './OrgOrdersEmployees.module.scss';
@@ -33,7 +36,7 @@ const OrgOrdersEmployees = observer(() => {
     },
   ];
   const transform = {
-    orderList: (prop: OrderSummary[]) =>
+    orderList: (prop: OrderAccepted[]) =>
       prop.map((item) => <div key={item.orderId}>{item.title}</div>),
     status: (prop: string) => {
       const statuses = { Authorized: 'Авторизован', Invited: 'Отправлено приглашение' };
@@ -58,13 +61,13 @@ const OrgOrdersEmployees = observer(() => {
     },
   };
 
-  const buttons: { type: 'orders' | 'employees'; title: string }[] = [
+  const buttons: { tab: 'orders' | 'employees'; title: string }[] = [
     {
-      type: 'orders',
+      tab: 'orders',
       title: 'Текущие заказы организации',
     },
     {
-      type: 'employees',
+      tab: 'employees',
       title: 'Список сотрудников',
     },
   ];
@@ -86,26 +89,18 @@ const OrgOrdersEmployees = observer(() => {
         ) : (
           <div className={styles.logo}>ST</div>
         )}
-
-        <h1 className={styles.title}>{appStore.myOrganization.name}</h1>
-        <div className={styles.description}>{appStore.myOrganization.description}</div>
+        <div className={styles.descriptionBlock}>
+          <h1 className={styles.title}>{appStore.myOrganization.name}</h1>
+          <div className={styles.description}>{appStore.myOrganization.description}</div>
+        </div>
       </div>
       <div className={styles.btnGroup}>
-        <div className={styles.btnList}>
-          {buttons.map((btn, index) => (
-            <Button
-              key={index}
-              color={btn.type === appStore.myOrganization.group ? 'orange' : 'white'}
-              type='button'
-              height='40px'
-              handler={() => {
-                appStore.myOrganizationSetGroup(btn.type);
-              }}
-            >
-              {btn.title}
-            </Button>
-          ))}
-        </div>
+        <TabSwitch
+          tabs={buttons}
+          activeTab={appStore.myOrganization.group}
+          switchFunc={(tab) => appStore.myOrganizationSetGroup(tab)}
+        />
+
         {!appStore.isActiveOrders && (
           <Button
             color='blue'
@@ -119,23 +114,25 @@ const OrgOrdersEmployees = observer(() => {
           </Button>
         )}
       </div>
-      <div className={styles.list}>
-        {appStore.isActiveOrders &&
-          appStore.myOrganization.orders.content &&
-          appStore.myOrganization.orders.content.map((item, index) => (
-            <AdRow key={index} item={item}>
-              {item.price}
-            </AdRow>
-          ))}
-        {!appStore.isActiveOrders && (
-          <TableCustom
-            headers={headers}
-            rows={appStore.myOrganization.employees.content}
-            transform={transform}
-            styling={style}
-          />
-        )}
-      </div>
+      <ScrollableWrapper>
+        <div className={styles.list}>
+          {appStore.isActiveOrders &&
+            appStore.myOrganization.orders.content &&
+            appStore.myOrganization.orders.content.map((item, index) => (
+              <AdRow key={index} item={item}>
+                {item.price}
+              </AdRow>
+            ))}
+          {!appStore.isActiveOrders && (
+            <TableCustom
+              headers={headers}
+              rows={appStore.myOrganization.employees.content}
+              transform={transform}
+              styling={style}
+            />
+          )}
+        </div>
+      </ScrollableWrapper>
     </div>
   );
 });

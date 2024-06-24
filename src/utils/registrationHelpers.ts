@@ -16,15 +16,15 @@ export interface ISubmitTypes {
   phoneNumber: string;
 }
 
-export const RegistrationSchema = Yup.object().shape({
-  lastName: Yup.string().required('Обязательное поле для заполнения'),
-  firstName: Yup.string().required('Обязательное поле для заполнения'),
-  middleName: Yup.string().required('Обязательное поле для заполнения'),
-  email: Yup.string()
-    .required('Обязательное поле для заполнения')
-    .email('Неправильный формат email адреса'),
-  phoneNumber: Yup.string().required('Обязательное поле для заполнения'),
-});
+// export const RegistrationSchema = Yup.object().shape({
+//   lastName: Yup.string().required('Обязательное поле для заполнения'),
+//   firstName: Yup.string().required('Обязательное поле для заполнения'),
+//   middleName: Yup.string().required('Обязательное поле для заполнения'),
+//   email: Yup.string()
+//     .email('Неправильный формат email адреса')
+//     .required('Обязательное поле для заполнения'),
+//   phoneNumber: Yup.string().required('Обязательное поле для заполнения'),
+// });
 
 export const formData = [
   {

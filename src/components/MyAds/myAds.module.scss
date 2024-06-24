@@ -1,11 +1,24 @@
-.btnGroup {
-  margin-top: 20px;
+.wrapper {
   display: flex;
-  gap: 8px;
+  flex-direction: column;
+  height: calc(100% - 140px);
+  // height: 100%;
+  width: 100%;
+  gap: 12px;
 }
+.title {
+  height: 30px;
+}
+
 .adsBlock {
-  margin-top: 8px;
   display: flex;
   flex-direction: column;
   gap: 8px;
+  // height: 100%;
+}
+.adHided{
+   font-family: 'SF Pro', sans-serif;
+  font-weight: 500;
+  font-size: 18px;
+  color: #ff7300;
 }

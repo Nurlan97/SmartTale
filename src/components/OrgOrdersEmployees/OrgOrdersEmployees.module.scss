@@ -1,3 +1,9 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  height: calc(100% - 140px);
+}
+
 .logoHeader {
   text-align: left;
   font-family: 'SF Pro', sans-serif;
@@ -6,6 +12,10 @@
   line-height: 92%;
   text-align: left;
   color: #000;
+  display: flex;
+  justify-content: start;
+  align-items: center;
+  gap: 24px;
 }
 .logo {
   background: #fc0;
@@ -16,6 +26,11 @@
   justify-content: center;
   align-items: center;
   margin-bottom: 20px;
+}
+.descriptionBlock {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
 }
 .title {
   font-family: 'SF Pro', sans-serif;
@@ -34,19 +49,18 @@
 }
 
 .btnGroup {
-  height: 56px;
-  margin-top: 32px;
+  height: 40px;
+  margin: 32px 0;
   display: flex;
   justify-content: space-between;
 }
 
-.btnList {
-  display: flex;
-  gap: 8px;
-}
+// .btnList {
+//   display: flex;
+//   gap: 8px;
+// }
 
 .list {
-  margin-top: 20px;
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -59,7 +73,6 @@
   background: #fff;
 }
 .tableHeaderContainer {
-  // background: #000;
   border-bottom: 1px solid rgb(233, 237, 247);
 }
 .tableHeader {
@@ -68,12 +81,13 @@
   color: #8e8e93;
 }
 
-.tableRow{
+.tableRow {
   padding: 20px;
 }
 
-.fullName, .order {
+.fullName,
+.order {
   text-decoration: underline;
   font-size: 14px;
-  font-weight: 400; 
+  font-weight: 400;
 }

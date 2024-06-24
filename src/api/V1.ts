@@ -9,42 +9,57 @@
  * ---------------------------------------------------------------
  */
 
-import { IAdsResponse } from '../store/appStore';
 import {
-  CreateAdRequest,
+  CreateJobRequest,
+  CreateOrderRequest,
   CreateOrgRequest,
-  DashboardOrder,
+  CreateProductRequest,
+  CustomPage,
+  CustomPageCard,
+  CustomPageEmployee,
+  CustomPageInvitation,
+  CustomPageInviterInvitation,
+  CustomPageJobSummary,
+  CustomPageOrderAccepted,
+  CustomPageOrganizationSummary,
+  CustomPagePurchaseSummary,
+  CustomPageSearchItem,
+  CustomPageSmallOrder,
+  CustomPageUserSummary,
+  EmployeeSummary,
   EmployeeTasksResponse,
-  FullOrder,
-  FullOrderCard,
-  FullProduct,
-  FullProductCard,
   InviteRequest,
+  InviteUserRequest,
+  Job,
   LoginResponse,
   MonitoringOrder,
-  Order,
+  OrderCard,
+  OrderDashboard,
   OrderDto,
+  OrderFull,
+  OrderSummaryPersonal,
   Organization,
-  PageCard,
-  PageEmployee,
-  PageOrderSummary,
-  PageOrganizationSummary,
-  PageSmallOrder,
   Position,
   PositionDto,
   PositionSummary,
   Product,
+  ProductCard,
+  ProductFull,
   Profile,
+  Purchase,
   RegistrationRequest,
-  UpdateAdRequest,
   UpdateEmployeeRequest,
+  UpdateJobRequest,
+  UpdateOrderRequest,
+  UpdateProductRequest,
   UpdateProfileRequest,
   UpdateTaskRequest,
+  UserDto,
   VerificationRequest,
 } from './data-contracts';
 import { ContentType, HttpClient, RequestParams } from './http-client';
 
-export class MyApi<SecurityDataType = unknown> extends HttpClient<SecurityDataType> {
+class MyApi<SecurityDataType = unknown> extends HttpClient<SecurityDataType> {
   /**
    * No description
    *
@@ -117,6 +132,20 @@ export class MyApi<SecurityDataType = unknown> extends HttpClient<SecurityDataTy
       ...params,
     });
   /**
+   * No description
+   *
+   * @tags Organization
+   * @name DeleteOrganization
+   * @request DELETE:/v1/organization
+   * @response `200` `string` OK
+   */
+  deleteOrganization = (params: RequestParams = {}) =>
+    this.request<string, any>({
+      path: `/v1/organization`,
+      method: 'DELETE',
+      ...params,
+    });
+  /**
    * @description Get all positions of organization
    *
    * @tags Organization, organization, get, position, employee
@@ -177,13 +206,34 @@ export class MyApi<SecurityDataType = unknown> extends HttpClient<SecurityDataTy
       ...params,
     });
   /**
+   * @description If user did not change anything except position title, then send patch request
+   *
+   * @tags patch, Organization, organization, position
+   * @name RenamePosition
+   * @summary Rename position
+   * @request PATCH:/v1/organization/positions
+   * @response `200` `string` Success
+   * @response `400` `string` Bad request
+   * @response `401` `string` Unauthorized
+   * @response `403` `string` No permission
+   * @response `404` `string` User, org or position not found
+   */
+  renamePosition = (data: Position, params: RequestParams = {}) =>
+    this.request<string, string>({
+      path: `/v1/organization/positions`,
+      method: 'PATCH',
+      body: data,
+      type: ContentType.Json,
+      ...params,
+    });
+  /**
    * @description Get all employees and invitees of organization
    *
    * @tags Organization, organization, get, employee, user, account
    * @name GetEmployees
    * @summary Get employees
    * @request GET:/v1/organization/employees
-   * @response `200` `PageEmployee` Success
+   * @response `200` `CustomPageEmployee` Success
    * @response `400` `void` Bad param request
    * @response `401` `void` Unauthorized
    * @response `404` `void` User or organization not found
@@ -205,7 +255,7 @@ export class MyApi<SecurityDataType = unknown> extends HttpClient<SecurityDataTy
     },
     params: RequestParams = {},
   ) =>
-    this.request<PageEmployee, void>({
+    this.request<CustomPageEmployee, void>({
       path: `/v1/organization/employees`,
       method: 'GET',
       query: query,
@@ -235,8 +285,8 @@ export class MyApi<SecurityDataType = unknown> extends HttpClient<SecurityDataTy
    * @description Sends email to invited person's address
    *
    * @tags Organization, post, organization, employee, user, account
-   * @name InviteEmployee
-   * @summary Invite employee
+   * @name SendInvitation
+   * @summary Send invitation
    * @request POST:/v1/organization/employees
    * @response `201` `string` Invite successful
    * @response `400` `string` Bad request. Email is validated
@@ -244,12 +294,66 @@ export class MyApi<SecurityDataType = unknown> extends HttpClient<SecurityDataTy
    * @response `403` `string` Forbidden
    * @response `404` `string` User, org or position not found
    */
-  inviteEmployee = (data: InviteRequest, params: RequestParams = {}) =>
+  sendInvitation = (data: InviteRequest, params: RequestParams = {}) =>
     this.request<string, string>({
       path: `/v1/organization/employees`,
       method: 'POST',
       body: data,
       type: ContentType.Json,
+      ...params,
+    });
+  /**
+   * @description Returns all job ads of organization
+   *
+   * @tags Organization, get, organization, advertisement, job
+   * @name GetAdvertisements
+   * @summary Get job ads of organization
+   * @request GET:/v1/organization/advertisements
+   * @response `200` `CustomPageJobSummary` Success
+   * @response `401` `CustomPageJobSummary` Unauthorized
+   * @response `403` `CustomPageJobSummary` Has no EMPLOYEE role
+   * @response `404` `CustomPageJobSummary` Organization not found
+   */
+  getAdvertisements = (
+    query?: {
+      /** Default 0 */
+      page?: any;
+      /** Default 5 */
+      size?: any;
+    },
+    params: RequestParams = {},
+  ) =>
+    this.request<CustomPageJobSummary, CustomPageJobSummary>({
+      path: `/v1/organization/advertisements`,
+      method: 'GET',
+      query: query,
+      ...params,
+    });
+  /**
+   * No description
+   *
+   * @tags Organization, organization, advertisement, job, put
+   * @name UpdateAdvertisement
+   * @summary Update job
+   * @request PUT:/v1/organization/advertisements
+   * @response `200` `string` Success
+   * @response `400` `string` Bad request
+   * @response `401` `string` Unauthorized
+   * @response `403` `string` No permission
+   * @response `404` `string` Not found
+   */
+  updateAdvertisement = (
+    data: {
+      dto: UpdateJobRequest;
+      images?: File[];
+    },
+    params: RequestParams = {},
+  ) =>
+    this.request<string, string>({
+      path: `/v1/organization/advertisements`,
+      method: 'PUT',
+      body: data,
+      type: ContentType.FormData,
       ...params,
     });
   /**
@@ -259,12 +363,12 @@ export class MyApi<SecurityDataType = unknown> extends HttpClient<SecurityDataTy
    * @name GetDashboard
    * @summary Get dashboard
    * @request GET:/v1/monitoring
-   * @response `200` `(DashboardOrder)[]` Success
+   * @response `200` `(OrderDashboard)[]` Success
    * @response `401` `void` Unauthorized
    * @response `404` `void` Not found
    */
   getDashboard = (params: RequestParams = {}) =>
-    this.request<DashboardOrder[], void>({
+    this.request<OrderDashboard[], void>({
       path: `/v1/monitoring`,
       method: 'GET',
       ...params,
@@ -347,58 +451,6 @@ export class MyApi<SecurityDataType = unknown> extends HttpClient<SecurityDataTy
       ...params,
     });
   /**
-   * @description Get order or product by id
-   *
-   * @tags market, product, Marketplace, get, advertisement, order
-   * @name GetAd
-   * @summary Get one ad
-   * @request GET:/v1/market/{advertisementId}
-   * @response `200` `(FullProductCard | FullOrderCard)` Success
-   * @response `404` `void` Ad not found
-   */
-  getAd = (advertisementId: number, params: RequestParams = {}) =>
-    this.request<FullProductCard | FullOrderCard, void>({
-      path: `/v1/market/${advertisementId}`,
-      method: 'GET',
-      ...params,
-    });
-  /**
-   * @description Accept order by it's id
-   *
-   * @tags market, Marketplace, put, order
-   * @name AcceptOrder
-   * @summary Accept order
-   * @request PUT:/v1/market/{advertisementId}
-   * @response `200` `string` Success
-   * @response `401` `void` Unauthorized
-   * @response `404` `void` Not found
-   * @response `410` `void` Already accepted
-   */
-  acceptOrder = (advertisementId: number, params: RequestParams = {}) =>
-    this.request<string, void>({
-      path: `/v1/market/${advertisementId}`,
-      method: 'PUT',
-      ...params,
-    });
-  /**
-   * @description Buy a product by ad id
-   *
-   * @tags market, product, Marketplace, post
-   * @name PurchaseProduct
-   * @summary Purchase product
-   * @request POST:/v1/market/{advertisementId}
-   * @response `200` `string` Success
-   * @response `401` `string` Unauthorized
-   * @response `404` `string` Not found
-   * @response `410` `string` Already purchased
-   */
-  purchaseProduct = (advertisementId: number, params: RequestParams = {}) =>
-    this.request<string, string>({
-      path: `/v1/market/${advertisementId}`,
-      method: 'POST',
-      ...params,
-    });
-  /**
    * @description Returns basic information about the user and avatar
    *
    * @tags Account, get, profile, user, account
@@ -437,18 +489,34 @@ export class MyApi<SecurityDataType = unknown> extends HttpClient<SecurityDataTy
       ...params,
     });
   /**
+   * No description
+   *
+   * @tags Account
+   * @name DeleteAccount
+   * @request DELETE:/v1/account/profile
+   * @response `200` `string` OK
+   */
+  deleteAccount = (data: string, params: RequestParams = {}) =>
+    this.request<string, any>({
+      path: `/v1/account/profile`,
+      method: 'DELETE',
+      body: data,
+      type: ContentType.Text,
+      ...params,
+    });
+  /**
    * @description Returns orders and products that belong to user, distinguish by "orderId" and "productId" field of objects
    *
    * @tags get, advertisement, My Advertisements, user, account
-   * @name GetAds1
+   * @name GetMyAds
    * @summary Get all my ads
    * @request GET:/v1/account/advertisements
-   * @response `200` `(Order | Product)` Success
+   * @response `200` `(OrderSummaryPersonal & Product & CustomPage)` Success
    * @response `400` `void` Bad request param
    * @response `401` `void` Unauthorized
    * @response `404` `void` User not found
    */
-  getAds1 = (
+  getMyAds = (
     query?: {
       /** Page number, default 0 */
       page?: any;
@@ -459,8 +527,7 @@ export class MyApi<SecurityDataType = unknown> extends HttpClient<SecurityDataTy
     },
     params: RequestParams = {},
   ) =>
-    this.request<IAdsResponse, void>({
-      //change types for response
+    this.request<OrderSummaryPersonal & Product & CustomPage, void>({
       path: `/v1/account/advertisements`,
       method: 'GET',
       query: query,
@@ -479,27 +546,44 @@ export class MyApi<SecurityDataType = unknown> extends HttpClient<SecurityDataTy
    * @response `404` `void` User or Ad not found
    */
   updateAd = (
-    data: {
-      dto: UpdateAdRequest;
-      images?: File[];
-    },
+    data: { dto: UpdateProductRequest | UpdateOrderRequest; images: File[] },
     params: RequestParams = {},
   ) =>
     this.request<string, void>({
       path: `/v1/account/advertisements`,
       method: 'PUT',
       body: data,
+      type: ContentType.FormData,
+      ...params,
+    });
+  /**
+   * No description
+   *
+   * @tags user, post
+   * @name InviteEmployee
+   * @summary Invite a user
+   * @request POST:/v1/users/invite
+   * @response `201` `string` Success
+   * @response `401` `void` Unauthorized
+   * @response `403` `void` No permission or role
+   * @response `404` `void` User not found
+   */
+  inviteEmployee = (data: InviteUserRequest, params: RequestParams = {}) =>
+    this.request<string, void>({
+      path: `/v1/users/invite`,
+      method: 'POST',
+      body: data,
       type: ContentType.Json,
       ...params,
     });
   /**
-   * @description Get orders and products by mandatory "type" param
+   * @description Get orders, products or jobs by mandatory "type" param
    *
-   * @tags market, product, Marketplace, get, advertisement, order
+   * @tags market, product, Marketplace, get, jobs, advertisement, order
    * @name GetAds
-   * @summary Get ads
+   * @summary Get market ads
    * @request GET:/v1/market
-   * @response `200` `PageCard` Success
+   * @response `200` `CustomPageCard` Success
    * @response `400` `void` Bad param
    */
   getAds = (
@@ -513,7 +597,7 @@ export class MyApi<SecurityDataType = unknown> extends HttpClient<SecurityDataTy
     },
     params: RequestParams = {},
   ) =>
-    this.request<PageCard, void>({
+    this.request<CustomPageCard, void>({
       path: `/v1/market`,
       method: 'GET',
       query: query,
@@ -529,20 +613,63 @@ export class MyApi<SecurityDataType = unknown> extends HttpClient<SecurityDataTy
    * @response `201` `string` Ad created
    * @response `400` `void` Bad request
    * @response `401` `void` Unauthorized
+   * @response `403` `void` Employee does not have permission to create job ad
    * @response `404` `void` User not found
    */
   placeAdvertisement = (
-    data: {
-      dto: CreateAdRequest;
-      images?: File[];
-    },
+    data: { dto: CreateProductRequest | CreateOrderRequest | CreateJobRequest },
     params: RequestParams = {},
   ) =>
     this.request<string, void>({
       path: `/v1/market`,
       method: 'POST',
       body: data,
-      type: ContentType.Json,
+      type: ContentType.FormData,
+      ...params,
+    });
+  /**
+   * @description Get order, product or job by id
+   *
+   * @tags market, product, Marketplace, get, advertisement, job, order
+   * @name GetAd
+   * @summary Get market ad
+   * @request GET:/v1/market/{advertisementId}
+   * @response `200` `(ProductCard | OrderCard)` Success
+   * @response `404` `void` Ad not found
+   */
+  getAd = (advertisementId: number, params: RequestParams = {}) =>
+    this.request<ProductCard | OrderCard, void>({
+      path: `/v1/market/${advertisementId}`,
+      method: 'GET',
+      ...params,
+    });
+  /**
+   * @description Purchase product, accept order or apply job
+   *
+   * @tags market, product, Marketplace, post, advertisement, job, order
+   * @name HandleAdvertisementAction
+   * @summary Handle advertisement
+   * @request POST:/v1/market/{advertisementId}
+   * @response `200` `string` Success
+   * @response `401` `string` Unauthorized
+   * @response `404` `string` Not found
+   * @response `410` `string` Already purchased
+   */
+  handleAdvertisementAction = (
+    advertisementId: number,
+    query?: {
+      /**
+       * Only used with purchase Product
+       * @format int32
+       */
+      quantity?: number;
+    },
+    params: RequestParams = {},
+  ) =>
+    this.request<string, string>({
+      path: `/v1/market/${advertisementId}`,
+      method: 'POST',
+      query: query,
       ...params,
     });
   /**
@@ -723,6 +850,41 @@ export class MyApi<SecurityDataType = unknown> extends HttpClient<SecurityDataTy
       ...params,
     });
   /**
+   * No description
+   *
+   * @tags Account, post, invitation, account
+   * @name AcceptInvitation
+   * @summary Accept invitation
+   * @request POST:/v1/account/profile/invitations/{invitationId}
+   * @response `200` `string` Success
+   * @response `401` `string` Unauthorized
+   * @response `403` `string` Still has assigned tasks
+   * @response `404` `string` Invitation not found or expired
+   */
+  acceptInvitation = (invitationId: number, params: RequestParams = {}) =>
+    this.request<string, string>({
+      path: `/v1/account/profile/invitations/${invitationId}`,
+      method: 'POST',
+      ...params,
+    });
+  /**
+   * No description
+   *
+   * @tags Account, invitation, delete, account
+   * @name DeclineInvitation
+   * @summary Decline invitation
+   * @request DELETE:/v1/account/profile/invitations/{invitationId}
+   * @response `200` `string` Success
+   * @response `401` `string` Unauthorized
+   * @response `404` `string` Invitation not found
+   */
+  declineInvitation = (invitationId: number, params: RequestParams = {}) =>
+    this.request<string, string>({
+      path: `/v1/account/profile/invitations/${invitationId}`,
+      method: 'DELETE',
+      ...params,
+    });
+  /**
    * @description Upload an image using param "avatar" to set an avatar
    *
    * @tags Account, post, profile, user, account
@@ -758,9 +920,9 @@ export class MyApi<SecurityDataType = unknown> extends HttpClient<SecurityDataTy
    *
    * @tags My Orders, get, account, order
    * @name GetOrders1
-   * @summary Get orders
+   * @summary Get my orders
    * @request GET:/v1/account/orders
-   * @response `200` `PageSmallOrder` Success
+   * @response `200` `CustomPageSmallOrder` Success
    * @response `400` `void` Bad param
    * @response `401` `void` Unauthorized
    * @response `404` `void` User not found
@@ -773,17 +935,10 @@ export class MyApi<SecurityDataType = unknown> extends HttpClient<SecurityDataTy
       page?: any;
       /** Page size */
       size?: any;
-      dateType?: any;
-      /** If dateType is not null, then dateFrom is required */
-      dateFrom?: any;
-      /** If dateType is not null, then dateTo is required */
-      dateTo?: any;
-      /** Sorting property. Equals to object field. Can be multiplesorting properties. Default "acceptedAt" */
-      '[sort]'?: any;
     },
     params: RequestParams = {},
   ) =>
-    this.request<PageSmallOrder, void>({
+    this.request<CustomPageSmallOrder, void>({
       path: `/v1/account/orders`,
       method: 'GET',
       query: query,
@@ -816,13 +971,97 @@ export class MyApi<SecurityDataType = unknown> extends HttpClient<SecurityDataTy
       ...params,
     });
   /**
+   * No description
+   *
+   * @tags user, get
+   * @name GetUsers
+   * @summary Get all users
+   * @request GET:/v1/users
+   * @response `200` `CustomPageUserSummary` Success
+   * @response `401` `void` Unauthorized
+   */
+  getUsers = (
+    query?: {
+      /**
+       * Page number
+       * @example 1
+       */
+      page?: any;
+      /**
+       * Page size
+       * @example 1
+       */
+      size?: any;
+    },
+    params: RequestParams = {},
+  ) =>
+    this.request<CustomPageUserSummary, void>({
+      path: `/v1/users`,
+      method: 'GET',
+      query: query,
+      ...params,
+    });
+  /**
+   * No description
+   *
+   * @tags user, get
+   * @name GetOneUser
+   * @summary Get one user
+   * @request GET:/v1/users/{userId}
+   * @response `200` `UserDto` Success
+   * @response `401` `void` Unauthorized
+   * @response `404` `void` User not found
+   */
+  getOneUser = (userId: number, params: RequestParams = {}) =>
+    this.request<UserDto, void>({
+      path: `/v1/users/${userId}`,
+      method: 'GET',
+      ...params,
+    });
+  /**
+   * @description Search by query and context aka filter. iDD stands for dropdown field
+   *
+   * @tags search, Search API, get
+   * @name Search
+   * @summary Search
+   * @request GET:/v1/search
+   * @response `200` `CustomPageSearchItem` Success
+   * @response `400` `CustomPageSearchItem` Bad request
+   * @response `401` `CustomPageSearchItem` Unauthorized
+   */
+  search = (
+    query: {
+      q: string;
+      con?: string;
+      /** @default true */
+      iDD?: boolean;
+      /**
+       * @format int32
+       * @default 0
+       */
+      page?: number;
+      /**
+       * @format int32
+       * @default 5
+       */
+      size?: number;
+    },
+    params: RequestParams = {},
+  ) =>
+    this.request<CustomPageSearchItem, CustomPageSearchItem>({
+      path: `/v1/search`,
+      method: 'GET',
+      query: query,
+      ...params,
+    });
+  /**
    * @description Public endpoint
    *
    * @tags get, organization
    * @name GetAllOrganizations
    * @summary Get all organizations
    * @request GET:/v1/organizations
-   * @response `200` `PageOrganizationSummary` Organizations paged list
+   * @response `200` `CustomPageOrganizationSummary` Organizations paged list
    */
   getAllOrganizations = (
     query?: {
@@ -833,7 +1072,7 @@ export class MyApi<SecurityDataType = unknown> extends HttpClient<SecurityDataTy
     },
     params: RequestParams = {},
   ) =>
-    this.request<PageOrganizationSummary, any>({
+    this.request<CustomPageOrganizationSummary, any>({
       path: `/v1/organizations`,
       method: 'GET',
       query: query,
@@ -916,7 +1155,7 @@ export class MyApi<SecurityDataType = unknown> extends HttpClient<SecurityDataTy
    * @name GetOrders
    * @summary Get order history
    * @request GET:/v1/organization/orders
-   * @response `200` `PageOrderSummary` Success
+   * @response `200` `CustomPageOrderAccepted` Success
    * @response `400` `void` Bad param request
    * @response `401` `void` Unauthorized
    * @response `404` `void` User or organization not found
@@ -940,8 +1179,40 @@ export class MyApi<SecurityDataType = unknown> extends HttpClient<SecurityDataTy
     },
     params: RequestParams = {},
   ) =>
-    this.request<PageOrderSummary, void>({
+    this.request<CustomPageOrderAccepted, void>({
       path: `/v1/organization/orders`,
+      method: 'GET',
+      query: query,
+      ...params,
+    });
+  /**
+   * @description Returns inv-s sent by current org
+   *
+   * @tags Organization, invitation, get, organization
+   * @name GetInvitations
+   * @summary Get invitations
+   * @request GET:/v1/organization/invitations
+   * @response `200` `CustomPageInviterInvitation` Success
+   * @response `401` `CustomPageInviterInvitation` Unauthorized
+   * @response `403` `CustomPageInviterInvitation` Has no role EMPLOYEE
+   */
+  getInvitations = (
+    query?: {
+      /**
+       * @format int32
+       * @default 0
+       */
+      page?: number;
+      /**
+       * @format int32
+       * @default 5
+       */
+      size?: number;
+    },
+    params: RequestParams = {},
+  ) =>
+    this.request<CustomPageInviterInvitation, CustomPageInviterInvitation>({
+      path: `/v1/organization/invitations`,
       method: 'GET',
       query: query,
       ...params,
@@ -995,13 +1266,31 @@ export class MyApi<SecurityDataType = unknown> extends HttpClient<SecurityDataTy
       ...params,
     });
   /**
+   * No description
+   *
+   * @tags Organization, get, organization, advertisement, job
+   * @name GetAdvertisement
+   * @summary Get one job ad
+   * @request GET:/v1/organization/advertisements/{advertisementId}
+   * @response `200` `Job` Success
+   * @response `401` `Job` Unauthorized
+   * @response `403` `Job` User has no EMPLOYEE role
+   * @response `404` `Job` Not found
+   */
+  getAdvertisement = (advertisementId: number, params: RequestParams = {}) =>
+    this.request<Job, Job>({
+      path: `/v1/organization/advertisements/${advertisementId}`,
+      method: 'GET',
+      ...params,
+    });
+  /**
    * @description Get all orders of organization
    *
    * @tags organization, get, monitoring, Monitoring, order
    * @name GetOrdersHistory
    * @summary Get order history
    * @request GET:/v1/monitoring/orders
-   * @response `200` `PageOrderSummary` Success
+   * @response `200` `CustomPageOrderAccepted` Success
    * @response `400` `void` Bad param request
    * @response `401` `void` Unauthorized
    * @response `404` `void` User or organization not found
@@ -1025,20 +1314,37 @@ export class MyApi<SecurityDataType = unknown> extends HttpClient<SecurityDataTy
     },
     params: RequestParams = {},
   ) =>
-    this.request<PageOrderSummary, void>({
+    this.request<CustomPageOrderAccepted, void>({
       path: `/v1/monitoring/orders`,
       method: 'GET',
       query: query,
       ...params,
     });
   /**
-   * @description Returns products purchased by user, id of product replaced by purchase id
+   * @description Retrieve employees list whose hierarchy is lower
+   *
+   * @tags get, employee, monitoring, Monitoring
+   * @name GetEmployeesBeforeAssign
+   * @summary Get employees to assign
+   * @request GET:/v1/monitoring/employees
+   * @response `200` `(EmployeeSummary)[]` Success
+   * @response `401` `(EmployeeSummary)[]` Unauthorized
+   * @response `403` `(EmployeeSummary)[]` No permission to assign employees
+   */
+  getEmployeesBeforeAssign = (params: RequestParams = {}) =>
+    this.request<EmployeeSummary[], EmployeeSummary[]>({
+      path: `/v1/monitoring/employees`,
+      method: 'GET',
+      ...params,
+    });
+  /**
+   * @description Returns purchases with product in it
    *
    * @tags product, get, purchase, Purchases, user, account
    * @name GetPurchases
    * @summary All purchases
    * @request GET:/v1/account/purchases
-   * @response `200` `PageCard` Success
+   * @response `200` `CustomPagePurchaseSummary` Success
    * @response `401` `void` Unauthorized
    */
   getPurchases = (
@@ -1050,27 +1356,58 @@ export class MyApi<SecurityDataType = unknown> extends HttpClient<SecurityDataTy
     },
     params: RequestParams = {},
   ) =>
-    this.request<PageCard, void>({
+    this.request<CustomPagePurchaseSummary, void>({
       path: `/v1/account/purchases`,
       method: 'GET',
       query: query,
       ...params,
     });
   /**
-   * @description Get one product ad by unique id of purchase
+   * @description Returns purchase with details and product in it
    *
    * @tags product, get, purchase, Purchases, user, account
    * @name GetPurchase
    * @summary One purchase
    * @request GET:/v1/account/purchases/{productId}
-   * @response `200` `FullProductCard` Success
+   * @response `200` `Purchase` Success
    * @response `401` `void` Unauthorized
    * @response `404` `void` Purchase not found
    */
   getPurchase = (productId: number, params: RequestParams = {}) =>
-    this.request<FullProductCard, void>({
+    this.request<Purchase, void>({
       path: `/v1/account/purchases/${productId}`,
       method: 'GET',
+      ...params,
+    });
+  /**
+   * No description
+   *
+   * @tags Account, invitation, get, account
+   * @name GetInvitations1
+   * @summary Get user's invitations
+   * @request GET:/v1/account/profile/invitations
+   * @response `200` `CustomPageInvitation` Success
+   * @response `401` `CustomPageInvitation` Unauthorized
+   */
+  getInvitations1 = (
+    query?: {
+      /**
+       * @format int32
+       * @default 0
+       */
+      page?: number;
+      /**
+       * @format int32
+       * @default 5
+       */
+      size?: number;
+    },
+    params: RequestParams = {},
+  ) =>
+    this.request<CustomPageInvitation, CustomPageInvitation>({
+      path: `/v1/account/profile/invitations`,
+      method: 'GET',
+      query: query,
       ...params,
     });
   /**
@@ -1094,31 +1431,88 @@ export class MyApi<SecurityDataType = unknown> extends HttpClient<SecurityDataTy
    * @description Returns status or product that belongs to user, distinguish by "orderId" and "productId" field of object
    *
    * @tags get, advertisement, My Advertisements, user, account
-   * @name GetAd1
+   * @name GetMyAd
    * @summary Get one my ad
    * @request GET:/v1/account/advertisements/{advertisementId}
-   * @response `200` `(FullOrder | FullProduct)` Success
+   * @response `200` `(OrderFull | ProductFull)` Success
    * @response `401` `void` Unauthorized
    * @response `404` `void` User or Ad not found
    */
-  getAd1 = (advertisementId: number, params: RequestParams = {}) =>
-    this.request<FullOrder | FullProduct, void>({
+  getMyAd = (advertisementId: number, params: RequestParams = {}) =>
+    this.request<OrderFull | ProductFull, void>({
       path: `/v1/account/advertisements/${advertisementId}`,
       method: 'GET',
       ...params,
     });
   /**
-   * @description EP for close(1)/disclose(2)/delete(3)/restore(4) an ad
+   * @description Deletes sent invitation. Requires DELETE_EMPLOYEE permission
+   *
+   * @tags Organization, invitation, organization, delete
+   * @name DeleteInvitation
+   * @summary Revoke invitation
+   * @request DELETE:/v1/organization/invitations/{invId}
+   * @response `200` `string` Deletion success
+   * @response `401` `string` Unauthorized
+   * @response `403` `string` Has no permission
+   * @response `404` `string` Not found or does not belong to current org
+   */
+  deleteInvitation = (invId: number, params: RequestParams = {}) =>
+    this.request<string, string>({
+      path: `/v1/organization/invitations/${invId}`,
+      method: 'DELETE',
+      ...params,
+    });
+  /**
+   * @description EP for close(1)/disclose(2)/delete(3) an ad
+   *
+   * @tags Organization, organization, advertisement, job, delete
+   * @name InteractWithAd
+   * @summary Interact with org ad
+   * @request DELETE:/v1/organization/advertisements/{advertisementId}/{actionId}
+   * @response `200` `string` Success
+   * @response `401` `void` Unauthorized
+   * @response `403` `void` No permission
+   * @response `404` `void` User or Ad not found
+   */
+  interactWithAd = (
+    advertisementId: number,
+    actionId: string,
+    params: RequestParams = {},
+  ) =>
+    this.request<string, void>({
+      path: `/v1/organization/advertisements/${advertisementId}/${actionId}`,
+      method: 'DELETE',
+      ...params,
+    });
+  /**
+   * No description
+   *
+   * @tags Account, organization, delete, user, account
+   * @name LeaveOrganization
+   * @summary Leave organization
+   * @request DELETE:/v1/account/profile/organization
+   * @response `200` `string` Success
+   * @response `401` `string` Unauthorized
+   * @response `403` `string` User is owner or has assigned tasks
+   */
+  leaveOrganization = (params: RequestParams = {}) =>
+    this.request<string, string>({
+      path: `/v1/account/profile/organization`,
+      method: 'DELETE',
+      ...params,
+    });
+  /**
+   * @description EP for close(1)/disclose(2)/delete(3) an ad
    *
    * @tags advertisement, My Advertisements, user, delete, account
-   * @name InteractWithAd
+   * @name InteractWithAd1
    * @summary Action on ad
    * @request DELETE:/v1/account/advertisements/{advertisementId}/{actionId}
    * @response `200` `string` Success
    * @response `401` `void` Unauthorized
    * @response `404` `void` User or Ad not found
    */
-  interactWithAd = (
+  interactWithAd1 = (
     advertisementId: number,
     actionId: string,
     params: RequestParams = {},
@@ -1129,3 +1523,4 @@ export class MyApi<SecurityDataType = unknown> extends HttpClient<SecurityDataTy
       ...params,
     });
 }
+export const myApi = new MyApi();

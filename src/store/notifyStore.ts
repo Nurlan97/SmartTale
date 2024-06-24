@@ -1,69 +1,54 @@
-import { makeAutoObservable } from 'mobx';
+import { Client } from '@stomp/stompjs';
+import { makeAutoObservable, runInAction } from 'mobx';
 
-import { IMessage } from '../api/interfaces-ws';
-import stompClient from '../api/ws';
-import { INotify } from '../components/Notify/Notify';
+import { IMessageOrg, IMessageUser, Messages } from '../api/interfaces-ws';
+import { createClient, sendMessage } from '../api/stomp';
+import { isTokenExpired } from '../utils/helpers';
 import userStore from './userStore';
 
-const defaultData: INotify[] = [
-  {
-    id: 1,
-    type: 'accept',
-    readed: true,
-    first: 'Пошив юбок',
-    second: 'Назгул',
-    time: 'Вчера, 10 утра',
-  },
-  {
-    id: 2,
-    type: 'advice',
-    readed: true,
-    first: 'Пошив юбок',
-    second: 'Назгул',
-    time: 'Вчера, 10 утра',
-  },
-  {
-    id: 3,
-    type: 'status',
-    readed: false,
-    first: 'Пошив юбок',
-    second: 'Назгул',
-    time: 'Вчера, 10 утра',
-  },
-];
 class notifyStore {
-  notifications: INotify[] = defaultData;
+  notifications: Array<IMessageOrg | IMessageUser> = [];
+  client: Client | undefined = undefined;
   constructor() {
     makeAutoObservable(this);
   }
   connect = () => {
-    if (userStore.accessToken) {
-      stompClient.connect(
-        { Authorization: `Bearer ${userStore.accessToken}` },
-        (frame) => {
-          const decodedToken = JSON.parse(atob(userStore.accessToken.split('.')[1]));
-          const userId = decodedToken.userId;
-          const orgId = decodedToken.orgId;
-
-          stompClient.subscribe(`/user/${userId}/push`, (message) => {
-            const notification = JSON.parse(message.body);
-            console.log(notification);
-          });
-          if (orgId > 0) {
-            stompClient.subscribe(`/org/${orgId}/push`, (message) => {
-              const notification = JSON.parse(message.body);
-              console.log(notification);
-            });
-          }
-        },
-      );
+    if (!isTokenExpired(userStore.accessToken) && !this.client) {
+      this.client = createClient(userStore.accessToken);
+      this.client.activate();
     }
   };
-
-  markAsRead = (id: number) => {
-    const index = this.notifications.findIndex((item) => item.id === id);
-    this.notifications[index].readed = true;
+  addNotify = (notify: IMessageOrg | IMessageUser) => {
+    if (
+      this.notifications.findIndex(
+        (message) => message.notificationId === notify.notificationId,
+      ) !== -1
+    )
+      return;
+    this.notifications.push(notify);
   };
+  markAsRead = (id: number) => {
+    if (this.client) {
+      sendMessage(this.client, String(id), '/app/notifications/markAsRead');
+      runInAction(() => {
+        const index = this.notifications.findIndex((item) => item.notificationId === id);
+        if (index !== -1) {
+          this.notifications[index].read = true;
+        }
+      });
+    }
+  };
+  markAllReaded = () => {
+    this.notifications.forEach((item) => {
+      if (item.read === false) {
+        this.markAsRead(item.notificationId);
+        item.read = true;
+      }
+    });
+  };
+  get hasUnreaded() {
+    return this.notifications.some((item) => !item.read);
+  }
 }
 
 export default new notifyStore();

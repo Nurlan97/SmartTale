@@ -14,12 +14,11 @@ import type {
   AxiosRequestConfig,
   AxiosResponse,
   HeadersDefaults,
-  InternalAxiosRequestConfig,
   ResponseType,
 } from 'axios';
 import axios from 'axios';
-import { isTokenExpired, removeCookie } from '../utils/helpers';
 import { userStore } from '../store';
+import { isTokenExpired, redirectToAuth } from '../utils/helpers';
 
 export type QueryParamsType = Record<string | number, any>;
 
@@ -56,13 +55,6 @@ export enum ContentType {
   UrlEncoded = 'application/x-www-form-urlencoded',
   Text = 'text/plain',
 }
-const redirectToAuth = (config: InternalAxiosRequestConfig<any>) => {
-  const abortCtrl = new AbortController();
-  abortCtrl.abort();
-  config.signal = abortCtrl.signal;
-  userStore.logout();
-  window.location.assign(`${window.location.origin}/#/authorization`);
-};
 
 export class HttpClient<SecurityDataType = unknown> {
   public instance: AxiosInstance;
@@ -88,13 +80,13 @@ export class HttpClient<SecurityDataType = unknown> {
       if (config.url?.includes('refresh-token')) {
         return config;
       }
+
       if (userStore.isAuth) {
         if (isTokenExpired(userStore.accessToken)) {
           if (isTokenExpired(userStore.refreshToken)) {
             redirectToAuth(config);
           } else {
             await userStore.refreshTokens();
-
             config.headers['Authorization'] = `Bearer ${userStore.accessToken}`;
           }
         } else {
@@ -107,18 +99,40 @@ export class HttpClient<SecurityDataType = unknown> {
       (response) => response,
       async (error) => {
         const originalRequest = error.config;
+
         if (!userStore.isAuth) {
           return Promise.reject(error);
+        }
+        if (
+          error.response.status === 403 &&
+          (originalRequest.url.includes('market') ||
+            originalRequest.url.includes('organization') ||
+            originalRequest.url.includes('monitoring')) &&
+          !originalRequest._retry
+        ) {
+          originalRequest._retry = true;
+          await userStore.refreshTokens();
+          return this.instance(originalRequest);
+        }
+        if (
+          error.response.status === 403 &&
+          (originalRequest.url.includes('market') ||
+            originalRequest.url.includes('organization') ||
+            originalRequest.url.includes('monitoring')) &&
+          originalRequest._retry
+        ) {
+          window.location.assign(`${window.location.origin}/#/profile`);
         }
         if (error.response.status === 401 && !originalRequest._retry) {
           originalRequest._retry = true;
           await userStore.refreshTokens();
           return this.instance(originalRequest);
-        } else {
+        }
+        if (error.response.status === 401 && originalRequest._retry) {
           userStore.logout();
           window.location.assign(`${window.location.origin}/#/authorization`);
-          return Promise.reject(error);
         }
+        return Promise.reject(error);
       },
     );
   }

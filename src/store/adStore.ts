@@ -1,15 +1,22 @@
-import { makeAutoObservable } from 'mobx';
-import uniqid from 'uniqid';
+import { makeAutoObservable, runInAction } from 'mobx';
+import { v4 as uuidv4 } from 'uuid';
 
-import { CreateAdRequest } from '../api/data-contracts';
-import { MyApi } from '../api/V1';
+import {
+  CreateJobRequest,
+  CreateOrderRequest,
+  CreateProductRequest,
+  Job,
+  OrderFull,
+  PositionSummary,
+  ProductFull,
+  UpdateJobRequest,
+  UpdateOrderRequest,
+  UpdateProductRequest,
+} from '../api/data-contracts';
+import { myApi } from '../api/V1';
+import { errorNotify, successNotify } from '../utils/toaster';
 import modalStore, { Modals } from './modalStore';
 
-const api = new MyApi();
-interface IPlaceAd {
-  dto: CreateAdRequest;
-  images?: File[];
-}
 interface IImage {
   type: 'currentImages' | 'additionalImages';
   index: number;
@@ -40,11 +47,12 @@ interface REPLACE {
   arrayPosition: number;
   filePosiiton: number;
 }
-
+export type AdType = 'Order' | 'Product' | 'Job';
 export default class adStore {
+  ad: Array<OrderFull | ProductFull | Job> = [];
   isLoading = false;
   showForm = true;
-  type: 'Order' | 'Product' = 'Product';
+  type: AdType = 'Product';
   currentImages: Array<string> = [];
   #viewedImages: IImage[] = [];
   #oldImages: IImage[] = [];
@@ -52,17 +60,32 @@ export default class adStore {
   additionalFiles: File[] = [];
   viewedImages: Array<string> = [];
   imageActions: IAction[] = [];
+  posiitons: PositionSummary[] = [];
 
-  constructor(imagesArr: string[]) {
-    this.currentImages = imagesArr;
-    imagesArr.forEach((val, ind) => {
-      this.#viewedImages.push({ index: ind, type: 'currentImages', id: uniqid() });
-    });
-    this.#oldImages = [...this.#viewedImages];
-    this.updateViewed();
-    makeAutoObservable(this, {}, { autoBind: true });
+  constructor(id?: number, type?: AdType) {
+    if (id) {
+      this.createStore(id, type);
+    }
+    makeAutoObservable(this);
   }
-  setType = (type: 'Product' | 'Order') => {
+  createStore = async (id: number, type?: AdType) => {
+    if (type === 'Job') {
+      this.type = 'Job';
+      await this.fetchJob(id);
+    } else {
+      await this.fetchAd(id);
+    }
+    runInAction(() => {
+      this.currentImages =
+        'imageUrls' in this.ad[0] ? this.ad[0].imageUrls : this.ad[0].images;
+      this.currentImages.forEach((val, ind) => {
+        this.#viewedImages.push({ index: ind, type: 'currentImages', id: uuidv4() });
+      });
+      this.#oldImages = [...this.#viewedImages];
+      this.updateViewed();
+    });
+  };
+  setType = (type: AdType) => () => {
     this.type = type;
   };
   calcActions = () => {
@@ -84,7 +107,6 @@ export default class adStore {
             filePointer += 1;
             currentView.splice(i, 1, newView[i]);
           } else {
-            // console.log('testing', currentView.length, newView.length);
             action = {
               action: 'ADD',
               targetPosition: i,
@@ -92,9 +114,7 @@ export default class adStore {
             };
             currentView = [...currentView, newView[i]];
           }
-          // currentView.push(newView[i]);
         } else {
-          // console.log('action remove');
           action = {
             action: 'REMOVE',
             arrayPosition: i,
@@ -133,7 +153,7 @@ export default class adStore {
     const ind = this.additionalImages.length;
     this.additionalFiles.push(file);
     this.additionalImages.push(URL.createObjectURL(file));
-    this.#viewedImages.push({ index: ind, type: 'additionalImages', id: uniqid() });
+    this.#viewedImages.push({ index: ind, type: 'additionalImages', id: uuidv4() });
     this.updateViewed();
   };
   deleteImage = (ind: number) => {
@@ -160,7 +180,7 @@ export default class adStore {
       this.#viewedImages.splice(ind, 1, {
         index: imageToChange.index,
         type: 'additionalImages',
-        id: uniqid(),
+        id: uuidv4(),
       });
     } else {
       this.additionalFiles.push(file);
@@ -168,7 +188,7 @@ export default class adStore {
       this.#viewedImages.splice(ind, 1, {
         index: additionalInd,
         type: 'additionalImages',
-        id: uniqid(),
+        id: uuidv4(),
       });
     }
 
@@ -179,21 +199,19 @@ export default class adStore {
     });
     this.updateViewed();
   };
-  placeAd = async (dto: CreateAdRequest, images: File[] = []) => {
+  placeAd = async (
+    dto: CreateProductRequest | CreateOrderRequest | CreateJobRequest,
+    images: File[] = [],
+  ) => {
     modalStore.openModal(Modals.loader);
     const obj = { dto: dto, images: images };
-    const formData = new FormData();
-    formData.append('dto', new Blob([JSON.stringify(dto)], { type: 'application/json' }));
-    if (images) {
-      for (const image of images) {
-        formData.append('images', image);
-      }
-    }
     try {
-      const response = await api.placeAdvertisement(obj);
+      const response = await myApi.placeAdvertisement(obj);
       this.resetForm();
+      successNotify('Объявление успешно добавлено');
     } catch (error) {
       console.log(error);
+      errorNotify('Произошла ошибка, повторите попытку');
     }
     modalStore.closeModal();
   };
@@ -208,5 +226,83 @@ export default class adStore {
     this.additionalFiles = [];
     this.viewedImages = [];
     this.imageActions = [];
+  };
+  fetchAd = async (id: number) => {
+    try {
+      const response = await myApi.getMyAd(id);
+      this.ad = [];
+      this.ad.push(response.data);
+    } catch (error) {
+      console.log(error);
+      errorNotify('Произошла ошибка при загрузке, повторите попытку');
+    }
+  };
+  fetchJob = async (id: number) => {
+    try {
+      const response = await myApi.getAdvertisement(id);
+      this.ad = [];
+      this.ad.push(response.data);
+    } catch (error) {
+      console.log(error);
+      errorNotify('Произошла ошибка при загрузке, повторите попытку');
+    }
+  };
+  getDropdownPositions = async () => {
+    try {
+      const response = await myApi.getPositionsDropdown();
+      runInAction(() => {
+        this.posiitons = response.data;
+      });
+    } catch (error) {
+      console.log(error);
+      errorNotify('Произошла ошибка при загрузке доступных позиций, повторите попытку');
+    }
+  };
+  updateAd = async (
+    dto:
+      | UpdateProductRequest
+      | UpdateOrderRequest
+      | UpdateJobRequest
+      | CreateProductRequest
+      | CreateOrderRequest,
+  ) => {
+    const imageActions = this.calcActions();
+
+    if ('jobId' in dto) {
+      const obj = {
+        dto: { ...dto, imageOperations: imageActions },
+        images: this.additionalFiles,
+      };
+      try {
+        const response = await myApi.updateAdvertisement(obj);
+        successNotify('Объявление успешно обновлено');
+      } catch (error) {
+        console.log(error);
+        errorNotify('Произошла ошибка при обновлении объявления');
+      }
+    }
+    if ('advertisementId' in dto) {
+      const obj = {
+        dto: { ...dto, imageOperations: imageActions },
+        images: this.additionalFiles,
+      };
+      try {
+        const response = await myApi.updateAd(obj);
+        successNotify('Объявление успешно обновлено');
+      } catch (error) {
+        console.log(error);
+        errorNotify('Произошла ошибка при обновлении объявления');
+      }
+    }
+  };
+  confirmRequest = async (code: string) => {
+    try {
+      const response = await myApi.confirmOrder({ code: code });
+      if ('acceptanceRequests' in this.ad[0]) this.ad[0].acceptanceRequests = [];
+      successNotify('Пришлашение успешно принято');
+    } catch (error) {
+      console.log(error);
+      errorNotify('Произошла ошибка при подтверждении заказа, повторите попытку');
+    }
   };
 }

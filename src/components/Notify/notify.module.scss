@@ -47,15 +47,15 @@
   align-items: center;
   justify-content: center;
 }
-.accept {
+.market {
   @include logo;
   background-color: #fffba1;
 }
-.status {
+.orders {
   @include logo;
   background-color: #c3fffb;
 }
-.advice {
+.profile {
   @include logo;
   background-color: #c5e6ff;
 }
@@ -71,4 +71,10 @@
 .unreaded {
   @include read;
   background-color: #ffcc00;
+}
+.logo {
+  width: 32px;
+  height: 32px;
+  border-radius: 16px;
+  object-fit: cover;
 }

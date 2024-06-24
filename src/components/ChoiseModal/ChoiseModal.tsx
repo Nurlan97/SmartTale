@@ -1,12 +1,15 @@
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 import { appStore, modalStore, userStore } from '../../store';
 import { Modals } from '../../store/modalStore';
+import vacancyStore from '../../store/vacancyStore';
 import Button from '../../UI/Button/Button';
 import styles from './choiseModal.module.scss';
 
 const ChoiseModal = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const id = Number(location.pathname.split('/').pop());
   const map = new Map();
   map.set(Modals.deleteAd, {
     emoji: '😔',
@@ -14,8 +17,9 @@ const ChoiseModal = () => {
     description: 'Объявление удалится навсегда!',
     button1: 'Отменить',
     button2: 'Удалить',
-    handler: (id: number) => {
+    handler: () => {
       appStore.deleteAd(id);
+      navigate(-1);
     },
   });
   map.set(Modals.hideAd, {
@@ -24,9 +28,31 @@ const ChoiseModal = () => {
     description: 'Объявление больше не будет доступно для просмотра в маркетплейсе',
     button1: 'Отменить',
     button2: 'Скрыть',
-    handler: (id: number) => {
-      console.log('hide');
+    handler: () => {
       appStore.closeAd(id);
+      navigate(-1);
+    },
+  });
+  map.set(Modals.deleteJob, {
+    emoji: '😔',
+    title: 'Удалить объявление?',
+    description: 'Объявление удалится навсегда!',
+    button1: 'Отменить',
+    button2: 'Удалить',
+    handler: () => {
+      vacancyStore.deleteAd(id);
+      navigate(-1);
+    },
+  });
+  map.set(Modals.hideJob, {
+    emoji: '🙃',
+    title: 'Скрыть объявление?',
+    description: 'Объявление больше не будет доступно для просмотра в маркетплейсе',
+    button1: 'Отменить',
+    button2: 'Скрыть',
+    handler: () => {
+      vacancyStore.closeAd(id);
+      navigate(-1);
     },
   });
   map.set(Modals.exit, {
@@ -41,41 +67,6 @@ const ChoiseModal = () => {
       navigate('/authorization');
     },
   });
-
-  // const modalObj = {
-  //   deleteAd: {
-  //     emoji: '😔',
-  //     title: 'Удалить объявление?',
-  //     description: 'Объявление удалится навсегда!',
-  //     button1: 'Отменить',
-  //     button2: 'Удалить',
-  //     handler: (id: number) => {
-  //       appStore.deleteAd(id);
-  //     },
-  //   },
-  //   hideAd: {
-  //     emoji: '🙃',
-  //     title: 'Скрыть объявление?',
-  //     description: 'Объявление больше не будет доступно для просмотра в маркетплейсе',
-  //     button1: 'Отменить',
-  //     button2: 'Скрыть',
-  //     handler: (id: number) => {
-  //       appStore.closeAd(id);
-  //     },
-  //   },
-  //   exit: {
-  //     emoji: '🤔',
-  //     title: 'Вы действительно\nхотите выйти?',
-  //     description: 'Все данные будут сохранены!',
-  //     button1: 'Нет',
-  //     button2: 'Да',
-  //     handler: () => {
-  //       userStore.logout();
-  //       modalStore.closeModal();
-  //       navigate('/authorization');
-  //     },
-  //   },
-  // };
 
   return (
     modalStore.currentModal && (
@@ -93,13 +84,7 @@ const ChoiseModal = () => {
             color='blue'
             type='button'
             handler={() => {
-              map
-                .get(modalStore.currentModal)
-                .handler(
-                  'orderId' in appStore.myAds.detailed[0]
-                    ? appStore.myAds.detailed[0].orderId
-                    : appStore.myAds.detailed[0].productId,
-                );
+              map.get(modalStore.currentModal).handler();
             }}
           >
             {map.get(modalStore.currentModal).button2}

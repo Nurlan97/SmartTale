@@ -11,7 +11,7 @@ const ServicesPage = observer(() => {
   const columns = useColumnsGrid(servicesStore.setLimit, 286, 24);
   return (
     <div className={styles.page}>
-      <Header path='Маркетплейс/Услуги' title='Услуги' />
+      <Header path='Маркетплейс/Заказы' title='Заказы' />
       <Grid array={servicesStore.data.content} columns={columns} />
       <PageBtnGroup store={servicesStore} setPage={servicesStore.setPage} />
     </div>

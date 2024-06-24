@@ -1,14 +1,19 @@
 import { observer } from 'mobx-react-lite';
+import { SetStateAction, useState } from 'react';
 
 import { DeleteImg } from '../../assets';
-import { typePlaceOrderStore } from '../../store';
+import ImageModal from '../../components/ImageModal/ImageModal';
+import { typePlaceAdvStore } from '../../store';
 import styles from './imageInput.module.scss';
 
 interface IImageInput {
-  store: typePlaceOrderStore;
+  store: typePlaceAdvStore;
+  disabled?: boolean;
 }
 
-const ImageInput = observer(({ store }: IImageInput) => {
+const ImageInput = observer(({ store, disabled = false }: IImageInput) => {
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [current, setCurrent] = useState(0);
   return (
     <div className={styles.photoContainer}>
       {store.viewedImages.map((img, ind) => {
@@ -16,16 +21,34 @@ const ImageInput = observer(({ store }: IImageInput) => {
           <div key={ind} className={styles.currentImages}>
             <label htmlFor={`current${ind}`} className={styles.inputPhotoFilled}>
               <img className={styles.smallImg} src={img} alt='Change' />
-              <div className={styles.changeImage}>Change photo</div>
-              <button
-                className={styles.deleteImage}
-                onClick={() => store.deleteImage(ind)}
-                type='button'
-              >
-                <DeleteImg />
-              </button>
+              {!disabled ? (
+                <>
+                  <div className={styles.changeImage}>Change photo</div>
+                  <button
+                    className={styles.deleteImage}
+                    onClick={() => store.deleteImage(ind)}
+                    type='button'
+                  >
+                    <DeleteImg />
+                  </button>
+                </>
+              ) : (
+                <>
+                  <button
+                    className={styles.viewImage}
+                    onClick={() => {
+                      setCurrent(ind);
+                      setIsOpen(true);
+                    }}
+                    type='button'
+                  >
+                    <div className={styles.changeImage}>view photo</div>
+                  </button>
+                </>
+              )}
             </label>
             <input
+              disabled={disabled}
               id={`current${ind}`}
               type='file'
               className={styles.hiddenInput}
@@ -37,7 +60,7 @@ const ImageInput = observer(({ store }: IImageInput) => {
           </div>
         );
       })}
-      {store.viewedImages.length < 5 && (
+      {store.viewedImages.length < 5 && !disabled && (
         <>
           <label htmlFor='newFile' className={styles.inputPhoto}>
             {<div className={styles.addFile}>+ Добавить файл</div>}
@@ -53,6 +76,13 @@ const ImageInput = observer(({ store }: IImageInput) => {
           />
         </>
       )}
+      <ImageModal
+        urls={store.viewedImages}
+        isOpen={isOpen}
+        setIsOpen={setIsOpen}
+        current={current}
+        setCurrent={setCurrent}
+      />
     </div>
   );
 });

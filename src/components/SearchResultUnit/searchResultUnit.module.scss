@@ -1,0 +1,56 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px;
+  width: 200px;
+  height: 250px;
+  justify-content: start;
+  gap: 10px;
+  background-color: white;
+  border-radius: 16px;
+  box-shadow: 1px 0 4px 0 rgba(0, 0, 0, 0.05);
+  background: #fff;
+}
+
+.img {
+  width: 180px;
+  height: 180px;
+  border-radius: 8px;
+  object-fit: cover;
+}
+.descriptionBlock {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  gap: 3px;
+}
+@mixin type {
+  font-family: 'SF Pro', sans-serif;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 143%;
+  letter-spacing: -0.02em;
+  color: #34c759;
+}
+.equipment {
+  @include type;
+  color: #34c759;
+}
+.service {
+  @include type;
+  color: #0085ff;
+}
+.job {
+  @include type;
+  color: #d0ff00;
+}
+
+.title {
+  font-family: 'SF Pro', sans-serif;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 100%;
+  letter-spacing: -0.02em;
+  color: #2b3674;
+}

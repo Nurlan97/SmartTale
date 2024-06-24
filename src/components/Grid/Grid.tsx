@@ -1,10 +1,10 @@
 import { observer } from 'mobx-react-lite';
 
-import { Card as ICard } from '../../api/data-contracts';
+import { Card as ICard, PurchaseSummary } from '../../api/data-contracts';
 import Card from '../Card/Card';
 import styles from './grid.module.scss';
 interface IGridParams {
-  array: Omit<ICard, 'publishedAt'>[] | undefined;
+  array: PurchaseSummary[] | ICard[] | undefined;
   columns: number;
 }
 const stylesObj = {
@@ -18,11 +18,13 @@ const stylesObj = {
 type ObjKey = keyof typeof stylesObj;
 const Grid = observer(({ array, columns }: IGridParams) => {
   const key = columns as ObjKey;
+
   return (
     <div className={stylesObj[key]}>
       {array &&
         array.map((card) => {
-          return <Card card={card} key={card.advertisementId} />;
+          const id = 'purchaseId' in card ? card.purchaseId : card.advertisementId;
+          return <Card card={card} key={id} />;
         })}
     </div>
   );

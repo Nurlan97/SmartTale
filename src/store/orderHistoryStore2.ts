@@ -1,19 +1,19 @@
-import { makeAutoObservable, runInAction, toJS } from 'mobx';
-import { CSSProperties } from 'react';
+import { makeAutoObservable, runInAction } from 'mobx';
 
-import { tableData } from '../../mockData';
-import { PageOrderSummary, PageSmallOrder } from '../api/data-contracts';
-import { MyApi } from '../api/V1';
-import { formatDate } from '../utils/helpers';
-
-const api = new MyApi();
+import { CustomPageOrderAccepted } from '../api/data-contracts';
+import { myApi } from '../api/V1';
+import { errorNotify } from '../utils/toaster';
 
 export type TDate = [Date | null, Date | null];
 export enum dateFilters {
-  accept = 'дате принятия',
+  accepted = 'дате принятия',
   deadline = 'дедлайну',
   completed = 'дате завершения',
   empty = '. . .',
+}
+
+function getKeyByValue(object: any, value: any) {
+  return Object.keys(object).find((key) => object[key] === value);
 }
 interface dateFilter {
   currentType: dateFilters;
@@ -28,25 +28,13 @@ class orderHistoryStore {
     from: null,
     to: null,
   };
-  data: PageOrderSummary = {
+  data: CustomPageOrderAccepted = {
     totalPages: 0,
     totalElements: 0,
     size: 0,
     content: [],
     number: 0,
-    sort: { empty: false, sorted: false, unsorted: false },
-    pageable: {
-      offset: 0,
-      sort: { empty: false, sorted: false, unsorted: false },
-      pageNumber: 0,
-      pageSize: 0,
-      paged: false,
-      unpaged: false,
-    },
-    numberOfElements: 0,
-    first: false,
-    last: false,
-    empty: false,
+    isEmpty: false,
   };
   constructor() {
     makeAutoObservable(this);
@@ -55,33 +43,44 @@ class orderHistoryStore {
   setDateRange = (range: TDate) => {
     this.dateFilter.from = range[0];
     this.dateFilter.to = range[1];
+    if (this.dateFilter.from && this.dateFilter.to) this.getOrders();
   };
   setFilter = (type: dateFilters) => {
     this.dateFilter.currentType = type;
+    if (this.dateFilter.from && this.dateFilter.to) this.getOrders();
   };
 
   setActiveTab = (tab: 'active' | 'history') => async () => {
     console.log(tab);
     try {
-      const response = await api.getOrdersHistory({ active: tab === 'active' });
-      runInAction(() => {
-        this.activeTab = tab;
-        this.data = response.data;
-      });
+      this.activeTab = tab;
+      this.getOrders();
     } catch (error) {
       console.log(error);
+      errorNotify('Произошла ошибка при загрузке, повторите попытку');
     }
   };
   getOrders = async () => {
     try {
-      const response = await api.getOrdersHistory({
-        active: this.activeTab === 'active',
-      });
+      const body: { [key: string]: any } = { active: this.activeTab === 'active' };
+      if (getKeyByValue(dateFilters, this.dateFilter.currentType) !== 'empty') {
+        body.dateFrom = this.dateFilter.from
+          ? this.dateFilter.from.toISOString().slice(0, 10)
+          : undefined;
+        body.dateTo = this.dateFilter.to
+          ? this.dateFilter.to.toISOString().slice(0, 10)
+          : undefined;
+        body.dateType = this.dateFilter.currentType
+          ? getKeyByValue(dateFilters, this.dateFilter.currentType)
+          : undefined;
+      }
+      const response = await myApi.getOrdersHistory(body);
       runInAction(() => {
         this.data = response.data;
       });
     } catch (error) {
       console.log(error);
+      errorNotify('Произошла ошибка при загрузке, повторите попытку');
     }
   };
 }

@@ -1,13 +1,13 @@
 import { useDroppable } from '@dnd-kit/core';
 
-import { DashboardOrder } from '../../../api/data-contracts';
+import { OrderDashboard } from '../../../api/data-contracts';
 import { toCamelCase } from '../../../utils/helpers';
 import { IColumn } from '../DragAndDrop';
 import styles from './Column.module.scss';
 import OrderCard from './OrderCard';
 
 interface Props {
-  elements: Array<DashboardOrder>;
+  elements: Array<OrderDashboard>;
   column: IColumn;
 }
 

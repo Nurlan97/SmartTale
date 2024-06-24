@@ -1,35 +1,27 @@
 import { makeAutoObservable, runInAction } from 'mobx';
 
 import {
-  FullOrder,
+  CustomPageInvitation,
+  CustomPageInviterInvitation,
+  Organization,
   RegistrationRequest,
   UpdateProfileRequest,
   VerificationRequest,
 } from '../api/data-contracts';
-import { MyApi } from '../api/V1';
-import { fullPromise, removeCookie } from '../utils/helpers';
+import { myApi } from '../api/V1';
+import { getRolesFromMask, Roles } from '../utils/authorizationHelpers';
+import { decodeJWT, isTokenExpired, removeCookie } from '../utils/helpers';
 import { setCookie } from '../utils/helpers';
+import { errorNotify, successNotify } from '../utils/toaster';
 import modalStore, { Modals } from './modalStore';
-
-const api = new MyApi(); //создаем экземпляр нашего api
-interface IOneAd {
-  productId: number;
-  title: string;
-  type: string;
-  description: string;
-  imageUrl: string;
-}
-export interface IType {
-  type: 'equipment' | 'services';
-}
-
-interface IMyAd {
-  group: 'all' | 'service' | 'equipment';
-  data: IOneAd[];
-  detailed: FullOrder & IType;
-}
+import notifyStore from './notifyStore';
 
 class userStore {
+  userId: number | undefined = undefined;
+  orgId: number | undefined = undefined;
+
+  hierarchy: number | undefined = undefined;
+  authorities: Roles[] = [];
   accessToken = '';
   refreshToken = '';
   profileEdit = false;
@@ -38,6 +30,7 @@ class userStore {
   middleName = '';
   email = '';
   phone = '';
+  contactInfo: 'EMAIL' | 'PHONE' | 'EMAIL_PHONE' = 'EMAIL';
   profilePhoto = '';
   subscribePeriod = '';
   isRemember = false;
@@ -45,7 +38,8 @@ class userStore {
   isAuth = false;
   anyAds = false;
   invalidCode = false;
-  orgId: number | undefined = 3;
+  organization: Organization | undefined = undefined;
+  invitations: CustomPageInvitation | undefined = undefined;
 
   constructor() {
     makeAutoObservable(this);
@@ -55,9 +49,9 @@ class userStore {
     this.isRemember = !this.isRemember;
   };
 
-  fetchRegistration = async (registrationData: RegistrationRequest) => {
+  fetchRegistration = async (registrationData: RegistrationRequest, code?: string) => {
     try {
-      const result = await api.register(registrationData);
+      const result = await myApi.register(registrationData, { code: code });
       runInAction(() => {
         this.email = registrationData.email;
         this.authenticationStage = 3;
@@ -68,18 +62,20 @@ class userStore {
   };
   fetchAvailableEmail = async (emailValue: string) => {
     try {
-      const result = await api.isEmailAvailable(emailValue);
-      return result.data;
+      const result = await myApi.isEmailAvailable(emailValue);
+      return result;
     } catch (error) {
       console.log(error);
+      errorNotify('Произошла ошибка при проверке почты');
     }
   };
   fetchAvailablePhone = async (phoneValue: string) => {
     try {
-      const result = await api.isPhoneAvailable(phoneValue);
+      const result = await myApi.isPhoneAvailable(phoneValue);
       return result.data;
     } catch (error) {
       console.log(error);
+      errorNotify('Произошла ошибка при проверке телефона');
     }
   };
   sendVerificationCode = async (
@@ -87,42 +83,34 @@ class userStore {
     // navigate: NavigateFunction,
     navigate: () => void,
   ) => {
-    //функция fullPromise принимает 3 аргумента
-    //promise - сам промис
-    //fullfilled - каллбек вызовется если промис зарезолвится
-    //rejected - каллбек вызовется если промис зереджектится
-    this.authenticationStage = 4; //включаем лоадер
-    fullPromise(
-      api.verifyEmail(data),
-      (value) => {
-        runInAction(() => {
-          this.accessToken = value.data.accessToken;
-          this.refreshToken = value.data.refreshToken;
-          this.isAuth = true;
-          if (this.isRemember) {
-            setCookie('accessToken', value.data.accessToken, 1);
-            setCookie('refreshToken', value.data.refreshToken, 168);
-          }
-        });
-        this.getUser();
-        setTimeout(() => {
-          navigate();
-        }, 500);
-      },
-      (error) => {
-        runInAction(() => {
-          console.error(error);
-          this.authenticationStage = 3;
-          this.invalidCode = true;
-        });
-      },
-    );
+    this.authenticationStage = 4;
+    try {
+      const response = await myApi.verifyEmail(data);
+      runInAction(() => {
+        this.setTokens(response.data.accessToken, response.data.refreshToken);
+        this.isAuth = true;
+        if (this.isRemember) {
+          setCookie('accessToken', response.data.accessToken, 1);
+          setCookie('refreshToken', response.data.refreshToken, 168);
+        }
+      });
+      this.getUser();
+      setTimeout(() => {
+        navigate();
+      }, 500);
+    } catch (error) {
+      runInAction(() => {
+        console.error(error);
+        this.authenticationStage = 3;
+        this.invalidCode = true;
+      });
+    }
   };
 
   resendVerificationCode = async () => {
     if (this.email !== '') {
       try {
-        await api.resend(this.email);
+        await myApi.resend(this.email);
       } catch (error) {
         console.error(error);
       }
@@ -131,10 +119,9 @@ class userStore {
     }
   };
 
-  fetchAuthorization = async (authorizationData: string) => {
+  fetchAuthorization = async (authorizationData: string, code?: string) => {
     try {
-      await api.login(authorizationData);
-      console.log(authorizationData);
+      await myApi.login(authorizationData, { code: code });
       runInAction(() => {
         this.email = authorizationData;
         this.authenticationStage = 3;
@@ -145,13 +132,13 @@ class userStore {
   };
   getUser = async () => {
     try {
-      // const response = await api.getProfile();
-      const response = await api.getProfile();
+      const response = await myApi.getProfile();
       runInAction(() => {
         this.firstName = response.data.firstName;
         this.lastName = response.data.lastName;
         this.middleName = response.data.middleName;
         this.email = response.data.email;
+        this.contactInfo = response.data.contactInfo;
         this.profilePhoto = response.data.avatarUrl;
         this.phone = response.data.phoneNumber;
         if (response.data.subscriptionEndDate) {
@@ -160,6 +147,7 @@ class userStore {
       });
     } catch (error) {
       console.log(error);
+      errorNotify('Произошла ошибка при загрузке данных пользователя');
     }
   };
 
@@ -169,17 +157,18 @@ class userStore {
   updatePhoto = async (file: File) => {
     modalStore.openModal(Modals.loader);
     try {
-      await api.updateAvatar({ avatar: 'any' }, { avatar: file });
+      await myApi.updateAvatar({ avatar: 'any' }, { avatar: file });
       this.profilePhoto = URL.createObjectURL(file);
     } catch (error) {
       console.log(error);
+      errorNotify('Произошла ошибка при смене аватарки');
     }
     modalStore.closeModal();
   };
   updateProfile = async (data: UpdateProfileRequest) => {
     modalStore.openModal(Modals.loader);
     try {
-      const response = await api.updateProfile(data);
+      const response = await myApi.updateProfile(data);
       runInAction(() => {
         this.firstName = response.data.firstName;
         this.lastName = response.data.lastName;
@@ -193,39 +182,57 @@ class userStore {
       });
     } catch (error) {
       console.log(error);
+      errorNotify('Произошла ошибка при обновлении профиля');
     }
     modalStore.closeModal();
   };
   subscribe = async () => {
     modalStore.openModal(Modals.loader);
     try {
-      const response = await api.subscribe();
+      const response = await myApi.subscribe();
       modalStore.openModal(Modals.successSubscribe);
     } catch (error) {
       console.log(error);
+      errorNotify('Произошла ошибка при отправке запроса о подписке');
     }
   };
-  setTokens = (accessToken: string, refreshToken: string) => {
+  setTokens = (accessToken: string, refreshToken: string, isRemember?: boolean) => {
     runInAction(() => {
+      this.isAuth = true;
       this.accessToken = accessToken;
       this.refreshToken = refreshToken;
-      setCookie('accessToken', accessToken, 1);
-      setCookie('refreshToken', refreshToken, 168);
+      const decodedJWT = decodeJWT(accessToken);
+      this.orgId = decodedJWT.orgId;
+      this.userId = decodedJWT.userId;
+      this.hierarchy = decodedJWT.hierarchy;
+      this.authorities = getRolesFromMask(decodedJWT.authorities);
+      // console.log(getRolesFromMask(decodeJWT(accessToken).authorities));
+      notifyStore.connect();
+      if (isRemember) {
+        setCookie('accessToken', accessToken, 24);
+        setCookie('refreshToken', refreshToken, 168);
+        this.isRemember = true;
+      }
     });
   };
-  refreshTokens = async () => {
+  refreshTokens = async (refresh?: string, isRemember?: boolean) => {
     try {
-      console.log('refresh tokens');
-      const response = await api.refreshToken(`Bearer ${this.refreshToken}`);
+      const refreshToken = refresh ? refresh : this.refreshToken;
+      const response = await myApi.refreshToken(`Bearer ${refreshToken}`);
       runInAction(() => {
-        this.setTokens(response.data.accessToken, response.data.refreshToken);
+        this.setTokens(response.data.accessToken, response.data.refreshToken, isRemember);
       });
     } catch (error) {
       console.log(error);
+      errorNotify('Произошла ошибка при проверке авторизации');
     }
   };
   logout = () => {
-    this.isAuth = false;
+    this.userId = undefined;
+    this.orgId = undefined;
+
+    this.hierarchy = undefined;
+    this.authorities = [];
     this.accessToken = '';
     this.refreshToken = '';
     this.profileEdit = false;
@@ -238,10 +245,55 @@ class userStore {
     this.subscribePeriod = '';
     this.isRemember = false;
     this.authenticationStage = 1;
+    this.isAuth = false;
     this.anyAds = false;
     this.invalidCode = false;
     removeCookie('accessToken');
     removeCookie('refreshToken');
+  };
+  get getToken() {
+    if (isTokenExpired(this.accessToken)) {
+      if (isTokenExpired(this.refreshToken)) {
+        this.logout();
+      } else {
+        this.refreshTokens();
+      }
+    }
+    return this.accessToken;
+  }
+  getOrganization = async () => {
+    try {
+      const response = await myApi.getOrganization();
+      runInAction(() => {
+        this.organization = response.data;
+      });
+    } catch (error) {
+      console.log(error);
+      errorNotify('Произошла ошибка при загрузке данных компании');
+    }
+  };
+  getInvitations = async () => {
+    try {
+      const response = await myApi.getInvitations1();
+      runInAction(() => {
+        this.invitations = response.data;
+      });
+    } catch (error) {
+      console.log(error);
+      errorNotify('Произошла ошибка при загрузке приглашений в организации');
+    }
+  };
+  acceptInvitation = async (invitationId: number) => {
+    try {
+      await myApi.acceptInvitation(invitationId);
+      runInAction(() => {
+        this.invitations = undefined;
+      });
+      successNotify('Вы успешно приняли пришлашение');
+    } catch (error) {
+      console.log(error);
+      errorNotify('Произошла ошибка при отклике на вакансию');
+    }
   };
 }
 

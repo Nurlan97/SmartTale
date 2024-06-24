@@ -1,7 +1,16 @@
 import { makeAutoObservable } from 'mobx';
 
-import { FullOrderCard, FullProductCard } from '../api/data-contracts';
-import { MyApi } from '../api/V1';
+import {
+  InviteRequest,
+  JobCard,
+  OrderCard,
+  OrderDashboard,
+  PositionSummary,
+  ProductCard,
+  Purchase,
+} from '../api/data-contracts';
+import { myApi } from '../api/V1';
+import { errorNotify } from '../utils/toaster';
 
 export enum Modals {
   closeOrder = 'closeOrder',
@@ -13,64 +22,44 @@ export enum Modals {
   successSubscribe = 'successSubscribe',
   deleteAd = 'deleteAd',
   hideAd = 'hideAd',
+  deleteJob = 'deleteJob',
+  hideJob = 'hideJob',
   exit = 'exit',
   descriptionModal = 'descriptionModal',
   changePhotoModal = 'changePhotoModal',
   inviteEmployer = 'inviteEmployer',
+  taskDescription = 'taskDescription',
   loader = 'loader',
 }
-interface IDetailed {
-  id: number;
-  path: string;
-  title: string;
-  deadline: string;
-  status: string;
-  price: number;
-  authorImg: string;
-  author: string;
-  images: string[];
-  activeImg: number;
-  type: string;
-  activeTab: 'description' | 'contacts' | 'size';
-  description: string;
-  contacts: string;
-  size: string;
-}
-const api = new MyApi();
+
 const pathObj = {
   '/my-purchases': 'Личный кабинет/Мои покупки',
   '/equipment': 'Маркетплейс/Оборудование',
-  '/services': 'Маркетплейс/Услуги',
+  '/services': 'Маркетплейс/Заказы',
+  '/job': 'Маркетплейс/Услуги',
+  '/orders-history': 'Заказы/История',
 };
+export enum PathEnum {
+  '/my-purchases' = 'Личный кабинет/Мои покупки',
+  '/equipment' = 'Маркетплейс/Оборудование',
+  '/services' = 'Маркетплейс/Заказы',
+  '/job' = 'Маркетплейс/Услуги',
+  '/orders-history' = 'Заказы/История',
+}
 class modalStore {
   isOpen = false;
   isLoading = false;
   error = '';
+  dropDownPositions: PositionSummary[] = [];
   detailedExt: {
+    id: number;
     path: string;
     activeImg: number;
     activeTab: 'description' | 'size' | 'contacts';
-  } = { activeImg: 0, activeTab: 'description', path: '' };
-  detailed: FullProductCard | FullOrderCard = {
-    acceptedBy: 0,
-    advertisementId: 0,
-    deadlineAt: '',
-    description: '',
-    imageUrls: [],
-    organizationLogoUrl: '',
-    organizationName: '',
-    price: 0,
-    publishedAt: '',
-    publishedBy: 0,
-    publisherAvatarUrl: '',
-    publisherEmail: '',
-    publisherName: '',
-    publisherPhoneNumber: '',
-    purchasedAt: '',
-    size: '',
-    title: '',
-    views: 0,
-  };
+  } = { id: 0, activeImg: 0, activeTab: 'description', path: '' };
+  detailed: Array<OrderCard | ProductCard | JobCard | Purchase> = [];
+  task: OrderDashboard | undefined = undefined;
+
   currentModal: Modals | null = null;
 
   constructor() {
@@ -79,20 +68,27 @@ class modalStore {
   closeModal = () => {
     this.isOpen = false;
   };
-  openDescription = async (id: number, path: string) => {
+  openDescription = async (id: number, path: PathEnum) => {
+    this.detailed = [];
     this.isOpen = true;
     this.currentModal = Modals.loader;
+    this.detailedExt.id = id;
     try {
-      const response = await api.getAd(id);
-      this.detailed = response.data;
-      if (path === '/my-purchases' || path === '/equipment' || path === '/services') {
-        this.detailedExt.path = pathObj[path];
+      let response;
+      if (path === PathEnum['/my-purchases']) {
+        response = await myApi.getPurchase(id);
+      } else {
+        response = await myApi.getAd(id);
       }
+
+      this.detailed.push(response.data);
+      this.detailedExt.path = path;
       this.detailedExt.activeImg = 0;
       this.detailedExt.activeTab = 'description';
       this.currentModal = Modals.descriptionModal;
     } catch (error) {
       console.log(error);
+      errorNotify('Произошла ошибка при загрузке, повторите попытку');
       this.isOpen = false;
     }
   };
@@ -100,24 +96,34 @@ class modalStore {
     this.currentModal = type;
     this.isOpen = true;
   };
-  // openSimple = (type: SimpleModals) => {
-  //   this.currentType = ModalsTypes.simpleModal;
-  //   this.currentSimple = type;
-  //   this.isOpen = true;
-  // };
-  // openChangePhoto = () => {
-  //   this.currentType = ModalsTypes.changePhotoModal;
-  //   this.isOpen = true;
-  // };
-  // openLoader = () => {
-  //   this.currentType = ModalsTypes.loader;
-  //   this.isOpen = true;
-  // };
+
   setImage = (num: number) => () => {
     this.detailedExt.activeImg = num;
   };
   setActiveTab = (tab: 'description' | 'contacts' | 'size') => () => {
     this.detailedExt.activeTab = tab;
+  };
+  handleAdvertisement = (quantity?: number) => {
+    try {
+      myApi.handleAdvertisementAction(this.detailedExt.id, { quantity: quantity });
+      this.openModal(Modals.successPurchase);
+    } catch (error) {
+      console.log(error);
+      errorNotify('Произошла ошибка при отправке запроса, повторите попытку');
+    }
+  };
+  getPositions = async () => {
+    try {
+      const response = await myApi.getPositionsDropdown();
+      this.dropDownPositions = response.data;
+    } catch (error) {
+      console.log(error);
+      errorNotify('Произошла ошибка при загрузке, повторите попытку');
+    }
+  };
+  senInvite = (data: InviteRequest) => {
+    myApi.sendInvitation(data);
+    this.closeModal();
   };
 }
 

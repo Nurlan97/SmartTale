@@ -1,33 +1,35 @@
 import { observer } from 'mobx-react-lite';
 import { useLocation } from 'react-router-dom';
 
-import { Card as ICard } from '../../api/data-contracts';
+import { Card as ICard, PurchaseSummary } from '../../api/data-contracts';
 import { defaultImage, defaultPhoto } from '../../assets';
 import { modalStore, navbarStore } from '../../store';
+import { PathEnum } from '../../store/modalStore';
 import Button from '../../UI/Button/Button';
-import { cutText } from '../../utils/helpers';
+import { addImageSize, cutText } from '../../utils/helpers';
 import styles from './card.module.scss';
 interface IProps {
-  card: Omit<ICard, 'publishedAt'>;
+  card: PurchaseSummary | ICard;
 }
 const Card = observer(({ card }: IProps) => {
+  const id = 'purchaseId' in card ? card.purchaseId : card.advertisementId;
   const location = useLocation();
+  const path = location.pathname as keyof typeof PathEnum;
   const buttonHandler = () => {
-    console.log('id', card);
-    modalStore.openDescription(card.advertisementId, location.pathname);
+    modalStore.openDescription(id, PathEnum[path]);
   };
   return (
     <div className={styles.cardWrapper}>
       <img
         className={styles.cardImage}
-        src={card.imageUrl ? card.imageUrl : defaultImage}
+        src={card.imageUrl ? addImageSize(card.imageUrl, 269, 182) : defaultImage}
         alt=''
       />
       <div className={styles.descriptionWrapper}>
         <div className={styles.headBlock}>
           <span>{cutText(card.title, 15)}</span>
           <span className={styles.price}>
-            {card.price ? `${card.price} сом` : 'Договорная'}
+            {'price' in card ? `${card.price} сом` : 'Договорная'}
           </span>
         </div>
         <div className={styles.authorBlock}>

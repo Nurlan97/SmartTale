@@ -1,4 +1,5 @@
 import { FormikProps } from 'formik';
+import { useEffect, useState } from 'react';
 
 import Input from '../../UI/Input/Input';
 import styles from './FormInput.module.scss';
@@ -12,13 +13,15 @@ type FormType = {
 };
 
 const FormInput = ({ htmlFor, label, placeholder, id, formik }: FormType) => {
-  const isError = formik.errors[htmlFor] ? formik.errors[htmlFor] : '';
+  const error = formik.errors[htmlFor] ? formik.errors[htmlFor] : '';
+  const isTouched = !!formik.touched[htmlFor];
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (htmlFor === 'phoneNumber') {
       const regex = new RegExp(/^\+?[0-9]*$/);
       if (!regex.test(e.target.value)) return;
     }
-    formik.setFieldValue(htmlFor, e.target.value);
+    formik.setFieldValue(htmlFor, e.target.value, false);
   };
   return (
     <div>
@@ -31,12 +34,10 @@ const FormInput = ({ htmlFor, label, placeholder, id, formik }: FormType) => {
         onChange={handleInputChange}
         border={true}
         id={id}
-        isError={!!isError && !!formik.touched[htmlFor]}
+        isError={!!error && isTouched}
         onBlur={formik.handleBlur}
       />
-      <p className={styles.errors}>
-        {`${!!isError && !!formik.touched[htmlFor] ? isError : ''}`}
-      </p>
+      <p className={styles.errors}>{`${!!error && isTouched ? error : ''}`}</p>
     </div>
   );
 };

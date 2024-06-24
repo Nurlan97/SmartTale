@@ -1,10 +1,10 @@
 import { makeAutoObservable, runInAction, toJS } from 'mobx';
 import { CSSProperties } from 'react';
 
-import { tableData } from '../../mockData';
-import { PageSmallOrder } from '../api/data-contracts';
-import { MyApi } from '../api/V1';
+import { CustomPageSmallOrder } from '../api/data-contracts';
+import { myApi } from '../api/V1';
 import { formatDate } from '../utils/helpers';
+import { errorNotify } from '../utils/toaster';
 
 interface IStyle {
   [key: string]: (prop: string) => CSSProperties;
@@ -22,7 +22,6 @@ interface ITable {
   transform: ITransfrom;
   sorting: ISorting;
 }
-const api = new MyApi();
 
 const sorting: ISorting = {
   // acceptedAt: 'noSort',
@@ -43,37 +42,57 @@ const style: IStyle = {
         backgroundColor: '#C3FFFB',
         borderRadius: '12px',
         padding: '12px',
+        display: 'flex',
+        justifyContent: 'center',
       },
-      NEW: { backgroundColor: '#C3FFFB', borderRadius: '12px', padding: '12px' },
+      NEW: {
+        backgroundColor: '#C3FFFB',
+        borderRadius: '12px',
+        padding: '12px',
+        display: 'flex',
+        justifyContent: 'center',
+      },
       IN_PROGRESS: {
         backgroundColor: '#C5E6FF',
         borderRadius: '12px',
         padding: '12px',
+        display: 'flex',
+        justifyContent: 'center',
       },
       CHECKING: {
         backgroundColor: '#FFFBA1',
         borderRadius: '12px',
         padding: '12px',
+        display: 'flex',
+        justifyContent: 'center',
       },
       DISPATCHED: {
         backgroundColor: '#FFD9A1',
         borderRadius: '12px',
         padding: '12px',
+        display: 'flex',
+        justifyContent: 'center',
       },
       ARRIVED: {
         backgroundColor: '#E6FFA1',
         borderRadius: '12px',
         padding: '12px',
+        display: 'flex',
+        justifyContent: 'center',
       },
       COMPLETED: {
         backgroundColor: '#E6FFA1',
         borderRadius: '12px',
         padding: '12px',
+        display: 'flex',
+        justifyContent: 'center',
       },
       CANCELED: {
         backgroundColor: '#E6FFA1',
         borderRadius: '12px',
         padding: '12px',
+        display: 'flex',
+        justifyContent: 'center',
       },
     };
 
@@ -144,25 +163,13 @@ class orderHistoryStore {
     from: null,
     to: null,
   };
-  data: PageSmallOrder = {
+  data: CustomPageSmallOrder = {
     totalPages: 0,
     totalElements: 0,
     size: 0,
     content: [],
     number: 0,
-    sort: { empty: false, sorted: false, unsorted: false },
-    pageable: {
-      offset: 0,
-      sort: { empty: false, sorted: false, unsorted: false },
-      pageNumber: 0,
-      pageSize: 0,
-      paged: false,
-      unpaged: false,
-    },
-    numberOfElements: 0,
-    first: false,
-    last: false,
-    empty: false,
+    isEmpty: false,
   };
   constructor() {
     makeAutoObservable(this);
@@ -176,17 +183,16 @@ class orderHistoryStore {
     this.dateFilter.currentType = type;
   };
   setSorting = (column: string) => {
-    console.log(column);
     if (this.table.sorting[column] === 'asc') this.table.sorting[column] = 'desc';
     else if (this.table.sorting[column] === 'desc') this.table.sorting[column] = 'noSort';
     else this.table.sorting[column] = 'asc';
-    console.log(this.table.sorting[column]);
   };
   setActiveTab = (tab: 'active' | 'history') => async () => {
     try {
-      const response = await api.getOrders1({ q: tab });
+      this.activeTab = tab;
+      const response = await myApi.getOrders1({ q: tab });
+
       runInAction(() => {
-        this.activeTab = tab;
         this.data = response.data;
         this.table.headers.pop();
         if (tab === 'active') {
@@ -197,16 +203,7 @@ class orderHistoryStore {
       });
     } catch (error) {
       console.log(error);
-    }
-  };
-  getOrders = async (status: 'active' | 'history') => {
-    try {
-      const response = await api.getOrders1({ q: status });
-      runInAction(() => {
-        this.data = response.data;
-      });
-    } catch (error) {
-      console.log(error);
+      errorNotify('Произошла ошибка при загрузке, повторите попытку');
     }
   };
 }

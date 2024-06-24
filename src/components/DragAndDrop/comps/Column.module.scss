@@ -16,9 +16,12 @@
 }
 .pending {
   @include header;
+  background: #e4e4e4;
+}
+.new {
+  @include header;
   background: #c3fffb;
 }
-
 .inProgress {
   @include header;
   background: #c5e6ff;
