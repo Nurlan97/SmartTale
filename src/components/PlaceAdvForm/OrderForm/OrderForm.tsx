@@ -74,10 +74,12 @@ const OrderForm = observer(({ formik, store, isEdit = true }: Props) => {
         disabled={!isEdit}
       />
       <div className={styles.title}>Крайняя дата выполнения</div>
-      {'deadline' in formik.values && (
+      {/* {'deadline' in formik.values && (
         <DatePicker
           withPortal
-          selected={(formik.values.deadline && new Date(formik.values.deadline)) || null}
+          selected={
+            (formik.values.deadlineAt && new Date(formik.values.deadlineAt)) || null
+          }
           onChange={(date: Date) =>
             formik.setFieldValue('deadline', date.toISOString().slice(0, 10))
           }
@@ -88,7 +90,7 @@ const OrderForm = observer(({ formik, store, isEdit = true }: Props) => {
           id='deadline'
           disabled={!isEdit}
         />
-      )}
+      )} */}
       {'deadlineAt' in formik.values && (
         <DatePicker
           withPortal

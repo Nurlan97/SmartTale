@@ -18,7 +18,7 @@ interface IAd {
 }
 
 const AdRow = ({ item, children }: IAd) => {
-  const image = 'imageUrl' in item ? item.imageUrl : item.image;
+  const image = item.imageUrl;
   return (
     <div className={styles.wrapper}>
       <div className={styles.mainBlock}>

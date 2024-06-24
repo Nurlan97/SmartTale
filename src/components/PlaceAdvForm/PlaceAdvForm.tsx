@@ -41,7 +41,7 @@ const initalOrder: CreateOrderRequest = {
   description: '',
   price: 0,
   size: '',
-  deadline: `${new Date(new Date().getTime() + 1 * 24 * 60 * 60 * 1000).toISOString()}`,
+  deadlineAt: `${new Date(new Date().getTime() + 1 * 24 * 60 * 60 * 1000).toISOString()}`,
   contactInfo: 'EMAIL',
 };
 
@@ -83,10 +83,8 @@ const PlaceAdvForm = observer(() => {
     initialValues: initialObj[store.type],
     enableReinitialize: true,
     onSubmit: async (values) => {
-      console.log(values);
       try {
-        await schema.validate({ ...values }, { abortEarly: false }).catch((err) => {
-          console.log(err.errors);
+        await schema.validate({ ...values }).catch((err) => {
           const errorMessage = err.errors;
           errorNotify(`${errorMessage}`);
           throw err;
@@ -134,7 +132,12 @@ const PlaceAdvForm = observer(() => {
             <Button
               color='blue'
               type='submit'
-              // disabled={!formik.values.title || !formik.values.description}
+              disabled={
+                !formik.values.title ||
+                !formik.values.description ||
+                ('quantity' in formik.values ? !formik.values.quantity : false) ||
+                ('location' in formik.values ? !formik.values.location : false)
+              }
             >
               Разместить объявление
             </Button>

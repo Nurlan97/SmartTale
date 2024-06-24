@@ -27,12 +27,12 @@ interface IAction {
   action: 'ADD' | 'MOVE' | 'REMOVE' | 'REPLACE';
   arrayPosition?: number;
   targetPosition?: number;
-  filePosiiton?: number;
+  filePosition?: number;
 }
 interface ADD {
   action: 'ADD';
   targetPosition: number;
-  filePosiiton: number;
+  filePosition: number;
 }
 interface MOVE {
   action: 'MOVE';
@@ -46,7 +46,7 @@ interface REMOVE {
 interface REPLACE {
   action: 'REPLACE';
   arrayPosition: number;
-  filePosiiton: number;
+  filePosition: number;
 }
 export type AdType = 'Order' | 'Product' | 'Job';
 export type ImageExt = {
@@ -59,16 +59,16 @@ export default class adStore {
   isLoading = false;
   showForm = true;
   type: AdType = 'Product';
-  currentImages: Array<string> = [];
-  #viewedImages: IImage[] = [];
-  #oldImages: IImage[] = [];
-  additionalImages: Array<string> = [];
-  additionalFiles: File[] = [];
-  viewedImages: Array<string> = [];
+  // currentImages: Array<string> = [];
+  // #viewedImages: IImage[] = [];
+  // #oldImages: IImage[] = [];
+  // additionalImages: Array<string> = [];
+  // additionalFiles: File[] = [];
+  // viewedImages: Array<string> = [];
   prevImages: ImageExt[] = [];
   currImages: ImageExt[] = [];
   addFiles: File[] = [];
-  imageActions: IAction[] = [];
+  // imageActions: IAction[] = [];
   imageOperations: IAction[] = [];
   posiitons: PositionSummary[] = [];
 
@@ -106,117 +106,117 @@ export default class adStore {
   setType = (type: AdType) => () => {
     this.type = type;
   };
-  calcActions = () => {
-    let currentView = [...this.#oldImages];
-    const newView = [...this.#viewedImages];
-    let filePointer = 0;
-    const length = currentView.length - 1;
-    for (let i = length; i >= 0; i--) {
-      if (!newView.some((obj) => obj.id === currentView[i].id)) {
-        let action: REPLACE | ADD | REMOVE | MOVE;
-        if (currentView.length <= newView.length) {
-          console.log('action add/replace');
-          if (filePointer < this.additionalFiles.length) {
-            action = {
-              action: 'REPLACE',
-              arrayPosition: i,
-              filePosiiton: filePointer,
-            };
-            filePointer += 1;
-            currentView.splice(i, 1, newView[i]);
-          } else {
-            action = {
-              action: 'ADD',
-              targetPosition: i,
-              filePosiiton: filePointer,
-            };
-            currentView = [...currentView, newView[i]];
-          }
-        } else {
-          action = {
-            action: 'REMOVE',
-            arrayPosition: i,
-          };
-          currentView.splice(i, 1);
-          for (let j = i; j < currentView.length; j++) {
-            currentView[j].index -= 1;
-          }
-        }
-        this.imageActions.push(action);
-      }
-    }
-    currentView = currentView.filter((curObj) =>
-      newView.some((obj) => obj.id === curObj.id),
-    );
-    let newPostion = currentView.length;
+  // calcActions = () => {
+  //   let currentView = [...this.#oldImages];
+  //   const newView = [...this.#viewedImages];
+  //   let filePointer = 0;
+  //   const length = currentView.length - 1;
+  //   for (let i = length; i >= 0; i--) {
+  //     if (!newView.some((obj) => obj.id === currentView[i].id)) {
+  //       let action: REPLACE | ADD | REMOVE | MOVE;
+  //       if (currentView.length <= newView.length) {
+  //         console.log('action add/replace');
+  //         if (filePointer < this.additionalFiles.length) {
+  //           action = {
+  //             action: 'REPLACE',
+  //             arrayPosition: i,
+  //             filePosition: filePointer,
+  //           };
+  //           filePointer += 1;
+  //           currentView.splice(i, 1, newView[i]);
+  //         } else {
+  //           action = {
+  //             action: 'ADD',
+  //             targetPosition: i,
+  //             filePosition: filePointer,
+  //           };
+  //           currentView = [...currentView, newView[i]];
+  //         }
+  //       } else {
+  //         action = {
+  //           action: 'REMOVE',
+  //           arrayPosition: i,
+  //         };
+  //         currentView.splice(i, 1);
+  //         for (let j = i; j < currentView.length; j++) {
+  //           currentView[j].index -= 1;
+  //         }
+  //       }
+  //       this.imageActions.push(action);
+  //     }
+  //   }
+  //   currentView = currentView.filter((curObj) =>
+  //     newView.some((obj) => obj.id === curObj.id),
+  //   );
+  //   let newPostion = currentView.length;
 
-    newView.forEach((obj, ind) => {
-      if (!currentView.some((obj) => obj.id === newView[ind].id)) {
-        this.imageActions.push({
-          action: 'ADD',
-          targetPosition: newPostion,
-          filePosiiton: obj.index,
-        });
-        newPostion += 1;
-      }
-    });
-    return this.imageActions;
-  };
-  updateViewed = () => {
-    this.viewedImages = this.#viewedImages.map((cur) => {
-      return this[cur.type][cur.index];
-    });
-  };
-  addImage = async (file: File) => {
-    const ind = this.additionalImages.length;
-    this.additionalFiles.push(file);
-    this.additionalImages.push(URL.createObjectURL(file));
-    this.#viewedImages.push({ index: ind, type: 'additionalImages', id: uuidv4() });
-    this.updateViewed();
-  };
-  deleteImage = (ind: number) => {
-    const deletedImage = this.#viewedImages.splice(ind, 1)[0];
-    this[deletedImage.type].splice(deletedImage.index, 1);
-    this.#viewedImages = this.#viewedImages.map((obj) => {
-      if (obj.type !== deletedImage.type) return obj;
-      if (obj.index < deletedImage.index) return obj;
-      return { ...obj, index: obj.index - 1 };
-    });
-    if (deletedImage.type === 'additionalImages') {
-      this.additionalFiles.splice(deletedImage.index, 1);
-      this.imageActions = this.imageActions.filter((obj) => obj.targetPosition !== ind);
-    }
-    this.updateViewed();
-  };
+  //   newView.forEach((obj, ind) => {
+  //     if (!currentView.some((obj) => obj.id === newView[ind].id)) {
+  //       this.imageActions.push({
+  //         action: 'ADD',
+  //         targetPosition: newPostion,
+  //         filePosition: obj.index,
+  //       });
+  //       newPostion += 1;
+  //     }
+  //   });
+  //   return this.imageActions;
+  // };
+  // updateViewed = () => {
+  //   this.viewedImages = this.#viewedImages.map((cur) => {
+  //     return this[cur.type][cur.index];
+  //   });
+  // };
+  // addImage = async (file: File) => {
+  //   const ind = this.additionalImages.length;
+  //   this.additionalFiles.push(file);
+  //   this.additionalImages.push(URL.createObjectURL(file));
+  //   this.#viewedImages.push({ index: ind, type: 'additionalImages', id: uuidv4() });
+  //   this.updateViewed();
+  // };
+  // deleteImage = (ind: number) => {
+  //   const deletedImage = this.#viewedImages.splice(ind, 1)[0];
+  //   this[deletedImage.type].splice(deletedImage.index, 1);
+  //   this.#viewedImages = this.#viewedImages.map((obj) => {
+  //     if (obj.type !== deletedImage.type) return obj;
+  //     if (obj.index < deletedImage.index) return obj;
+  //     return { ...obj, index: obj.index - 1 };
+  //   });
+  //   if (deletedImage.type === 'additionalImages') {
+  //     this.additionalFiles.splice(deletedImage.index, 1);
+  //     this.imageActions = this.imageActions.filter((obj) => obj.targetPosition !== ind);
+  //   }
+  //   this.updateViewed();
+  // };
 
-  replaceImage = (file: File, ind: number) => {
-    const imageToChange = this.#viewedImages[ind];
-    const additionalInd = this.additionalImages.length;
-    if (imageToChange.type === 'additionalImages') {
-      this.additionalFiles.splice(imageToChange.index, 1, file);
-      this.additionalImages.splice(imageToChange.index, 1, URL.createObjectURL(file));
-      this.#viewedImages.splice(ind, 1, {
-        index: imageToChange.index,
-        type: 'additionalImages',
-        id: uuidv4(),
-      });
-    } else {
-      this.additionalFiles.push(file);
-      this.additionalImages.push(URL.createObjectURL(file));
-      this.#viewedImages.splice(ind, 1, {
-        index: additionalInd,
-        type: 'additionalImages',
-        id: uuidv4(),
-      });
-    }
+  // replaceImage = (file: File, ind: number) => {
+  //   const imageToChange = this.#viewedImages[ind];
+  //   const additionalInd = this.additionalImages.length;
+  //   if (imageToChange.type === 'additionalImages') {
+  //     this.additionalFiles.splice(imageToChange.index, 1, file);
+  //     this.additionalImages.splice(imageToChange.index, 1, URL.createObjectURL(file));
+  //     this.#viewedImages.splice(ind, 1, {
+  //       index: imageToChange.index,
+  //       type: 'additionalImages',
+  //       id: uuidv4(),
+  //     });
+  //   } else {
+  //     this.additionalFiles.push(file);
+  //     this.additionalImages.push(URL.createObjectURL(file));
+  //     this.#viewedImages.splice(ind, 1, {
+  //       index: additionalInd,
+  //       type: 'additionalImages',
+  //       id: uuidv4(),
+  //     });
+  //   }
 
-    this.#viewedImages = this.#viewedImages.map((obj) => {
-      if (obj.type !== imageToChange.type) return obj;
-      if (obj.index < imageToChange.index) return obj;
-      return { ...obj, index: obj.index - 1 };
-    });
-    this.updateViewed();
-  };
+  //   this.#viewedImages = this.#viewedImages.map((obj) => {
+  //     if (obj.type !== imageToChange.type) return obj;
+  //     if (obj.index < imageToChange.index) return obj;
+  //     return { ...obj, index: obj.index - 1 };
+  //   });
+  //   this.updateViewed();
+  // };
 
   updateImg = (imageFile: File, id: string) => {
     this.currImages = this.currImages.map((img) => {
@@ -254,33 +254,64 @@ export default class adStore {
         console.log('нет изменений');
         return;
       }
-      const prevIndex = prevArray.findIndex((findImage) => findImage.id === image.id);
-      if (!image.file) {
+      const currIndex = currArray.findIndex(
+        (currImage) => currImage.id === prevArray[ind].id,
+      );
+      const prevIndex = prevArray.findIndex((prevImage) => prevImage.id === image.id);
+      if (image.file) {
+        if (prevArray.length <= ind) {
+          this.imageOperations.push({
+            action: 'ADD',
+            targetPosition: ind,
+            filePosition: this.addFiles.length,
+          });
+          this.addFiles.push(image.file);
+          console.log('добавляем', ind, this.addFiles.length);
+          return;
+        } else {
+          if (currIndex !== -1) {
+            this.imageOperations.push({
+              action: 'ADD',
+              targetPosition: ind,
+              filePosition: this.addFiles.length,
+            });
+            this.addFiles.push(image.file);
+            const prevArrLength = prevArray.length;
+            prevArray.push({
+              id: image.id,
+              url: '',
+              file: undefined,
+            });
+            console.log('добавляем', ind, this.addFiles.length);
+            this.imageOperations.push({
+              action: 'MOVE',
+              arrayPosition: prevArrLength,
+              targetPosition: ind,
+            });
+            arrayMove(prevArray, ind, prevArrLength);
+            console.log('перемещаем', currIndex, ind);
+            return;
+          } else {
+            this.imageOperations.push({
+              action: 'REPLACE',
+              arrayPosition: ind,
+              filePosition: this.addFiles.length,
+            });
+            this.addFiles.push(image.file);
+            console.log('меняем на новый', ind, this.addFiles.length - 1);
+            return;
+          }
+        }
+      } else {
         this.imageOperations.push({
           action: 'MOVE',
           arrayPosition: prevIndex,
           targetPosition: ind,
         });
-        console.log('перемещаем', prevIndex, ind);
+        arrayMove(prevArray, ind, prevIndex);
+        console.log('перемещаем', currIndex, ind);
         return;
       }
-      if (prevArray.length > ind + 1) {
-        this.imageOperations.push({
-          action: 'REPLACE',
-          arrayPosition: ind,
-          filePosiiton: this.addFiles.length,
-        });
-        this.addFiles.push(image.file);
-        console.log('меняем', ind, this.addFiles.length);
-        return;
-      }
-      this.imageOperations.push({
-        action: 'ADD',
-        targetPosition: ind,
-        filePosiiton: this.addFiles.length,
-      });
-      this.addFiles.push(image.file);
-      console.log('добавляем', ind, this.addFiles.length);
     });
     if (prevArray.length > this.currImages.length) {
       for (let i = prevArray.length - 1; i >= this.currImages.length; i--) {
@@ -326,13 +357,13 @@ export default class adStore {
     this.isLoading = false;
     this.showForm = true;
     this.type = 'Product';
-    this.currentImages = [];
-    this.#viewedImages = [];
-    this.#oldImages = [];
-    this.additionalImages = [];
-    this.additionalFiles = [];
-    this.viewedImages = [];
-    this.imageActions = [];
+    // this.currentImages = [];
+    // this.#viewedImages = [];
+    // this.#oldImages = [];
+    // this.additionalImages = [];
+    // this.additionalFiles = [];
+    // this.viewedImages = [];
+    this.imageOperations = [];
     this.addFiles = [];
     this.currImages = [];
     this.prevImages = [];
@@ -377,7 +408,6 @@ export default class adStore {
       | CreateOrderRequest,
   ) => {
     await this.calcOperations();
-
     if ('jobId' in dto) {
       const obj = {
         dto: { ...dto, imageOperations: this.imageOperations },
@@ -404,6 +434,7 @@ export default class adStore {
         errorNotify('Произошла ошибка при обновлении объявления');
       }
     }
+    this.resetForm();
   };
   confirmRequest = async (code: string) => {
     try {
