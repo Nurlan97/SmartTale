@@ -2,7 +2,6 @@ import { observer } from 'mobx-react-lite';
 import { useEffect, useRef } from 'react';
 import DatePicker from 'react-datepicker';
 
-import { IInital } from '../../pages/AdminOrganizationPage/AdminOrganizationPage';
 import organizationOrderStore from '../../store/organizationOrderStore';
 import Button from '../../UI/Button/Button';
 import DateRangeCustomInput from '../../UI/DateRangeCustomInput/DateRangeCustomInput';
@@ -10,6 +9,7 @@ import { formatDate } from '../../utils/helpers';
 import AdRow from '../AdRow/AdRow';
 import CreateOrganization from '../CreateOrganization/CreateOrganization';
 import DropDownFilterDate from '../DropDownFilterDate/DropDownFilterDate';
+import { IInital } from '../EmptyPageMessage/EmptyPageMessage';
 import styles from './AdminOrderAndEmployeeDashboard.module.scss';
 
 type Props = {

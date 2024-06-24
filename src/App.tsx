@@ -36,7 +36,6 @@ import UpdatePosition from './pages/UpdatePosition/UpdatePosition';
 import VacancyAd from './pages/VacancyAd/VacancyAd';
 import { userStore } from './store';
 import { getCookie, isTokenExpired, removeCookie } from './utils/helpers';
-import AdminJobPositionsPage from './pages/AdminJobPositionsPage/AdminJobPositionsPage';
 
 const App = observer(() => {
   const [isLoading, setIsLoading] = useState(true);

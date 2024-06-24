@@ -55,7 +55,6 @@
     "eslint-plugin-simple-import-sort": "^12.1.0",
     "globals": "^15.1.0",
     "path": "^0.12.7",
-    "pre-commit": "^1.2.2",
     "prettier": "^3.2.5",
     "sass": "^1.77.0",
     "swagger-typescript-api": "^13.0.3",

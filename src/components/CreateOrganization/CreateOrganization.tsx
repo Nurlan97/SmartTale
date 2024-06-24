@@ -1,13 +1,13 @@
 import { useFormik } from 'formik';
 
-import { IInital } from '../../pages/AdminOrganizationPage/AdminOrganizationPage';
 import modalStore, { Modals } from '../../store/modalStore';
 import organizationOrderStore from '../../store/organizationOrderStore';
 import Button from '../../UI/Button/Button';
 import Input from '../../UI/Input/Input';
 import Textarea from '../../UI/Textarea/Textarea';
 import { nameSchema } from '../../utils/nameSchema';
-import { descriptionSchema } from '../../utils/placeOrderHelpers';
+import { descriptionSchema } from '../../utils/yupShemas';
+import { IInital } from '../EmptyPageMessage/EmptyPageMessage';
 import OrganizationLogoInput from '../OrganizationLogoInput/OrganizationLogoInput';
 import styles from './CreateOrganization.module.scss';
 

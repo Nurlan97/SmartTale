@@ -1,13 +1,8 @@
 import { observer } from 'mobx-react-lite';
 
 import { DeleteImg } from '../../assets';
-import { typePlaceOrderStore } from '../../store';
 import organizationOrderStore from '../../store/organizationOrderStore';
 import styles from './OrganizationLogoInput.module.scss';
-
-interface IImageInput {
-  store: typePlaceOrderStore;
-}
 
 const OrganizationLogoInput = observer(() => {
   return (
