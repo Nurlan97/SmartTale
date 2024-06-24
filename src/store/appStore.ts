@@ -172,6 +172,11 @@ class appStore {
   get isActiveOrders() {
     return this.myOrganization.group === 'orders';
   }
+
+  get isEmployees() {
+    return this.myOrganization.group === 'employees';
+  }
+
   deleteAd = async (id: number) => {
     try {
       await myApi.interactWithAd1(id, '3');

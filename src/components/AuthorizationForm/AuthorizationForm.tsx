@@ -50,9 +50,6 @@ const AuthorizationForm = observer(() => {
           );
         })}
         <Checkbox checked={userStore.isRemember} onClick={userStore.toggleRemember} />
-        {/* <Button color='blue' type='submit' width='100%'>
-          Войти
-        </Button> */}
         {!submit &&
           (Object.keys(formik.touched).length === 0 ? (
             <Button color='blue' type='submit' width='100%'>
