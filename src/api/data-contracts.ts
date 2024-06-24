@@ -172,7 +172,7 @@ export interface CreateOrderRequest {
   price?: number;
   size?: string;
   /** @format date */
-  deadline?: string;
+  deadlineAt?: string;
   contactInfo: 'EMAIL' | 'PHONE' | 'EMAIL_PHONE';
 }
 
@@ -541,7 +541,7 @@ export interface JobSummary {
   description?: string;
   jobType?: 'FULL_TIME' | 'PART_TIME' | 'CONTRACT' | 'INTERN' | 'TEMPORARY';
   salary?: number;
-  image?: string;
+  imageUrl?: string;
   /** @format int32 */
   applicantsCount?: number;
   isClosed?: boolean;

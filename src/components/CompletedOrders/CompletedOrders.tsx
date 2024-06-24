@@ -62,24 +62,17 @@ const CompletedOrders: React.FC = observer(() => {
 
       <div className={styles.adsBlock} ref={tableRef}>
         {orderHistoryStore2.data.content &&
-          orderHistoryStore2.data.content.map((item, ind) => (
-            <AdRow key={ind} item={item}>
-              <div className={styles.details}>
-                {item.completedAt && <p>{formatDate(item.completedAt)}</p>}
-
-                <button
-                  className={styles.detailedBtn}
-                  onClick={async () => {
-                    const id = 'productId' in item ? item.productId : item.orderId;
-                    navigate(`/task/${id}`);
-                    // kanbanStore.showDescription(Number(id));
-                  }}
-                >
-                  Посмотреть детали
-                </button>
-              </div>
-            </AdRow>
-          ))}
+          orderHistoryStore2.data.content.map((item, ind) => {
+            const id = 'productId' in item ? item.productId : item.orderId;
+            return (
+              <AdRow key={ind} item={item} navigateTo={`/task/${id}`}>
+                <div className={styles.details}>
+                  {item.completedAt && <p>{formatDate(item.completedAt)}</p>}
+                  <div className={styles.detailedBtn}>Посмотреть детали</div>
+                </div>
+              </AdRow>
+            );
+          })}
       </div>
     </div>
   );

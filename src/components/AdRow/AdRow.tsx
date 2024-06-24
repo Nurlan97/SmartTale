@@ -1,4 +1,5 @@
 import { ReactNode } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import {
   JobSummary,
@@ -14,12 +15,20 @@ import styles from './adRow.module.scss';
 interface IAd {
   item: Product | OrderAccepted | SearchItem | OrderSummaryPersonal | JobSummary;
   children?: ReactNode;
+  navigateTo?: string;
 }
 
-const AdRow = ({ item, children }: IAd) => {
-  const image = 'imageUrl' in item ? item.imageUrl : item.image;
+const AdRow = ({ item, children, navigateTo }: IAd) => {
+  const image = item.imageUrl;
+  const navigate = useNavigate();
   return (
-    <div className={styles.wrapper}>
+    <button
+      className={styles.wrapper}
+      disabled={!navigateTo}
+      onClick={() => {
+        if (navigateTo) navigate(navigateTo);
+      }}
+    >
       <div className={styles.mainBlock}>
         <img
           className={styles.img}
@@ -37,7 +46,7 @@ const AdRow = ({ item, children }: IAd) => {
         </div>
       </div>
       {children}
-    </div>
+    </button>
   );
 };
 

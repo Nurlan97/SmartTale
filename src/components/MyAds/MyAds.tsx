@@ -25,31 +25,26 @@ const MyAds = observer(() => {
       <ScrollableWrapper>
         <div className={styles.adsBlock}>
           {appStore.myAds.data.content &&
-            appStore.myAds.data.content.map((item, ind) => (
-              <AdRow key={ind} item={item}>
-                <div
-                  style={{
-                    gap: '12px',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'end',
-                  }}
-                >
-                  {item.isClosed && (
-                    <div className={styles.adHided}>Объявление скрыто</div>
-                  )}
-                  <button
-                    className={styles.detailedBtn}
-                    onClick={async () => {
-                      const id = 'productId' in item ? item.productId : item.orderId;
-                      navigate(`/my-ads/${id}`);
+            appStore.myAds.data.content.map((item, ind) => {
+              const id = 'productId' in item ? item.productId : item.orderId;
+              return (
+                <AdRow key={ind} item={item} navigateTo={`/my-ads/${id}`}>
+                  <div
+                    style={{
+                      gap: '12px',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'end',
                     }}
                   >
-                    Посмотреть детали
-                  </button>
-                </div>
-              </AdRow>
-            ))}
+                    {item.isClosed && (
+                      <div className={styles.adHided}>Объявление скрыто</div>
+                    )}
+                    <div className={styles.detailedBtn}>Посмотреть детали</div>
+                  </div>
+                </AdRow>
+              );
+            })}
         </div>
       </ScrollableWrapper>
     </div>

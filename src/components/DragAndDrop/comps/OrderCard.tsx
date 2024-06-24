@@ -1,13 +1,10 @@
 import { useDraggable } from '@dnd-kit/core';
 import { observer } from 'mobx-react-lite';
-import { useState } from 'react';
 
-import { MonitoringOrder, OrderDashboard } from '../../../api/data-contracts';
-import { Clock, defaultImage, defaultPhoto } from '../../../assets';
+import { OrderDashboard } from '../../../api/data-contracts';
+import { Clock } from '../../../assets';
 import { kanbanStore } from '../../../store';
-import Button from '../../../UI/Button/Button';
 import { cutText, formatDate, toCamelCase } from '../../../utils/helpers';
-import TaskDescription from '../../TaskDescription/TaskDescription';
 import styles from './orderCard.module.scss';
 
 interface Props {
@@ -30,6 +27,7 @@ const OrderCard = observer(({ order }: Props) => {
       type: 'Order',
       order,
     },
+    disabled: kanbanStore.isLoading,
   });
 
   if (isDragging) {

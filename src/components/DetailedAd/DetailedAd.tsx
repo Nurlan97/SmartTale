@@ -19,7 +19,7 @@ import { Modals } from '../../store/modalStore';
 import vacancyStore from '../../store/vacancyStore';
 import Button from '../../UI/Button/Button';
 import { formatDate } from '../../utils/helpers';
-import { dateSchema, descriptionSchema, titleSchema } from '../../utils/yupShemas';
+import { deadlineSchema, descriptionSchema, titleSchema } from '../../utils/yupShemas';
 import JobForm from '../PlaceAdvForm/JobForm/JobForm';
 import OrderForm from '../PlaceAdvForm/OrderForm/OrderForm';
 import ProductForm from '../PlaceAdvForm/ProductForm/ProductForm';
@@ -34,7 +34,7 @@ const DetailedAd = observer(({ store }: IProps) => {
   const schema = titleSchema.concat(descriptionSchema);
   const ad = store.ad[0];
   if ('orderId' in ad) {
-    schema.concat(dateSchema);
+    schema.concat(deadlineSchema);
   }
 
   const initialProduct: UpdateProductRequest | CreateProductRequest = {
@@ -219,6 +219,7 @@ const DetailedAd = observer(({ store }: IProps) => {
                 width='fit-content'
                 handler={() => {
                   formik.resetForm();
+                  store.resetImgs();
                   setIsEdit(false);
                 }}
               >

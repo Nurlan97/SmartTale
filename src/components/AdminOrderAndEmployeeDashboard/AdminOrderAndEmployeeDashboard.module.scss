@@ -1,6 +1,7 @@
-.wrapper{
+.wrapper {
   height: 100%;
 }
+
 .logoWrapper {
   display: flex;
   align-items: flex-end;
@@ -15,16 +16,28 @@
   line-height: 92%;
   text-align: left;
   color: #000;
+  display: flex;
+  gap: 12px;
+  align-items: start;
+ 
 }
+
 .logo {
   background: #fc0;
-  width: 70px;
-  height: 70px;
+  width: 120px;
+  height: 120px;
   border-radius: 10px;
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-bottom: 20px;
+}
+.companyDescription {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  justify-content: space-between;
+  gap: 8px;
 }
 .title {
   font-family: 'SF Pro', sans-serif;
@@ -32,7 +45,7 @@
   font-size: 24px;
   line-height: 92%;
   color: #000;
-  margin-bottom: 12px;
+  // margin-bottom: 12px;
 }
 .description {
   font-family: 'SF Pro', sans-serif;
@@ -52,9 +65,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-top: 20px;
 }
-
 
 .btnGroup {
   height: 56px;

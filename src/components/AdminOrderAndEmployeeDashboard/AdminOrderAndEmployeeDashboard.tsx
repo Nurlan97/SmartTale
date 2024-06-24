@@ -5,6 +5,7 @@ import DatePicker from 'react-datepicker';
 import organizationOrderStore from '../../store/organizationOrderStore';
 import Button from '../../UI/Button/Button';
 import DateRangeCustomInput from '../../UI/DateRangeCustomInput/DateRangeCustomInput';
+import TabSwitch from '../../UI/TabSwitch/TabSwitch';
 import { formatDate } from '../../utils/helpers';
 import AdRow from '../AdRow/AdRow';
 import CreateOrganization from '../CreateOrganization/CreateOrganization';
@@ -20,23 +21,6 @@ type Props = {
 const AdminOrderAndEmployeeDashboard = observer(
   ({ editOrganization, setEditOrganization }: Props) => {
     const tableRef = useRef<HTMLTableElement>(null);
-
-    const buttons: {
-      type: 'orders' | 'completedOrders' | 'employees';
-      title: string;
-      activeTab: string;
-    }[] = [
-      {
-        type: 'orders',
-        title: 'Текущие заказы',
-        activeTab: 'active',
-      },
-      {
-        type: 'completedOrders',
-        title: 'Завершенные заказы',
-        activeTab: 'completed',
-      },
-    ];
 
     const editOrganizationForm: IInital = {
       name: organizationOrderStore.myOrganization.name,
@@ -69,16 +53,22 @@ const AdminOrderAndEmployeeDashboard = observer(
                   />
                 ) : (
                   <div className={styles.logo}>ST</div>
-                )}
+                )}{' '}
+                <div className={styles.companyDescription}>
+                  <div>
+                    {' '}
+                    <h1 className={styles.title}>
+                      {organizationOrderStore.myOrganization.name}
+                    </h1>
+                    <div className={styles.description}>
+                      {organizationOrderStore.myOrganization.description}
+                    </div>
+                  </div>
 
-                <h1 className={styles.title}>
-                  {organizationOrderStore.myOrganization.name}
-                </h1>
-                <div className={styles.description}>
-                  {organizationOrderStore.myOrganization.description}
-                </div>
-                <div className={styles.organizationEstablishedDate}>
-                  Создан {formatDate(organizationOrderStore.myOrganization.registeredAt)}
+                  <div className={styles.organizationEstablishedDate}>
+                    Создан{' '}
+                    {formatDate(organizationOrderStore.myOrganization.registeredAt)}
+                  </div>
                 </div>
               </div>
               <div className={styles.editBtn}>
@@ -89,25 +79,16 @@ const AdminOrderAndEmployeeDashboard = observer(
             </div>
             <div className={styles.btnGroup}>
               <div className={styles.btnList}>
-                {buttons.map((btn, index) => (
-                  <Button
-                    key={index}
-                    color={
-                      organizationOrderStore.activeTab === btn.activeTab
-                        ? 'orange'
-                        : 'white'
-                    }
-                    type='button'
-                    height='40px'
-                    handler={() => {
-                      organizationOrderStore.setActiveTab(
-                        btn.activeTab === 'active' ? 'active' : 'completed',
-                      );
-                    }}
-                  >
-                    {btn.title}
-                  </Button>
-                ))}
+                <TabSwitch
+                  tabs={[
+                    { tab: 'active', title: 'Текущие' },
+                    { tab: 'completed', title: 'Завершенные' },
+                  ]}
+                  activeTab={organizationOrderStore.activeTab}
+                  switchFunc={(tab: 'active' | 'completed') =>
+                    organizationOrderStore.setActiveTab(tab)
+                  }
+                />
               </div>
               <div className={styles.filterBtnGrp}>
                 <DropDownFilterDate

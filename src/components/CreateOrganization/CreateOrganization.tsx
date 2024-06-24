@@ -1,5 +1,6 @@
 import { useFormik } from 'formik';
 
+import { userStore } from '../../store';
 import modalStore, { Modals } from '../../store/modalStore';
 import organizationOrderStore from '../../store/organizationOrderStore';
 import Button from '../../UI/Button/Button';
@@ -32,7 +33,9 @@ const CreateOrganization = ({
       schema
         .validate({ name, description }, { abortEarly: false })
         .then(() => {
-          organizationOrderStore.createOrganization({ name, description });
+          userStore.orgId
+            ? organizationOrderStore.updateOrganization({ name, description })
+            : organizationOrderStore.createOrganization({ name, description });
           formik.resetForm();
         })
         .catch((e) => {

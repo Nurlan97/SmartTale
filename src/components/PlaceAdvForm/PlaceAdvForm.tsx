@@ -1,25 +1,32 @@
 import { useFormik } from 'formik';
+import { toJS } from 'mobx';
 import { observer } from 'mobx-react-lite';
+import { useEffect } from 'react';
+import * as Yup from 'yup';
 
 import {
   CreateJobRequest,
   CreateOrderRequest,
   CreateProductRequest,
 } from '../../api/data-contracts';
-import { modalStore, typePlaceAdvStore, userStore } from '../../store';
+import { createPlaceAdvStore, modalStore, userStore } from '../../store';
 import { AdType } from '../../store/adStore';
 import { Modals } from '../../store/modalStore';
 import Button from '../../UI/Button/Button';
 import TabSwitch from '../../UI/TabSwitch/TabSwitch';
-import { dateSchema, descriptionSchema, titleSchema } from '../../utils/yupShemas';
+import { errorNotify } from '../../utils/toaster';
+import {
+  applicationDeadlineSchema,
+  deadlineSchema,
+  descriptionSchema,
+  positionSchema,
+  quantitySchema,
+  titleSchema,
+} from '../../utils/yupShemas';
 import JobForm from './JobForm/JobForm';
 import OrderForm from './OrderForm/OrderForm';
 import styles from './placeAdvForm.module.scss';
 import ProductForm from './ProductForm/ProductForm';
-
-type Props = {
-  store: typePlaceAdvStore;
-};
 
 const initialProduct: CreateProductRequest = {
   title: '',
@@ -34,7 +41,7 @@ const initalOrder: CreateOrderRequest = {
   description: '',
   price: 0,
   size: '',
-  deadline: `${new Date(new Date().getTime() + 1 * 24 * 60 * 60 * 1000)}`,
+  deadlineAt: `${new Date(new Date().getTime() + 1 * 24 * 60 * 60 * 1000).toISOString()}`,
   contactInfo: 'EMAIL',
 };
 
@@ -42,7 +49,7 @@ const initialJob: CreateJobRequest = {
   title: '',
   description: '',
   salary: 0,
-  applicationDeadline: '',
+  applicationDeadline: `${new Date(new Date().getTime() + 1 * 24 * 60 * 60 * 1000).toISOString()}`,
   contactInfo: 'EMAIL',
   jobType: 'FULL_TIME',
   location: '',
@@ -54,8 +61,15 @@ const initialObj = {
   Order: initalOrder,
   Job: initialJob,
 };
-const PlaceAdvForm = observer(({ store }: Props) => {
-  const schema = titleSchema.concat(descriptionSchema);
+const store = createPlaceAdvStore();
+const PlaceAdvForm = observer(() => {
+  let schema = titleSchema.concat(descriptionSchema);
+  if (store.type === 'Product') {
+    schema = schema.concat(quantitySchema);
+  }
+  if (store.type === 'Order') schema = schema.concat(deadlineSchema);
+  if (store.type === 'Job')
+    schema = schema.concat(applicationDeadlineSchema).concat(positionSchema);
 
   const typesArr: { tab: AdType; title: string }[] = [
     { tab: 'Product', title: 'Оборудование' },
@@ -68,19 +82,19 @@ const PlaceAdvForm = observer(({ store }: Props) => {
   const formik = useFormik({
     initialValues: initialObj[store.type],
     enableReinitialize: true,
-    onSubmit: (values) => {
-      console.log(values);
-      schema
-        .validate({ ...values }, { abortEarly: false })
-        .then(() => {
-          store.placeAd(values, store.additionalFiles);
-          formik.resetForm();
-        })
-        .catch((e) => {
-          console.log(formik.errors);
-          console.log(e);
-          modalStore.openModal(Modals.errorValidation);
+    onSubmit: async (values) => {
+      try {
+        await schema.validate({ ...values }).catch((err) => {
+          const errorMessage = err.errors;
+          errorNotify(`${errorMessage}`);
+          throw err;
         });
+        store.placeAd(values);
+        formik.resetForm();
+      } catch (error) {
+        console.log(error);
+        modalStore.openModal(Modals.errorValidation);
+      }
     },
   });
 
@@ -93,14 +107,7 @@ const PlaceAdvForm = observer(({ store }: Props) => {
           switchFunc={(tab) => store.setType(tab)}
         />
 
-        <form
-          className={styles.wrapper}
-          onSubmit={(e) => {
-            console.log('submit');
-            e.preventDefault();
-            formik.handleSubmit(e);
-          }}
-        >
+        <form className={styles.wrapper} onSubmit={formik.handleSubmit}>
           {store.type === 'Product' && 'quantity' in formik.values && (
             <ProductForm
               values={formik.values}
@@ -125,7 +132,12 @@ const PlaceAdvForm = observer(({ store }: Props) => {
             <Button
               color='blue'
               type='submit'
-              disabled={!formik.values.title || !formik.values.description}
+              disabled={
+                !formik.values.title ||
+                !formik.values.description ||
+                ('quantity' in formik.values ? !formik.values.quantity : false) ||
+                ('location' in formik.values ? !formik.values.location : false)
+              }
             >
               Разместить объявление
             </Button>

@@ -1,0 +1,38 @@
+.wrapper {
+  background-color: white;
+  border-radius: 15px;
+  padding: 15px;
+
+  display: flex;
+  gap: 15px;
+}
+.imagesWrapper {
+  display: flex;
+  gap: 15px;
+}
+.hiddenInput {
+  display: none;
+}
+.addFile {
+  border-radius: 4px;
+  padding: 4px 6px;
+  width: 82px;
+  height: 40px;
+  background: #e5effd;
+}
+.inputPhoto {
+  background-color: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-size: 12px;
+  color: rgba(138, 138, 138, 1);
+  border: 1px dashed #babfc3;
+  border-radius: 8px;
+  overflow: hidden;
+  padding: 24px;
+  width: 100px;
+  height: 100px;
+}
