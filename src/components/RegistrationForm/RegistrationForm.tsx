@@ -150,7 +150,6 @@ const RegistrationForm = observer(() => {
         )}
         {userStore.authenticationStage === 2 && (
           <>
-            <Checkbox checked={userStore.isRemember} onClick={userStore.toggleRemember} />
             <Button
               color={buttonProps.color}
               type={buttonProps.type}

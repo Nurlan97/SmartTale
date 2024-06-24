@@ -1,9 +1,7 @@
 import { makeAutoObservable, runInAction } from 'mobx';
 
-import { CreateOrgRequest, PageOrderSummary } from '../api/data-contracts';
-import { MyApi } from '../api/V1';
-
-const api = new MyApi();
+import { CreateOrgRequest, CustomPageOrderAccepted } from '../api/data-contracts';
+import { myApi } from '../api/V1';
 
 export type TDate = [Date | null, Date | null];
 export enum dateFilters {
@@ -38,25 +36,13 @@ class organizationOrderStore {
     from: null,
     to: null,
   };
-  data: PageOrderSummary = {
+  data: CustomPageOrderAccepted = {
     totalPages: 0,
     totalElements: 0,
     size: 0,
     content: [],
     number: 0,
-    sort: { empty: false, sorted: false, unsorted: false },
-    pageable: {
-      offset: 0,
-      sort: { empty: false, sorted: false, unsorted: false },
-      pageNumber: 0,
-      pageSize: 0,
-      paged: false,
-      unpaged: false,
-    },
-    numberOfElements: 0,
-    first: false,
-    last: false,
-    empty: false,
+    isEmpty: false,
   };
 
   myOrganization: IMyOrganization = {
@@ -82,7 +68,7 @@ class organizationOrderStore {
   setActiveTab = async (tab: 'active' | 'completed') => {
     console.log(tab);
     try {
-      const response = await api.getOrders({ active: tab === 'active' });
+      const response = await myApi.getOrders({ active: tab === 'active' });
       runInAction(() => {
         this.activeTab = tab;
         this.data = response.data;
@@ -105,7 +91,7 @@ class organizationOrderStore {
           ? getKeyByValue(dateFilters, this.dateFilter.currentType)
           : undefined;
       }
-      const response = await api.getOrders(body);
+      const response = await myApi.getOrders(body);
       runInAction(() => {
         this.data = response.data;
       });
@@ -116,7 +102,7 @@ class organizationOrderStore {
 
   getMyOrganization = async () => {
     try {
-      const response = await api.getOrganization();
+      const response = await myApi.getOrganization();
       runInAction(() => {
         this.myOrganization.description = response.data.description;
         this.myOrganization.logoUrl = response.data.logoUrl;
@@ -141,7 +127,7 @@ class organizationOrderStore {
   };
   createOrganization = async (dto: CreateOrgRequest) => {
     try {
-      await api.createOrganization({
+      await myApi.createOrganization({
         dto,
         logo: this.fileImage,
       });
