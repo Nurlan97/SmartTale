@@ -171,9 +171,9 @@ const RegistrationForm = observer(() => {
               color={buttonProps.color}
               type={buttonProps.type}
               width={buttonProps.width}
-              disabled={isSubmitting || Object.values(formik.values).some((val) => !val)}
+              disabled={Object.values(formik.values).some((val) => !val)}
             >
-              Зарегистрироваться
+              {buttonProps.children}
             </Button>
           </>
         )}
