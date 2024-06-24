@@ -65,12 +65,12 @@ class organizationOrderStore {
     if (this.dateFilter.from && this.dateFilter.to) this.getOrders();
   };
 
-  setActiveTab = async (tab: 'active' | 'completed') => {
+  setActiveTab = (tab: 'active' | 'completed') => async () => {
     console.log(tab);
     try {
+      this.activeTab = tab;
       const response = await myApi.getOrders({ active: tab === 'active' });
       runInAction(() => {
-        this.activeTab = tab;
         this.data = response.data;
       });
     } catch (error) {
@@ -106,6 +106,7 @@ class organizationOrderStore {
       runInAction(() => {
         this.myOrganization.description = response.data.description;
         this.myOrganization.logoUrl = response.data.logoUrl;
+        this.viewedImage = response.data.logoUrl;
         this.myOrganization.name = response.data.name;
         this.myOrganization.registeredAt = response.data.registeredAt;
       });
@@ -134,6 +135,9 @@ class organizationOrderStore {
     } catch (error) {
       console.error('Error', error);
     }
+  };
+  updateOrganization = async (dto: CreateOrgRequest) => {
+    await myApi.updateOrganization({ dto, logo: this.fileImage });
   };
 }
 export default new organizationOrderStore();

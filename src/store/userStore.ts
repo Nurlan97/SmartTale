@@ -50,6 +50,7 @@ class userStore {
   };
 
   fetchRegistration = async (registrationData: RegistrationRequest, code?: string) => {
+    console.log(registrationData);
     try {
       const result = await myApi.register(registrationData, { code: code });
       runInAction(() => {

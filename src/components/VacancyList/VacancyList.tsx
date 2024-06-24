@@ -8,35 +8,29 @@ const VacancyList = observer(() => {
   const navigate = useNavigate();
   return (
     <div className={styles.list}>
-      {vacancyStore.positionsList?.content.map((item, ind) => (
-        <AdRow key={ind} item={item}>
-          <div
-            style={{
-              gap: '12px',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'end',
-            }}
-          >
-            {item.isClosed && <div className={styles.adHided}>Объявление скрыто</div>}
-            <button
-              className={styles.detailedBtn}
-              onClick={async () => {
-                const id =
-                  'productId' in item
-                    ? item.productId
-                    : 'orderId' in item
-                      ? item.orderId
-                      : item.jobId;
-
-                navigate(`/vacancy/${id}`);
+      {vacancyStore.positionsList?.content.map((item, ind) => {
+        const id =
+          'productId' in item
+            ? item.productId
+            : 'orderId' in item
+              ? item.orderId
+              : item.jobId;
+        return (
+          <AdRow key={ind} item={item} navigateTo={`/vacancy/${id}`}>
+            <div
+              style={{
+                gap: '12px',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'end',
               }}
             >
-              Посмотреть детали
-            </button>
-          </div>
-        </AdRow>
-      ))}
+              {item.isClosed && <div className={styles.adHided}>Объявление скрыто</div>}
+              <div className={styles.detailedBtn}>Посмотреть детали</div>
+            </div>
+          </AdRow>
+        );
+      })}
     </div>
   );
 });

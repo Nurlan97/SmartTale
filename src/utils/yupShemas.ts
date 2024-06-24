@@ -40,9 +40,7 @@ export const emailSchema = Yup.object().shape({
     .email('Неправильный формат email адреса'),
 });
 export const phoneNumberSchema = Yup.object().shape({
-  phoneNumber: Yup.string()
-    .required('Обязательное поле для заполнения')
-    .email('Неправильный формат email адреса'),
+  phoneNumber: Yup.string().required('Обязательное поле для заполнения'),
 });
 export const positionSchema = Yup.object().shape({
   positionId: Yup.number().min(0, 'Выберите должность'),

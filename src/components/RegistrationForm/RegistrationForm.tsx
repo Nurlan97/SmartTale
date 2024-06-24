@@ -96,7 +96,7 @@ const RegistrationForm = observer(() => {
   const buttonProps: ButtonProps = isSubmitting
     ? {
         color: 'blue',
-        type: 'submit',
+        type: 'button',
         width: '100%',
         disabled: hasErrors,
         children: (
@@ -124,7 +124,13 @@ const RegistrationForm = observer(() => {
 
   return (
     <div className={styles.wrapper}>
-      <form className={styles.form} onSubmit={formik.handleSubmit}>
+      <form
+        className={styles.form}
+        onSubmit={(e) => {
+          console.log(formik.errors);
+          formik.handleSubmit(e);
+        }}
+      >
         {formData.map((data, index) => {
           if (userStore.authenticationStage === data.stage) {
             return (
@@ -144,7 +150,18 @@ const RegistrationForm = observer(() => {
         )}
 
         {userStore.authenticationStage === 1 && (
-          <Button color='blue' type='button' width='100%' handler={handleNextStage}>
+          <Button
+            color='blue'
+            type='button'
+            width='100%'
+            handler={handleNextStage}
+            disabled={
+              !!formik.errors.email ||
+              !!formik.errors.phoneNumber ||
+              !formik.values.email ||
+              !formik.values.phoneNumber
+            }
+          >
             Продолжить
           </Button>
         )}
@@ -154,7 +171,7 @@ const RegistrationForm = observer(() => {
               color={buttonProps.color}
               type={buttonProps.type}
               width={buttonProps.width}
-              disabled={isSubmitting}
+              disabled={isSubmitting || Object.values(formik.values).some((val) => !val)}
             >
               Зарегистрироваться
             </Button>
