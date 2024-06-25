@@ -140,6 +140,7 @@ const ProfilePage = observer(() => {
                 <div className={styles.contactsGrp}>
                   <span
                     className={
+                      formik.values.contactInfo &&
                       formik.values.contactInfo.includes('PHONE')
                         ? styles.contactsItemActive
                         : styles.contactsItem
@@ -149,6 +150,7 @@ const ProfilePage = observer(() => {
                   </span>
                   <span
                     className={
+                      formik.values.contactInfo &&
                       formik.values.contactInfo.includes('EMAIL')
                         ? styles.contactsItemActive
                         : styles.contactsItem
@@ -248,63 +250,6 @@ const ProfilePage = observer(() => {
                         </div>
                       );
                     })}
-                    {/* {[
-                      {
-                        invitationId: 0,
-                        orgId: 0,
-                        orgName: 'Компания',
-                        orgLogoUrl: '',
-                        position: 'Раб',
-                        invitedAt: '2024-06-19T16:54:07.148Z',
-                      },
-                      {
-                        invitationId: 0,
-                        orgId: 0,
-                        orgName: 'Компания',
-                        orgLogoUrl: '',
-                        position: 'Надзиратель',
-                        invitedAt: '2024-06-19T16:54:07.148Z',
-                      },
-                      {
-                        invitationId: 0,
-                        orgId: 0,
-                        orgName: 'Компания',
-                        orgLogoUrl: '',
-                        position: 'Раб',
-                        invitedAt: '2024-06-19T16:54:07.148Z',
-                      },
-                      {
-                        invitationId: 0,
-                        orgId: 0,
-                        orgName: 'Компания',
-                        orgLogoUrl: '',
-                        position: 'Надзиратель',
-                        invitedAt: '2024-06-19T16:54:07.148Z',
-                      },
-                    ].map((invite) => {
-                      return (
-                        <div key={invite.invitationId} className={styles.invite}>
-                          <div className={styles.inviteGrp}>
-                            <img
-                              src={invite.orgLogoUrl ? invite.orgLogoUrl : logo}
-                              alt=''
-                              className={styles.inviteLogo}
-                            />{' '}
-                            <div>{invite.orgName}</div>
-                            <div>{invite.position}</div>
-                          </div>
-
-                          <button
-                            className={styles.inviteBtn}
-                            onClick={() => {
-                              userStore.acceptInvitation(invite.invitationId);
-                            }}
-                          >
-                            Принять
-                          </button>
-                        </div>
-                      );
-                    })} */}
                   </div>
                 </>
               )}

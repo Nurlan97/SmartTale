@@ -78,6 +78,9 @@ const RegistrationForm = observer(() => {
     if (code) return;
     userStore.fetchAvailablePhone(search).then((data) => {
       if (!data) formik.setFieldError('phoneNumber', 'Указанный вами номер занят');
+      else {
+        formik.setFieldError('phoneNumber', undefined);
+      }
     });
   });
 
@@ -95,10 +98,10 @@ const RegistrationForm = observer(() => {
   }
   const buttonProps: ButtonProps = isSubmitting
     ? {
-        color: 'blue',
+        color: 'white',
         type: 'button',
         width: '100%',
-        disabled: hasErrors,
+        disabled: true,
         children: (
           <div className={styles.loaderWrapper}>
             <div className={styles.loader}>Ожидаем...</div>
@@ -109,7 +112,7 @@ const RegistrationForm = observer(() => {
         color: hasErrors ? 'white' : 'blue',
         type: 'submit',
         width: '100%',
-        disabled: hasErrors,
+        disabled: hasErrors || Object.values(formik.values).some((val) => !val),
         children: 'Зарегистрироваться',
       };
 
@@ -171,7 +174,7 @@ const RegistrationForm = observer(() => {
               color={buttonProps.color}
               type={buttonProps.type}
               width={buttonProps.width}
-              disabled={Object.values(formik.values).some((val) => !val)}
+              disabled={buttonProps.disabled}
             >
               {buttonProps.children}
             </Button>

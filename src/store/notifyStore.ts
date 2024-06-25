@@ -72,7 +72,8 @@ class notifyStore {
     });
   };
   get hasUnreaded() {
-    return !!this.unreadedCount || this.notifications.some((item) => !item.read);
+    return this.notifications.some((item) => !item.read);
+    // return this.unreadedCount > 50 || this.notifications.some((item) => !item.read); backend issue count ta all accoutns from organization
   }
 }
 

@@ -107,7 +107,7 @@ export interface Profile {
   organizationName: string;
   organizationLogoUrl: string;
   position: string;
-  contactInfo: 'EMAIL' | 'PHONE' | 'EMAIL_PHONE';
+  contactInfo: 'EMAIL' | 'PHONE' | 'EMAIL_PHONE' | null;
   /** @format date */
   registeredAt: string;
   /** @format date */

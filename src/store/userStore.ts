@@ -136,10 +136,12 @@ class userStore {
       const response = await myApi.getProfile();
       runInAction(() => {
         this.firstName = response.data.firstName;
+        this.orgId = response.data.organizationId;
         this.lastName = response.data.lastName;
         this.middleName = response.data.middleName;
         this.email = response.data.email;
-        this.contactInfo = response.data.contactInfo;
+        this.contactInfo =
+          response.data.contactInfo === null ? 'EMAIL' : response.data.contactInfo;
         this.profilePhoto = response.data.avatarUrl;
         this.phone = response.data.phoneNumber;
         if (response.data.subscriptionEndDate) {
@@ -263,14 +265,16 @@ class userStore {
     return this.accessToken;
   }
   getOrganization = async () => {
-    try {
-      const response = await myApi.getOrganization();
-      runInAction(() => {
-        this.organization = response.data;
-      });
-    } catch (error) {
-      console.log(error);
-      errorNotify('Произошла ошибка при загрузке данных компании');
+    if (this.orgId !== undefined && this.orgId !== 0) {
+      try {
+        const response = await myApi.getOrganization();
+        runInAction(() => {
+          this.organization = response.data;
+        });
+      } catch (error) {
+        console.log(error);
+        errorNotify('Произошла ошибка при загрузке данных компании');
+      }
     }
   };
   getInvitations = async () => {
