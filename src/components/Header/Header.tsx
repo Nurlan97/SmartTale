@@ -5,7 +5,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { SearchItem } from '../../api/data-contracts';
 import { Bell } from '../../assets';
 import { useDebounce } from '../../hooks/useDebounce';
-import { notifyStore, searchStore } from '../../store';
+import { notifyStore, searchStore, userStore } from '../../store';
 import SearchInput from '../../UI/SearchInput/SearchInput';
 import DropDownSearch from '../DropDownSearch/DropDownSearch';
 import Notifications from '../Notifications/Notifications';
@@ -59,6 +59,7 @@ const Header = observer(({ path, title }: IHeader) => {
     }, 2000);
   };
   const navigate = useNavigate();
+  console.log(userStore.isAuth);
   return (
     <div className={styles.wrapper}>
       <div className={styles.main}>
@@ -68,7 +69,7 @@ const Header = observer(({ path, title }: IHeader) => {
         </div>
 
         <div className={styles.searchGroup}>
-          {context && (
+          {context && userStore.isAuth && (
             <form
               className={styles.search}
               onSubmit={(e) => {
