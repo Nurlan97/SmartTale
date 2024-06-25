@@ -87,9 +87,7 @@ const NavBar = observer(({ path }: INavBar) => {
               <NavbarLink title='Профиль' to='profile' />
               <NavbarLink title='Мои объявления' to='my-ads' />
               <NavbarLink title='Мои покупки' to='my-purchases' />
-              {(!!userStore.subscribePeriod || !!userStore.orgId) && (
-                <NavbarLink title='История заказов' to='orders-history' />
-              )}
+              <NavbarLink title='История заказов' to='orders-history' />
               {(!!userStore.subscribePeriod || !!userStore.orgId) && (
                 <NavbarLink title='Организация' to='company' />
               )}
