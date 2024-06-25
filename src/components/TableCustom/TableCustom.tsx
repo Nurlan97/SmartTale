@@ -3,6 +3,7 @@ import { CSSProperties, JSXElementConstructor, useRef, useState } from 'react';
 
 import { Employee, SmallOrder } from '../../api/data-contracts';
 import { Asc, Desc, NoSort } from '../../assets';
+import TablePagesGroup from '../../UI/PageBtnGroup/TablePagesGroup/TablePagesGroup';
 import styles from './tableCustom.module.scss';
 interface IHeader {
   name: string;
@@ -12,7 +13,7 @@ interface IStyle {
   [key: string]: (prop: any) => CSSProperties;
 }
 interface ITransform {
-  [key: string]: (prop: any) => any;
+  [key: string]: (prop: any, row: any) => any;
 }
 interface IProps {
   headers: IHeader[];
@@ -22,6 +23,9 @@ interface IProps {
   sorting?: ISorting;
   setSorting?: (column: string) => void;
   myRef?: React.RefObject<HTMLTableElement>;
+  totalPages?: number;
+  currPage?: number;
+  setPage?: (page: number) => void;
 }
 const sortIcons = {
   asc: <Asc className={styles.sortIcon} />,
@@ -34,7 +38,19 @@ interface ISorting {
 }
 
 const TableCustom = observer(
-  ({ headers, rows, styling, transform, sorting, setSorting, myRef }: IProps) => {
+  ({
+    headers,
+    rows,
+    styling,
+    transform,
+    sorting,
+    setSorting,
+    myRef,
+    totalPages,
+    currPage,
+    setPage,
+  }: IProps) => {
+    console.log(totalPages, currPage);
     return (
       <div className={styles.tableWrapper}>
         <table className={styles.table} ref={myRef}>
@@ -72,7 +88,7 @@ const TableCustom = observer(
                       <td key={header.name} className={styles.cell}>
                         <div style={styling && styling[key] && styling[key](row[key])}>
                           {transform && transform[key] && row[key]
-                            ? transform[key](row[key])
+                            ? transform[key](row[key], row)
                             : row[key]}
                         </div>
                       </td>
@@ -82,6 +98,10 @@ const TableCustom = observer(
               ))}
           </tbody>
         </table>
+        {setPage !== undefined && currPage !== undefined && !!totalPages && (
+          <TablePagesGroup setPage={setPage} currPage={currPage} total={totalPages} />
+          // <TablePagesGroup />
+        )}
       </div>
     );
   },

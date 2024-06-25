@@ -80,6 +80,13 @@ const DetailedAd = observer(({ store }: IProps) => {
         .validate({ ...values }, { abortEarly: false })
         .then(() => {
           store.updateAd(values);
+          store.fetchAd(
+            'productId' in store.ad[0]
+              ? store.ad[0].productId
+              : 'orderId' in store.ad[0]
+                ? store.ad[0].orderId
+                : store.ad[0].jobId,
+          );
           formik.resetForm();
         })
         .catch((e) => {

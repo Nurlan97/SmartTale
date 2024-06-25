@@ -1,0 +1,54 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&display=swap');
+
+.wrapper {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  justify-content: end;
+  margin-top: auto;
+  margin-bottom: 16px;
+}
+.btnGroup {
+  display: flex;
+  border-radius: 8px;
+  //   overflow: hidden;
+}
+
+.arrowLeft {
+  height: 38px;
+  width: 38px;
+  padding: 6px;
+  //   border: 1px solid rgba(255, 204, 0, 1);
+
+  border-top-left-radius: 8px;
+  border-bottom-left-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 4px;
+  color: rgba(255, 204, 0, 1);
+  &:hover {
+    background-color: rgba(255, 204, 0, 1);
+    border: none;
+    transition: background-color 0.3s;
+  }
+}
+.arrowRight {
+  height: 38px;
+  width: 38px;
+  padding: 6px;
+  //   border: 1px solid rgba(255, 204, 0, 1);
+
+  border-top-right-radius: 8px;
+  border-bottom-right-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 4px;
+  color: rgba(255, 204, 0, 1);
+  &:hover {
+    background-color: rgba(255, 204, 0, 1);
+    border: none;
+    transition: background-color 0.3s;
+  }
+}

@@ -17,9 +17,10 @@ class vacancyStore {
   };
   deleteAd = async (id: number) => {
     try {
-      await myApi.interactWithAd1(id, '3');
+      await myApi.interactWithAd(id, '3');
       modalStore.closeModal();
       successNotify('Объявлени успешно удалено');
+      this.positionsList?.content.filter((job) => job.jobId !== id);
     } catch (error) {
       console.log(error);
       errorNotify('Произошла ошибка при удалении, повторите попытку');
@@ -27,7 +28,7 @@ class vacancyStore {
   };
   closeAd = async (id: number) => {
     try {
-      await myApi.interactWithAd1(id, '1');
+      await myApi.interactWithAd(id, '1');
       modalStore.closeModal();
       successNotify('Объявлени успешно скрыто');
     } catch (error) {
@@ -37,7 +38,7 @@ class vacancyStore {
   };
   restoreAd = async (id: number) => {
     try {
-      await myApi.interactWithAd1(id, '2');
+      await myApi.interactWithAd(id, '2');
       successNotify('Объявлени успешно восставнолено');
     } catch (error) {
       console.log(error);

@@ -4,8 +4,6 @@ import { useEffect, useRef } from 'react';
 import DatePicker, { registerLocale } from 'react-datepicker';
 import { useNavigate } from 'react-router-dom';
 
-import { kanbanStore, modalStore } from '../../store';
-import { PathEnum } from '../../store/modalStore';
 import orderHistoryStore2 from '../../store/orderHistoryStore2';
 import DateRangeCustomInput from '../../UI/DateRangeCustomInput/DateRangeCustomInput';
 import TabSwitch from '../../UI/TabSwitch/TabSwitch';

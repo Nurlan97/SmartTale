@@ -22,13 +22,18 @@ export const createClient = (token: string) => {
       console.log('connected');
       client.subscribe(`/user/${userId}/push`, (message) => {
         const notification: IMessageUser | IHistoryUser = JSON.parse(message.body);
+        if ('unreadCount' in notification)
+          notifyStore.unreadedCount = Number(notification.unreadCount);
         if ('hasNext' in notification) {
           notification.content.forEach((notify) => {
             notifyStore.addNotify(notify);
           });
+          notifyStore.hasNext = notification.hasNext;
+          notifyStore.page += 1;
         } else {
           notifyStore.addNotify(notification);
         }
+        if (notifyStore.isLoading) notifyStore.stopLoading();
       });
       if (orgId !== 0) {
         client.subscribe(`/org/${orgId}/push`, (message) => {
@@ -37,6 +42,8 @@ export const createClient = (token: string) => {
             notification.content.forEach((notify) => {
               notifyStore.addNotify(notify);
             });
+            notifyStore.hasNext = notification.hasNext;
+            notifyStore.page += 1;
           } else {
             notifyStore.addNotify(notification);
           }
@@ -65,7 +72,7 @@ export const createClient = (token: string) => {
   return client;
 };
 
-export const sendMessage = (client: Client, message: string, destination: string) => {
+export const sendMessage = (client: Client, message: any, destination: string) => {
   client.publish({
     destination,
     body: JSON.stringify(message),

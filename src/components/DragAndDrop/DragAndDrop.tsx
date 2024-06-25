@@ -11,7 +11,6 @@ import {
   useSensors,
 } from '@dnd-kit/core';
 import { observer } from 'mobx-react-lite';
-import * as _ from 'radash';
 import { MutableRefObject, useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 

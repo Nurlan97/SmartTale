@@ -2,7 +2,7 @@ import { observer } from 'mobx-react-lite';
 import { useLayoutEffect } from 'react';
 import { Link } from 'react-router-dom';
 
-import { OrderAccepted } from '../../api/data-contracts';
+import { Employee, OrderAccepted } from '../../api/data-contracts';
 import Header from '../../components/Header/Header';
 import NoEmployees from '../../components/NoEmployees/NoEmployees';
 import TableCustom from '../../components/TableCustom/TableCustom';
@@ -47,11 +47,8 @@ const transform = {
     </div>
   ),
 
-  name: (prop: string) => (
-    <Link
-      to={`/employees/${employeeStore.employeeList.content.find((row) => row.name === prop)?.employeeId}`}
-      style={{ textDecoration: 'underline' }}
-    >
+  name: (prop: string, row: Employee) => (
+    <Link to={`/employees/${row.employeeId}`} style={{ textDecoration: 'underline' }}>
       {prop}
     </Link>
   ),
@@ -80,6 +77,7 @@ const style = {
 const Employees = observer(() => {
   useLayoutEffect(() => {
     employeeStore.getEmployees();
+    employeeStore.getInvitaions();
     employeeStore.resetEmployee();
   }, []);
   return (
@@ -101,6 +99,9 @@ const Employees = observer(() => {
             rows={employeeStore.employeeList.content}
             transform={transform}
             styling={style}
+            currPage={employeeStore.employeeList.number}
+            setPage={employeeStore.changePage}
+            totalPages={employeeStore.employeeList.totalPages}
           />
         </div>
       ) : (

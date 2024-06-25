@@ -1,6 +1,7 @@
 import { observer } from 'mobx-react-lite';
 
 import { SearchItem } from '../../api/data-contracts';
+import { defaultImage } from '../../assets';
 import styles from './dropDownSearch.module.scss';
 type Props = { results: SearchItem[] };
 const DropDownSearch = observer(({ results }: Props) => {
@@ -10,7 +11,11 @@ const DropDownSearch = observer(({ results }: Props) => {
         results.map((result, ind) => {
           return (
             <div key={ind} className={styles.result}>
-              <img src={result.imageUrl} alt={result.title} className={styles.img} />
+              <img
+                src={result.imageUrl ? result.imageUrl : defaultImage}
+                alt={result.title}
+                className={styles.img}
+              />
               <div>{result.title}</div>
             </div>
           );

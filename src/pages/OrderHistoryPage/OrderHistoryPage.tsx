@@ -33,6 +33,11 @@ const OrderHistoryPage = observer(() => {
         transform={orderHistoryStore.table.transform}
         sorting={orderHistoryStore.table.sorting}
         setSorting={orderHistoryStore.setSorting}
+        currPage={orderHistoryStore.data.number}
+        setPage={(page: number) =>
+          orderHistoryStore.setActiveTab(orderHistoryStore.activeTab, page)
+        }
+        totalPages={orderHistoryStore.data.totalPages}
       />
     </div>
   );

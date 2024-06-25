@@ -35,6 +35,7 @@ interface IMyOrganization {
 }
 
 class appStore {
+  isLoading = false;
   myOrders: IOrders = {
     data: {
       totalPages: 0,
@@ -96,19 +97,37 @@ class appStore {
 
   myAdsSetGroup = (group: 'all' | 'orders' | 'products') => async () => {
     this.myAds.group = group;
+    this.myAds.data = {
+      totalPages: 0,
+      totalElements: 0,
+      size: 10,
+      content: [],
+      number: 0,
+      isEmpty: false,
+    };
     this.getMyAds();
   };
-  getMyAds = async () => {
+  getMyAds = async (page?: number) => {
+    if (this.isLoading) return;
     try {
+      this.isLoading = true;
       const response = await myApi.getMyAds({
         q: this.myAds.group !== 'all' ? this.myAds.group : undefined,
-        page: this.myAds.data.number,
+        page: page ? page : this.myAds.data.number,
         size: this.myAds.data.size,
       });
-      this.myAds.data = response.data;
+
+      this.myAds.data.content.push(...response.data.content);
+      this.myAds.data.isEmpty = response.data.isEmpty;
+      this.myAds.data.number = response.data.number;
+      this.myAds.data.size = response.data.size;
+      this.myAds.data.totalElements = response.data.totalElements;
+      this.myAds.data.totalPages = response.data.totalPages;
     } catch (error) {
       console.log(error);
       errorNotify('Произошла ошибка при загрузке, повторите попытку');
+    } finally {
+      this.isLoading = false;
     }
   };
   myOrganizationSetGroup = (tab: 'orders' | 'employees') => async () => {
@@ -145,21 +164,19 @@ class appStore {
     const response = await myApi.getOrders1({ q: status });
     this.myOrders.data = response.data;
   };
-  getMyOrganizationOrders = async () => {
+  getMyOrganizationOrders = async (page?: number) => {
     try {
-      const response = await myApi.getOrders({ active: true });
+      const response = await myApi.getOrders({ active: true, page });
       runInAction(() => {
         this.myOrganization.orders = response.data;
-        // this.myOrganization.orders.content = MOCK_DATA;
       });
     } catch (error) {
       console.error('Failed to fetch orders', error);
     }
-    // this.myOrganization.orders.content = MOCK_DATA;
   };
-  getMyOrganizationEmployees = async () => {
+  getMyOrganizationEmployees = async (page?: number) => {
     try {
-      const response = await myApi.getEmployees();
+      const response = await myApi.getEmployees({ page });
       runInAction(() => {
         this.myOrganization.employees = response.data;
       });
@@ -167,7 +184,6 @@ class appStore {
       console.log(error);
       errorNotify('Произошла ошибка при загрузке сотрудников, повторите попытку');
     }
-    // this.myOrganization.employees.content = MOCK_DATA_EMPLOYEES;
   };
   get isActiveOrders() {
     return this.myOrganization.group === 'orders';
@@ -181,6 +197,12 @@ class appStore {
     try {
       await myApi.interactWithAd1(id, '3');
       modalStore.closeModal();
+      this.myAds.data.content.filter((ad) => {
+        if ('productId' in ad) return ad.productId !== id;
+        else {
+          return ad.orderId !== id;
+        }
+      });
       successNotify('Объявлени успешно удалено');
     } catch (error) {
       console.log(error);

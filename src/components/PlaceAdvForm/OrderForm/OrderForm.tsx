@@ -10,7 +10,6 @@ import DatePicker, { registerLocale } from 'react-datepicker';
 import { CreateOrderRequest, UpdateOrderRequest } from '../../../api/data-contracts';
 import { typePlaceAdvStore, userStore } from '../../../store';
 import DateCustomInput from '../../../UI/DateCustomInput/DateCustomInput';
-import ImageInput from '../../../UI/ImageInput/ImageInput';
 import Input from '../../../UI/Input/Input';
 import SortableImageInput from '../../../UI/SortableImageInput/SortableImageInput';
 import TabSwitch from '../../../UI/TabSwitch/TabSwitch';

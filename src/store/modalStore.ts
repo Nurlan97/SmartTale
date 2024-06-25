@@ -45,6 +45,8 @@ export enum PathEnum {
   '/services' = 'Маркетплейс/Заказы',
   '/job' = 'Маркетплейс/Услуги',
   '/orders-history' = 'Заказы/История',
+  '/search' = 'Поиск',
+  '/search-purchases' = 'Поиск',
 }
 class modalStore {
   isOpen = false;
@@ -75,12 +77,11 @@ class modalStore {
     this.detailedExt.id = id;
     try {
       let response;
-      if (path === PathEnum['/my-purchases']) {
+      if (path === PathEnum['/my-purchases'] || path === PathEnum['/search-purchases']) {
         response = await myApi.getPurchase(id);
       } else {
         response = await myApi.getAd(id);
       }
-
       this.detailed.push(response.data);
       this.detailedExt.path = path;
       this.detailedExt.activeImg = 0;

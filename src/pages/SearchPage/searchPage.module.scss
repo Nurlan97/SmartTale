@@ -45,11 +45,25 @@
 
 .results {
   display: flex;
+  // flex-direction: column;
   flex-wrap: wrap;
   gap: 12px;
   align-items: start;
   justify-content: start;
-  height: fit-content;
+  // height: fit-content;
+  background-color: rgb(235, 235, 235);
+  padding: 22px;
+  border-radius: 16px;
+  overflow: auto;
+}
+.searchWrapper {
+  display: flex;
+
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: start;
+  justify-content: start;
+  // height: fit-content;
   background-color: rgb(235, 235, 235);
   padding: 22px;
   border-radius: 16px;

@@ -2,6 +2,7 @@ import { makeAutoObservable, runInAction } from 'mobx';
 
 import {
   CustomPageEmployee,
+  CustomPageInviterInvitation,
   EmployeeTasksResponse,
   InviteRequest,
   PositionSummary,
@@ -18,6 +19,14 @@ class employeeStore {
     size: 12,
     isEmpty: true,
   };
+  invitations: CustomPageInviterInvitation = {
+    content: [],
+    totalPages: 0,
+    totalElements: 0,
+    number: 0,
+    size: 0,
+    isEmpty: false,
+  };
   employeeDetail: EmployeeTasksResponse | undefined = undefined;
   employeeDetailExt: { activeTab: 'history' | 'active' } = { activeTab: 'active' };
   posiitons: PositionSummary[] = [];
@@ -27,6 +36,14 @@ class employeeStore {
   getEmployees = async () => {
     const response = await myApi.getEmployees();
     this.employeeList = response.data;
+  };
+  changePage = (page: number) => async () => {
+    const response = await myApi.getEmployees({ page: page });
+    this.employeeList = response.data;
+  };
+  getInvitaions = async () => {
+    const response = await myApi.getInvitations();
+    this.invitations = response.data;
   };
   resetEmployee = () => {
     this.employeeDetail = undefined;
@@ -76,6 +93,32 @@ class employeeStore {
       errorNotify('Произошла ошибка при отстранении сотрудника');
     }
   };
+  revokeInvitation = async (employeeId: number) => {
+    try {
+      const employeeInvite = this.invitations.content.find(
+        (invite) => invite.inviteeId === employeeId,
+      );
+      if (employeeInvite) {
+        await myApi.deleteInvitation(employeeInvite?.invitationId);
+        successNotify('Пришлашение успешно отозвано');
+      }
+    } catch (error) {
+      errorNotify('Произошла ошибка при отзыве приглашения');
+    }
+  };
+  deleteEmployee = async (employeeId: number) => {
+    try {
+      await myApi.deleteEmployee(employeeId);
+      successNotify('Сотрудник успешно удален');
+    } catch (error) {
+      errorNotify('Произошла ошибка при удалении сотрудника');
+    }
+  };
+  get findEmployee() {
+    return this.employeeList.content.find(
+      (employee) => employee.employeeId === this.employeeDetail?.employee.employeeId,
+    );
+  }
 }
 
 export default new employeeStore();

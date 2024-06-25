@@ -26,7 +26,6 @@ const contexts: { [key: string]: SearchItem['type'] } = {
 };
 const Header = observer(({ path, title }: IHeader) => {
   const debounceSearch = useDebounce((e) => {
-    if (e.target.value.length === 0) return;
     searchStore.fetchSearch(e.target.value, true, 8, context);
   }, 1000);
   const location = useLocation();
@@ -81,8 +80,8 @@ const Header = observer(({ path, title }: IHeader) => {
                 onChange={(e) => {
                   if (showNotify) return;
                   setSearch(e.target.value);
+                  debounceSearch(e);
                   if (e.target.value.length > 2) {
-                    debounceSearch(e);
                     openSearchHandler();
                   } else {
                     closeSearchHandler();

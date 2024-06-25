@@ -187,10 +187,10 @@ class orderHistoryStore {
     else if (this.table.sorting[column] === 'desc') this.table.sorting[column] = 'noSort';
     else this.table.sorting[column] = 'asc';
   };
-  setActiveTab = (tab: 'active' | 'history') => async () => {
+  setActiveTab = (tab: 'active' | 'history', page?: number) => async () => {
     try {
       this.activeTab = tab;
-      const response = await myApi.getOrders1({ q: tab });
+      const response = await myApi.getOrders1({ q: tab, page });
 
       runInAction(() => {
         this.data = response.data;

@@ -1,7 +1,7 @@
 import { observer } from 'mobx-react-lite';
+import InfiniteScroll from 'react-infinite-scroll-component';
 
 import { notifyStore } from '../../store';
-import ScrollableWrapper from '../../UI/ScrollableWrapper/ScrollableWrapper';
 import Notify from '../Notify/Notify';
 import styles from './notifications.module.scss';
 
@@ -10,6 +10,15 @@ type Props = {
   onMouseLeave: () => void;
 };
 const Notifications = observer(({ onMouseEnter, onMouseLeave }: Props) => {
+  console.log(notifyStore.isLoading, notifyStore.hasNext);
+  const loadMoreNotifications = async () => {
+    try {
+      notifyStore.getHistory();
+    } catch (error) {
+      console.error('Error fetching notifications:', error);
+    }
+  };
+
   return (
     <div
       className={styles.wrapper}
@@ -18,8 +27,15 @@ const Notifications = observer(({ onMouseEnter, onMouseLeave }: Props) => {
     >
       <div className={styles.title}>Уведомления</div>
       <div className={styles.line}></div>
-      <ScrollableWrapper>
-        <div className={styles.body}>
+
+      <div className={styles.body} id='scrollableDiv'>
+        <InfiniteScroll
+          dataLength={notifyStore.notifications.length}
+          next={loadMoreNotifications}
+          hasMore={notifyStore.hasNext}
+          loader={<h4 className={styles.empty}>Loading...</h4>}
+          scrollableTarget='scrollableDiv'
+        >
           {notifyStore.notifications.length > 0 ? (
             <>
               {notifyStore.notifications.map((notify, ind) => {
@@ -29,8 +45,9 @@ const Notifications = observer(({ onMouseEnter, onMouseLeave }: Props) => {
           ) : (
             <div className={styles.empty}>У вас еще нет уведомлений</div>
           )}
-        </div>
-      </ScrollableWrapper>
+        </InfiniteScroll>
+      </div>
+
       <div className={styles.line}></div>
       {notifyStore.notifications.length > 0 && (
         <div className={styles.footer}>

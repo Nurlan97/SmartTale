@@ -1,10 +1,9 @@
 import { observer } from 'mobx-react-lite';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 
 import { OrderAccepted } from '../../api/data-contracts';
 import { appStore, modalStore } from '../../store';
 import { Modals } from '../../store/modalStore';
-import orderHistoryStore2 from '../../store/orderHistoryStore2';
 import Button from '../../UI/Button/Button';
 import ScrollableWrapper from '../../UI/ScrollableWrapper/ScrollableWrapper';
 import TabSwitch from '../../UI/TabSwitch/TabSwitch';
@@ -114,25 +113,29 @@ const OrgOrdersEmployees = observer(() => {
           </Button>
         )}
       </div>
-      <ScrollableWrapper>
-        <div className={styles.list}>
-          {appStore.isActiveOrders &&
-            appStore.myOrganization.orders.content &&
-            appStore.myOrganization.orders.content.map((item, index) => (
+      {appStore.isActiveOrders && appStore.myOrganization.orders.content && (
+        <ScrollableWrapper>
+          <div className={styles.list}>
+            {appStore.myOrganization.orders.content.map((item, index) => (
               <AdRow key={index} item={item}>
                 {item.price}
               </AdRow>
             ))}
-          {!appStore.isActiveOrders && (
-            <TableCustom
-              headers={headers}
-              rows={appStore.myOrganization.employees.content}
-              transform={transform}
-              styling={style}
-            />
-          )}
-        </div>
-      </ScrollableWrapper>
+          </div>
+        </ScrollableWrapper>
+      )}
+
+      {!appStore.isActiveOrders && (
+        <TableCustom
+          headers={headers}
+          rows={appStore.myOrganization.employees.content}
+          transform={transform}
+          styling={style}
+          currPage={appStore.myOrganization.employees.number}
+          setPage={appStore.getMyOrganizationEmployees}
+          totalPages={appStore.myOrganization.employees.totalPages}
+        />
+      )}
     </div>
   );
 });

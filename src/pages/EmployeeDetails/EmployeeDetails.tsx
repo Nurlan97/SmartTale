@@ -1,12 +1,14 @@
+import { toJS } from 'mobx';
 import { observer } from 'mobx-react-lite';
 import { useLayoutEffect } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 
 import { ArrowLeft, defaultPhoto } from '../../assets';
 import Header from '../../components/Header/Header';
 import OrganizationTask from '../../components/OrganizationTask/OrganizationTask';
 import { userStore } from '../../store';
 import employeeStore from '../../store/employeeStore';
+import Button from '../../UI/Button/Button';
 import TabSwitch from '../../UI/TabSwitch/TabSwitch';
 import styles from './employeeDetails.module.scss';
 
@@ -15,11 +17,14 @@ const EmployeeDetails = observer(() => {
   useLayoutEffect(() => {
     employeeStore.getEmployeeDetails(Number(id));
   }, []);
-
+  const navigate = useNavigate();
   const buttons: { tab: 'active' | 'history'; title: string }[] = [
     { tab: 'active', title: 'Текущие заказы' },
     { tab: 'history', title: 'Выполненные' },
   ];
+  const employeeDetail = toJS(employeeStore.employeeDetail);
+  const employee = employeeStore.findEmployee;
+
   return (
     <div className={styles.page}>
       <Header
@@ -34,71 +39,74 @@ const EmployeeDetails = observer(() => {
         <div className={styles.employeeDetails}>
           <img
             src={
-              employeeStore.employeeDetail?.employee.avatarUrl
-                ? employeeStore.employeeDetail?.employee.avatarUrl
+              employeeDetail?.employee.avatarUrl
+                ? employeeDetail?.employee.avatarUrl
                 : defaultPhoto
             }
             alt=''
             className={styles.avatar}
           />
           <div className={styles.textDetails}>
-            <div className={styles.name}>
-              {employeeStore.employeeDetail?.employee.name}
-            </div>
-            <div className={styles.phone}>
-              {employeeStore.employeeDetail?.employee.phoneNumber}
-            </div>
-            <div className={styles.position}>
-              {employeeStore.employeeDetail?.employee.position}
-            </div>
+            <div className={styles.name}>{employeeDetail?.employee.name}</div>
+            <div className={styles.phone}>{employeeDetail?.employee.phoneNumber}</div>
+            <div className={styles.position}>{employeeDetail?.employee.position}</div>
           </div>
         </div>
-        <TabSwitch
-          tabs={buttons}
-          activeTab={employeeStore.employeeDetailExt.activeTab}
-          switchFunc={(tab: 'history' | 'active') => employeeStore.switchDetailsTab(tab)}
-        />
-        {employeeStore.employeeDetail?.tasks.content?.map((task) => {
+        <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
+          <TabSwitch
+            tabs={buttons}
+            activeTab={employeeStore.employeeDetailExt.activeTab}
+            switchFunc={(tab: 'history' | 'active') =>
+              employeeStore.switchDetailsTab(tab)
+            }
+          />
+          {userStore.authorities.includes('DELETE_EMPLOYEE') && (
+            <>
+              {employee?.status === 'Invited' && (
+                <Button
+                  color={'red'}
+                  type={'button'}
+                  height='40px'
+                  handler={async () => {
+                    try {
+                      await employeeStore.revokeInvitation(employee.employeeId);
+                      navigate(-1);
+                    } catch (error) {
+                      console.log(error);
+                    }
+                  }}
+                >
+                  Отозвать приглашение
+                </Button>
+              )}
+              {employee?.status === 'Authorized' &&
+                employeeDetail &&
+                userStore.hierarchy !== undefined &&
+                employeeDetail.employee.hierarchy > userStore.hierarchy &&
+                employeeDetail.tasks.empty && (
+                  <Button
+                    color={'red'}
+                    type={'button'}
+                    height='40px'
+                    handler={async () => {
+                      try {
+                        await employeeStore.deleteEmployee(employee.employeeId);
+                        navigate(-1);
+                      } catch (error) {
+                        console.log(error);
+                      }
+                    }}
+                  >
+                    Удалить сотрдуника
+                  </Button>
+                )}
+            </>
+          )}
+        </div>
+
+        {employeeDetail?.tasks.content?.map((task) => {
           return <OrganizationTask task={task} key={task.orderId} id={Number(id)} />;
         })}
-        {/* <OrganizationTask
-          task={{
-            orderId: 0,
-            status: 'PENDING',
-            title: 'Пошив одежды',
-            key: 'Е1-111',
-            description:
-              'Какое-то описани по пошиву одежды с дополнительной информацией для исполнителя',
-            price: 10000,
-            comment: 'Какой-то комментарий',
-            date: '2024-06-17',
-            employees: [
-              {
-                userId: 0,
-                name: 'Исполнитель 1',
-                avatarUrl: '',
-                reward: 0,
-              },
-              {
-                userId: 1,
-                name: 'Исполнитель 2',
-                avatarUrl: '',
-                reward: 0,
-              },
-              {
-                userId: 2,
-                name: 'Исполнитель 3',
-                avatarUrl: '',
-                reward: 0,
-              },
-            ],
-            publisherId: 0,
-            publisherName: 'Имя заказчика',
-            publisherAvatarUrl: '',
-            publisherPhoneNumber: '1267526234',
-          }}
-          id={Number(id)}
-        /> */}
       </div>
     </div>
   );

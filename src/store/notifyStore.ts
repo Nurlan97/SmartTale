@@ -9,6 +9,11 @@ import userStore from './userStore';
 class notifyStore {
   notifications: Array<IMessageOrg | IMessageUser> = [];
   client: Client | undefined = undefined;
+  hasNext = false;
+  isLoading = false;
+  page = 0;
+  size = 8;
+  unreadedCount = 0;
   constructor() {
     makeAutoObservable(this);
   }
@@ -17,6 +22,26 @@ class notifyStore {
       this.client = createClient(userStore.accessToken);
       this.client.activate();
     }
+  };
+  getHistory = () => {
+    if (this.isLoading || !this.hasNext) return;
+    console.log('getHistory');
+    if (this.client) {
+      this.isLoading = true;
+      sendMessage(
+        this.client,
+        {
+          userId: userStore.userId,
+          organizationId: userStore.orgId ? userStore.orgId : 0,
+          page: this.page,
+          size: this.size,
+        },
+        '/app/notifications/history',
+      );
+    }
+  };
+  stopLoading = () => {
+    this.isLoading = false;
   };
   addNotify = (notify: IMessageOrg | IMessageUser) => {
     if (
@@ -47,7 +72,7 @@ class notifyStore {
     });
   };
   get hasUnreaded() {
-    return this.notifications.some((item) => !item.read);
+    return !!this.unreadedCount || this.notifications.some((item) => !item.read);
   }
 }
 

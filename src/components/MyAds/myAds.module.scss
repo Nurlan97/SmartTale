@@ -11,13 +11,16 @@
 }
 
 .adsBlock {
+  overflow: auto;
+  // height: 100%;
+}
+.adsWrapper {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  // height: 100%;
 }
-.adHided{
-   font-family: 'SF Pro', sans-serif;
+.adHided {
+  font-family: 'SF Pro', sans-serif;
   font-weight: 500;
   font-size: 18px;
   color: #ff7300;

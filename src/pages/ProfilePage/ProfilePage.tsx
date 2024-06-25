@@ -238,6 +238,13 @@ const ProfilePage = observer(() => {
                           >
                             Принять
                           </button>
+                          <button
+                            onClick={() => {
+                              userStore.acceptInvitation(invite.invitationId);
+                            }}
+                          >
+                            Отклонить
+                          </button>
                         </div>
                       );
                     })}
@@ -310,6 +317,18 @@ const ProfilePage = observer(() => {
         <div className={styles.horizontalLine}></div>
         {userStore.profileEdit ? (
           <div className={styles.buttonGroup}>
+            {userStore.orgId && (
+              <Button
+                color='red'
+                type='button'
+                width='fit-content'
+                handler={() => {
+                  userStore.leaveOrganization();
+                }}
+              >
+                Покинуть организацию
+              </Button>
+            )}
             <Button
               color='white'
               type='button'

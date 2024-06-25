@@ -1,5 +1,6 @@
 import { observer } from 'mobx-react-lite';
 import { useEffect, useState } from 'react';
+import InfiniteScroll from 'react-infinite-scroll-component';
 import { useSearchParams } from 'react-router-dom';
 
 import { SearchItem } from '../../api/data-contracts';
@@ -15,9 +16,7 @@ const SearchPage = observer(() => {
 
   const contexts: { context: SearchItem['type']; title: string }[] = [
     { context: 'ADVERTISEMENT', title: 'Все объявления' },
-
     { context: 'PRODUCT', title: 'Оборудование' },
-
     { context: 'ORDER', title: 'Заказы' },
   ];
   if (userStore.isAuth) {
@@ -37,18 +36,22 @@ const SearchPage = observer(() => {
     );
   }
   const [search, setSearch] = useState('');
+  const searchQuery = searchParams.get('query');
+  const contextQuery = searchParams.get('context') as SearchItem['type'];
   useEffect(() => {
-    const searchQuery = searchParams.get('query');
-    const contextQuery = searchParams.get('context') as SearchItem['type'];
     if (searchQuery && contextQuery) {
       setSearch(searchQuery);
       searchStore.setContext(contextQuery);
       searchStore.fetchSearch(searchQuery, false, 8);
     }
   }, []);
-  const debouncedSearch = useDebounce(() => {
-    searchStore.fetchSearch(search, false, 8);
+  const debouncedSearch = useDebounce((searchString: string) => {
+    searchStore.fetchSearch(searchString, false, 8);
   }, 1000);
+
+  const searchHandler = () => {
+    searchStore.fetchMore(search ? search : '');
+  };
   return (
     <div className={styles.page}>
       <Header
@@ -60,17 +63,12 @@ const SearchPage = observer(() => {
         title={'Поиск'}
       />
       <div className={styles.body}>
-        {/* <form
-          className={styles.search}
-          onSubmit={(e) => {
-            e.preventDefault();
-            searchStore.fetchSearch(search, false, 8);
-          }}
-        ></form> */}
         <SearchInput
           onChange={(e) => {
             setSearch(e.target.value);
-            debouncedSearch();
+            setSearchParams({ query: e.target.value, context: contextQuery });
+
+            debouncedSearch(e.target.value);
           }}
           value={search}
           width='100%'
@@ -89,6 +87,10 @@ const SearchPage = observer(() => {
                     key={cont.context}
                     onClick={() => {
                       searchStore.setContext(cont.context);
+                      setSearchParams({
+                        query: searchQuery ? searchQuery : '',
+                        context: cont.context,
+                      });
                       searchStore.fetchSearch(search, false, 8);
                     }}
                   >
@@ -99,15 +101,26 @@ const SearchPage = observer(() => {
             </div>
           </ScrollableWrapper>
         </div>
-        <ScrollableWrapper>
-          <div className={styles.results}>
+
+        <div className={styles.results} id='scrollableDiv'>
+          <InfiniteScroll
+            dataLength={searchStore.results.content.length}
+            next={searchHandler}
+            hasMore={searchStore.hasNext}
+            loader={<h4>Loading...</h4>}
+            scrollableTarget='scrollableDiv'
+            // style={{ display: 'flex', flexWrap: 'wrap' }}
+            className={styles.searchWrapper}
+          >
             {searchStore.results.content.length > 0
               ? searchStore.results.content.map((res, ind) => {
-                  return <SearchResultUnit item={res} key={ind} />;
+                  return <SearchResultUnit item={res} key={ind} context={contextQuery} />;
                 })
-              : 'Ничего не найдено'}
-          </div>
-        </ScrollableWrapper>
+              : searchStore.isLoading
+                ? 'Поиск...'
+                : 'Ничего не найдено, возможно вы ничего не ввели в поиск(минимум 3 символа)'}
+          </InfiniteScroll>
+        </div>
       </div>
     </div>
   );

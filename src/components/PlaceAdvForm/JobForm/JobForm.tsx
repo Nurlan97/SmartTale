@@ -3,7 +3,6 @@ import './selectDay.css';
 
 import { ru } from 'date-fns/locale';
 import { FormikErrors } from 'formik';
-import { toJS } from 'mobx';
 import { observer } from 'mobx-react-lite';
 import { useLayoutEffect } from 'react';
 import DatePicker, { registerLocale } from 'react-datepicker';
@@ -12,7 +11,6 @@ import Select from 'react-select';
 import { CreateJobRequest } from '../../../api/data-contracts';
 import { typePlaceAdvStore, userStore } from '../../../store';
 import DateCustomInput from '../../../UI/DateCustomInput/DateCustomInput';
-import ImageInput from '../../../UI/ImageInput/ImageInput';
 import Input from '../../../UI/Input/Input';
 import SortableImageInput from '../../../UI/SortableImageInput/SortableImageInput';
 import TabSwitch from '../../../UI/TabSwitch/TabSwitch';

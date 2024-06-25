@@ -296,6 +296,29 @@ class userStore {
       errorNotify('Произошла ошибка при отклике на вакансию');
     }
   };
+  declineInvitation = async (invitationId: number) => {
+    try {
+      await myApi.declineInvitation(invitationId);
+      runInAction(() => {
+        if (this.invitations)
+          this.invitations.content = this.invitations.content.filter(
+            (invite) => invite.invitationId !== invitationId,
+          );
+      });
+      successNotify('Вы успешно отклонили пришлашение');
+    } catch (error) {
+      console.log(error);
+      errorNotify('Произошла ошибка при отказе на вакансии');
+    }
+  };
+  leaveOrganization = async () => {
+    try {
+      await myApi.leaveOrganization();
+      successNotify('Вы успешно покинули организацию');
+    } catch (error) {
+      errorNotify('Произошла ошибка при выходе из организации');
+    }
+  };
 }
 
 export default new userStore();
