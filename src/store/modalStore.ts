@@ -46,7 +46,7 @@ export enum PathEnum {
   '/job' = 'Маркетплейс/Услуги',
   '/orders-history' = 'Заказы/История',
   '/search' = 'Поиск',
-  '/search-purchases' = 'Поиск',
+  '/search-purchases' = 'Поиск покупок',
 }
 class modalStore {
   isOpen = false;
@@ -71,6 +71,7 @@ class modalStore {
     this.isOpen = false;
   };
   openDescription = async (id: number, path: PathEnum) => {
+    console.log(path);
     this.detailed = [];
     this.isOpen = true;
     this.currentModal = Modals.loader;

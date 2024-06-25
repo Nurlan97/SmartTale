@@ -12,6 +12,7 @@ type Props = {
 };
 const SearchResultUnit = ({ item, context }: Props) => {
   const navigate = useNavigate();
+
   const contextHandlers: { [key in SearchItem['type']]: () => void } = {
     ADVERTISEMENT: () => {
       modalStore.openDescription(item.id, PathEnum['/search']);
@@ -40,7 +41,10 @@ const SearchResultUnit = ({ item, context }: Props) => {
       navigate(`/employees/${item.id}`);
     },
     PURCHASE: () => {
-      modalStore.openDescription(item.id, PathEnum['/search-purchases']);
+      modalStore.openDescription(
+        item.id,
+        PathEnum['/search-purchases' as keyof typeof PathEnum],
+      );
     },
   };
 
